@@ -19,293 +19,190 @@
   .wrap {
     max-width: 680px;
     margin: 0 auto;
-    padding: 0 24px;
+    padding: 48px 24px;
   }
 
-  /* ── NAV ── */
-  nav {
-    padding: 32px 0 0;
+  /* ── TOP SECTION ── */
+  .top {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    margin-bottom: 48px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid #e0e0e0;
+    gap: 2rem;
   }
 
-  .nav-handle {
+  .top-left {
+    flex: 1;
+  }
+
+  .handle {
     font-size: 11px;
-    color: #aaaaaa;
     letter-spacing: 0.18em;
     text-transform: uppercase;
+    color: #aaaaaa;
+    margin-bottom: 20px;
+    display: block;
   }
 
-  .nav-links {
+  .bio {
+    font-size: 15px;
+    color: #555555;
+    line-height: 1.9;
+    font-style: italic;
+    max-width: 420px;
+  }
+
+  .bio strong {
+    color: #1a1a1a;
+    font-weight: normal;
+  }
+
+  /* ── NAV LINKS (top right) ── */
+  .top-right {
     display: flex;
-    gap: 28px;
-    list-style: none;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 2px;
+    flex-shrink: 0;
   }
 
-  .nav-links a {
+  .top-right a {
     font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
     color: #aaaaaa;
     text-decoration: none;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    text-align: right;
     transition: color 0.2s;
   }
 
-  .nav-links a:hover { color: #1a1a1a; }
-
-  /* ── HERO ── */
-  .hero {
-    padding: 80px 0 64px;
-    border-bottom: 1px solid #e0e0e0;
-  }
-
-  .hero-prompt {
-    font-size: 11px;
-    color: #aaaaaa;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    margin-bottom: 24px;
-  }
-
-  .hero-name {
-    font-size: clamp(28px, 5vw, 44px);
-    font-weight: normal;
-    font-style: italic;
-    line-height: 1.25;
-    color: #1a1a1a;
-    margin-bottom: 32px;
-  }
-
-  .hero-bio {
-    font-size: 15px;
-    color: #555555;
-    max-width: 520px;
-    line-height: 1.9;
-    border-left: 1px solid #e0e0e0;
-    padding-left: 24px;
-  }
-
-  .hero-bio strong {
-    color: #1a1a1a;
-    font-weight: normal;
-    font-style: italic;
-  }
-
-  .hero-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 36px;
-  }
-
-  .tag {
-    font-size: 10px;
-    letter-spacing: 0.14em;
-    color: #aaaaaa;
-    border: 1px solid #e0e0e0;
-    padding: 4px 12px;
-    text-transform: uppercase;
-  }
+  .top-right a:hover { color: #1a1a1a; }
 
   /* ── PROJECTS ── */
-  #projects {
-    padding: 56px 0 80px;
-  }
-
   .section-label {
     font-size: 11px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: #aaaaaa;
-    margin-bottom: 32px;
-    padding-bottom: 14px;
-    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 20px;
   }
 
   .projects {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin-bottom: 48px;
   }
 
   .project {
-    padding: 28px 0;
+    padding: 18px 0;
     border-bottom: 1px solid #f0f0f0;
   }
 
-  .project:last-child { border-bottom: none; }
+  .project:nth-child(odd) {
+    padding-right: 32px;
+    border-right: 1px solid #f0f0f0;
+  }
 
-  .project-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 8px;
-    gap: 16px;
+  .project:nth-child(even) {
+    padding-left: 32px;
   }
 
   .project-name {
-    font-size: 17px;
+    font-size: 15px;
     font-style: italic;
-    font-weight: normal;
     color: #1a1a1a;
+    margin-bottom: 4px;
   }
 
   .project-status {
     font-size: 10px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    white-space: nowrap;
-    flex-shrink: 0;
-    margin-top: 4px;
-  }
-
-  .status-live    { color: #1a1a1a; }
-  .status-building { color: #aaaaaa; }
-  .status-personal { color: #aaaaaa; }
-
-  .project-type {
-    font-size: 11px;
     color: #aaaaaa;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 12px;
   }
-
-  .project-desc {
-    font-size: 14px;
-    color: #555555;
-    line-height: 1.85;
-    max-width: 540px;
-    font-style: italic;
-  }
-
-  .project-link {
-    display: inline-block;
-    margin-top: 14px;
-    font-size: 12px;
-    color: #aaaaaa;
-    text-decoration: none;
-    letter-spacing: 0.08em;
-    transition: color 0.2s;
-  }
-
-  .project-link:hover { color: #1a1a1a; }
-  .project-link::after { content: ' →'; }
 
   /* ── FOOTER ── */
   footer {
+    padding-top: 28px;
     border-top: 1px solid #e0e0e0;
-    padding: 28px 0 48px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
   }
 
   .footer-left {
     font-size: 11px;
     color: #cccccc;
-    letter-spacing: 0.08em;
     font-style: italic;
   }
 
-  .footer-links { display: flex; gap: 24px; }
-
-  .footer-links a {
+  .footer-right a {
     font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
     color: #aaaaaa;
     text-decoration: none;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
     transition: color 0.2s;
   }
 
-  .footer-links a:hover { color: #1a1a1a; }
+  .footer-right a:hover { color: #1a1a1a; }
 
   @media (max-width: 480px) {
-    .hero { padding: 56px 0 48px; }
-    .project-header { flex-direction: column; gap: 6px; }
-    nav { padding: 24px 0 0; }
+    .top { flex-direction: column; gap: 24px; }
+    .top-right { flex-direction: row; gap: 20px; }
+    .top-right a { text-align: left; }
+    .projects { grid-template-columns: 1fr; }
+    .project:nth-child(odd) { padding-right: 0; border-right: none; }
+    .project:nth-child(even) { padding-left: 0; }
   }
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <nav>
-    <span class="nav-handle">@thejosephrossi</span>
-    <ul class="nav-links">
-      <li><a href="#projects">projects</a></li>
-      <li><a href="https://twitter.com/thejosephrossi" target="_blank">twitter</a></li>
-    </ul>
-  </nav>
-
-  <section class="hero">
-    <p class="hero-prompt">Architect. Builder. Father.</p>
-    <h1 class="hero-name">Building a way out.<br>Iteration by iteration.</h1>
-    <p class="hero-bio">
-      <strong>Architect by profession.</strong> Building a consulting business and a portfolio of apps so my time belongs to me. Catholic. Father. Obsessed with things that last.<br><br>
-      Everything here is something I built — for my business, for myself, or for my family. Some are live. Some are in progress. All of them are real.
-    </p>
-    <div class="hero-tags">
-      <span class="tag">architecture</span>
-      <span class="tag">consulting</span>
-      <span class="tag">indie builder</span>
-      <span class="tag">Catholic</span>
-      <span class="tag">father</span>
+  <div class="top">
+    <div class="top-left">
+      <span class="handle">@thejosephrossi</span>
+      <p class="bio">
+        <strong>Architect by profession.</strong> Building a consulting business and a portfolio of apps so my time belongs to me. Catholic. Father. Obsessed with things that last.
+      </p>
     </div>
-  </section>
-
-  <div id="projects">
-    <div class="section-label">Projects</div>
-    <div class="projects">
-
-      <div class="project">
-        <div class="project-header">
-          <span class="project-name">RFI Calculator</span>
-          <span class="project-status status-building">Preempt Global</span>
-        </div>
-        <p class="project-type">Business tool — data center consulting</p>
-        <p class="project-desc">A free tool for owners and developers to calculate RFI costs on large-scale commercial and data center projects. Built so people can work with us before committing to anything.</p>
-        <a href="#" class="project-link">try it</a>
-      </div>
-
-      <div class="project">
-        <div class="project-header">
-          <span class="project-name">Motivation App</span>
-          <span class="project-status status-personal">Personal</span>
-         <a href="https://www.joerossi.co/motivation" class="project-link">try it</a>
-        </div>
-        <p class="project-type">Personal tool — daily use</p>
-        <p class="project-desc">Hard truths delivered daily. Custom goals, photos that mean something, no soft platitudes. Built it because nothing like it existed. I use it every day.</p>
-      </div>
-
-      <div class="project">
-        <div class="project-header">
-          <span class="project-name">Catholic Affirmations</span>
-          <span class="project-status status-building">Personal</span>
-           <a href="https://www.joerossi.co/affirmation" class="project-link">try it</a>
-        </div>
-        <p class="project-type">Personal tool — faith</p>
-        <p class="project-desc">Scripture and Catholic affirmations delivered at random points throughout the day. Built for an audience of one first. An app I wanted to exist, so I'm building it.</p>
-      </div>
-
-      <div class="project">
-        <div class="project-header">
-          <span class="project-name">Kids Projects</span>
-          <span class="project-status status-building">In progress</span>
-        </div>
-        <p class="project-type">Family — legacy</p>
-        <p class="project-desc">Building things my kids will actually grow up using. Not because they'll make money. Because I want them to know their dad built things — and that they can too.</p>
-      </div>
-
+    <div class="top-right">
+      <a href="https://twitter.com/thejosephrossi" target="_blank">twitter</a>
     </div>
+  </div>
+
+  <div class="section-label">Projects</div>
+
+  <div class="projects">
+
+    <div class="project">
+      <div class="project-name">RFI Calculator</div>
+      <div class="project-status">Building</div>
+    </div>
+
+    <div class="project">
+      <div class="project-name">Motivation App</div>
+      <div class="project-status">Personal</div>
+    </div>
+
+    <div class="project">
+      <div class="project-name">Catholic Affirmations</div>
+      <div class="project-status">Building</div>
+    </div>
+
+    <div class="project">
+      <div class="project-name">Kids Projects</div>
+      <div class="project-status">In progress</div>
+    </div>
+
   </div>
 
   <footer>
     <span class="footer-left">Built by hand. Updated as things ship.</span>
-    <div class="footer-links">
+    <div class="footer-right">
       <a href="https://twitter.com/thejosephrossi" target="_blank">twitter</a>
     </div>
   </footer>
