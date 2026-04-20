@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>No Excuses</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --black: #0a0a0a;
+      --red: #d62828;
+      --red-dark: #a01010;
+      --white: #f0ede8;
+      --gray: #1a1a1a;
+      --gray2: #2a2a2a;
+      --muted: #666;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Barlow', sans-serif;
+      min-height: 100vh;
+    }
+    header {
+      background: var(--gray);
+      border-bottom: 3px solid var(--red);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    header h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.2rem;
+      letter-spacing: 3px;
+      color: var(--red);
+    }
+    header p { font-size: 0.8rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+    .fire-btn {
+      background: var(--red);
+      color: var(--white);
+      border: none;
+      padding: 12px 22px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: background 0.2s;
+    }
+    .fire-btn:hover { background: var(--red-dark); }
+    .fire-btn:disabled { background: var(--muted); cursor: not-allowed; }
+    .container { max-width: 900px; margin: 0 auto; padding: 28px 16px; }
+    .section {
+      background: var(--gray);
+      border-radius: 6px;
+      padding: 24px;
+      margin-bottom: 28px;
+      border: 1px solid var(--gray2);
+    }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 2px;
+      color: var(--red);
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--gray2);
+      padding-bottom: 10px;
+    }
+    textarea {
+      width: 100%;
+      background: var(--black);
+      border: 1px solid var(--gray2);
+      border-radius: 4px;
+      color: var(--white);
+      font-family: 'Barlow', sans-serif;
+      font-size: 1rem;
+      padding: 12px;
+      resize: vertical;
+      min-height: 100px;
+    }
+    textarea:focus { outline: none; border-color: var(--red); }
+    textarea::placeholder { color: var(--muted); }
+    .btn-row { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+    .goals-list { margin-top: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .goal-item {
+      background: var(--black);
+      border: 1px solid var(--gray2);
+      border-left: 3px solid var(--red);
+      border-radius: 4px;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .goal-item p { font-size: 0.95rem; line-height: 1.5; flex: 1; }
+    .delete-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 0 4px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .delete-btn:hover { color: var(--red); }
+    .upload-area {
+      border: 2px dashed var(--gray2);
+      border-radius: 6px;
+      padding: 32px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .upload-area:hover { border-color: var(--red); }
+    .upload-area p { color: var(--muted); font-size: 0.95rem; }
+    .upload-area .upload-icon { font-size: 2rem; margin-bottom: 8px; }
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .image-card {
+      position: relative;
+      border-radius: 4px;
+      overflow: hidden;
+      aspect-ratio: 1;
+      background: var(--black);
+      border: 1px solid var(--gray2);
+    }
+    .image-card.pinned { border: 3px solid gold; }
+    .image-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .image-card .img-delete {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: rgba(0,0,0,0.7);
+      border: none;
+      color: var(--white);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .image-card .img-delete:hover { background: var(--red); }
+    .image-card .img-pin {
+      position: absolute;
+      bottom: 6px;
+      right: 6px;
+      background: rgba(0,0,0,0.7);
+      border: none;
+      color: var(--white);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .image-card .img-pin:hover { background: goldenrod; }
+    .image-card.pinned .img-pin { background: goldenrod; }
+    .pin-legend { font-size: 0.8rem; color: var(--muted); margin-top: 10px; }
+    .pin-legend span { color: gold; }
+    .uploading-indicator { color: var(--muted); font-size: 0.85rem; margin-top: 10px; display: none; }
+    .status-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--gray);
+      border-top: 2px solid var(--red);
+      padding: 12px 20px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-align: center;
+      transform: translateY(100%);
+      transition: transform 0.3s;
+      z-index: 100;
+    }
+    .status-bar.show { transform: translateY(0); }
+    .status-bar.success { color: #4caf50; }
+    .status-bar.error { color: var(--red); }
+    .empty-state { color: var(--muted); font-size: 0.9rem; font-style: italic; padding: 8px 0; }
+    @media (max-width: 480px) {
+      header h1 { font-size: 1.7rem; }
+      .section { padding: 18px; }
+      .upload-area { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>⚡ No Excuses</h1>
+    <p>Your personal accountability system</p>
+  </div>
+  <button class="fire-btn" id="sendNowBtn">🔥 Hit Me Now</button>
+</header>
+
+<div class="container">
+
+  <div class="section">
+    <div class="section-title">🎯 Your Goals & Why You're Doing This</div>
+    <textarea id="goalInput" placeholder="What are you working toward? Be specific. No vague BS."></textarea>
+    <div class="btn-row">
+      <button class="fire-btn" id="addGoalBtn">Add Goal</button>
+    </div>
+    <div class="goals-list" id="goalsList">
+      <p class="empty-state" id="goalsEmpty">No goals yet. Add one above.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🖼️ Your Motivation Images</div>
+    <div class="upload-area" id="uploadArea">
+      <div class="upload-icon">📸</div>
+      <p>Tap to upload an image that fires you up</p>
+      <p style="font-size:0.8rem; margin-top:6px; color:#444">JPG, PNG, WEBP accepted</p>
+    </div>
+    <input type="file" id="imageInput" accept="image/*" style="display:none;" />
+    <p class="uploading-indicator" id="uploadingIndicator">⏳ Uploading image...</p>
+    <p class="pin-legend">Tap <span>📌</span> on any image to pin it — pinned images appear in every single email.</p>
+    <div class="image-grid" id="imageGrid"></div>
+  </div>
+
+</div>
+
+<div class="status-bar" id="statusBar"></div>
+
+<script>
+  const SUPABASE_URL = 'https://urfsijczxmngbixprdkq.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZnNpamN6eG1uZ2JpeHByZGtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTU1NzIsImV4cCI6MjA5MTA3MTU3Mn0.KxNLu5Rg0A0IdxQbaAapDa-vmTkVmeUlub689o0ZOaM';
+  const CLOUDINARY_CLOUD_NAME = 'dasjoaf0h';
+  const CLOUDINARY_UPLOAD_PRESET = 'motivation_uploads';
+
+  // ─── SUPABASE ────────────────────────────────────────────────────────
+  async function sbFetch(path, method, body) {
+    method = method || 'GET';
+    const opts = {
+      method: method,
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'Prefer': 'return=representation'
+      }
+    };
+    if (body) opts.body = JSON.stringify(body);
+    const res = await fetch(SUPABASE_URL + path, opts);
+    if (!res.ok) throw new Error(await res.text());
+    const text = await res.text();
+    return text ? JSON.parse(text) : [];
+  }
+
+  // ─── STATUS ──────────────────────────────────────────────────────────
+  function showStatus(msg, type) {
+    var bar = document.getElementById('statusBar');
+    bar.textContent = msg;
+    bar.className = 'status-bar show ' + (type || 'success');
+    setTimeout(function() { bar.className = 'status-bar'; }, 3500);
+  }
+
+  // ─── GOALS ───────────────────────────────────────────────────────────
+  var goals = [];
+
+  function loadGoals() {
+    sbFetch('/rest/v1/goals?order=created_at.asc')
+      .then(function(data) { goals = data; renderGoals(); })
+      .catch(function(e) { console.error('Load goals error:', e); });
+  }
+
+  function renderGoals() {
+    var list = document.getElementById('goalsList');
+    list.innerHTML = '';
+    if (goals.length === 0) {
+      list.innerHTML = '<p class="empty-state">No goals yet. Add one above.</p>';
+      return;
+    }
+    goals.forEach(function(g) {
+      var div = document.createElement('div');
+      div.className = 'goal-item';
+      div.innerHTML = '<p>' + escapeHtml(g.text) + '</p><button class="delete-btn" data-id="' + g.id + '">✕</button>';
+      div.querySelector('.delete-btn').addEventListener('click', function() { deleteGoal(g.id); });
+      list.appendChild(div);
+    });
+  }
+
+  function addGoal() {
+    var input = document.getElementById('goalInput');
+    var text = input.value.trim();
+    if (!text) { showStatus('Type a goal first.', 'error'); return; }
+    sbFetch('/rest/v1/goals', 'POST', { text: text })
+      .then(function(result) {
+        goals.push(result[0]);
+        renderGoals();
+        input.value = '';
+        showStatus('Goal saved. Now go earn it.', 'success');
+      })
+      .catch(function() { showStatus('Error saving goal.', 'error'); });
+  }
+
+  function deleteGoal(id) {
+    sbFetch('/rest/v1/goals?id=eq.' + id, 'DELETE')
+      .then(function() {
+        goals = goals.filter(function(g) { return g.id !== id; });
+        renderGoals();
+      })
+      .catch(function() { showStatus('Error deleting goal.', 'error'); });
+  }
+
+  // ─── IMAGES ──────────────────────────────────────────────────────────
+  var images = [];
+
+  function loadImages() {
+    sbFetch('/rest/v1/images?order=created_at.asc')
+      .then(function(data) { images = data; renderImages(); })
+      .catch(function(e) { console.error('Load images error:', e); });
+  }
+
+  function renderImages() {
+    var grid = document.getElementById('imageGrid');
+    grid.innerHTML = '';
+    images.forEach(function(img) {
+      var card = document.createElement('div');
+      card.className = 'image-card' + (img.pinned ? ' pinned' : '');
+      card.innerHTML =
+        '<img src="' + img.url + '" alt="motivation" loading="lazy" />' +
+        '<button class="img-delete">✕</button>' +
+        '<button class="img-pin">📌</button>';
+      card.querySelector('.img-delete').addEventListener('click', function() { deleteImage(img.id); });
+      card.querySelector('.img-pin').addEventListener('click', function() { pinImage(img.id, img.pinned); });
+      grid.appendChild(card);
+    });
+  }
+
+  function pinImage(id, currentlyPinned) {
+    sbFetch('/rest/v1/images?pinned=not.is.null', 'PATCH', { pinned: false })
+      .then(function() {
+        if (!currentlyPinned) {
+          return sbFetch('/rest/v1/images?id=eq.' + id, 'PATCH', { pinned: true })
+            .then(function() { showStatus('📌 Pinned — this image will appear in every email.', 'success'); });
+        } else {
+          showStatus('Unpinned.', 'success');
+        }
+      })
+      .then(function() {
+        return sbFetch('/rest/v1/images?order=created_at.asc');
+      })
+      .then(function(data) { images = data; renderImages(); })
+      .catch(function(e) { console.error(e); showStatus('Error pinning image.', 'error'); });
+  }
+
+  function handleImageUpload(event) {
+    var file = event.target.files[0];
+    if (!file) return;
+
+    document.getElementById('uploadingIndicator').style.display = 'block';
+    document.getElementById('uploadArea').style.borderColor = 'var(--red)';
+
+    var formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+    fetch('https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD_NAME + '/image/upload', {
+      method: 'POST',
+      body: formData
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(cloudData) {
+      if (!cloudData.secure_url) throw new Error('Cloudinary upload failed');
+      return sbFetch('/rest/v1/images', 'POST', { url: cloudData.secure_url, pinned: false });
+    })
+    .then(function(result) {
+      images.push(result[0]);
+      renderImages();
+      showStatus('Image uploaded. Keep stacking fuel.', 'success');
+    })
+    .catch(function(e) {
+      console.error(e);
+      showStatus('Image upload failed. Try again.', 'error');
+    })
+    .finally(function() {
+      document.getElementById('uploadingIndicator').style.display = 'none';
+      document.getElementById('uploadArea').style.borderColor = '';
+      document.getElementById('imageInput').value = '';
+    });
+  }
+
+  function deleteImage(id) {
+    sbFetch('/rest/v1/images?id=eq.' + id, 'DELETE')
+      .then(function() {
+        images = images.filter(function(i) { return i.id !== id; });
+        renderImages();
+      })
+      .catch(function() { showStatus('Error deleting image.', 'error'); });
+  }
+
+  function sendNow() {
+    var btn = document.getElementById('sendNowBtn');
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+    fetch('/api/send-motivation', { method: 'POST' })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.success) {
+          showStatus('📬 Email fired. Check your inbox.', 'success');
+        } else {
+          showStatus('Send failed: ' + (data.error || 'unknown error'), 'error');
+        }
+      })
+      .catch(function() { showStatus('Send failed. Check console.', 'error'); })
+      .finally(function() {
+        btn.disabled = false;
+        btn.textContent = '🔥 Hit Me Now';
+      });
+  }
+
+  function escapeHtml(text) {
+    var d = document.createElement('div');
+    d.appendChild(document.createTextNode(text));
+    return d.innerHTML;
+  }
+
+  // ─── INIT ─────────────────────────────────────────────────────────────
+  document.getElementById('sendNowBtn').addEventListener('click', sendNow);
+  document.getElementById('addGoalBtn').addEventListener('click', addGoal);
+  document.getElementById('uploadArea').addEventListener('click', function() {
+    document.getElementById('imageInput').click();
+  });
+  document.getElementById('imageInput').addEventListener('change', handleImageUpload);
+
+  loadGoals();
+  loadImages();
+</script>
+</body>
+</html>
