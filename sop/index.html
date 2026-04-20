@@ -9,12 +9,24 @@
 
 <div id="pgos-wrap">
 
-  <div id="pgos-header">
-    <div id="pgos-title-block">
-      <span id="pgos-eyebrow">Preempt Global</span>
-      <h1 id="pgos-title">Owner's Second Eyes</h1>
-      <span id="pgos-slogan">Paper mistakes are free.</span>
+  <header>
+    <div class="header-top">
+      <a href="https://joerossi.co" class="header-home">Joseph Rossi</a>
+      <span class="header-handle">@thejosephrossi</span>
     </div>
+    <nav class="header-nav">
+      <a href="https://joerossi.co">Home</a>
+      <a href="https://joerossi.co/sop" class="active">SOP</a>
+      <a href="https://joerossi.co/motivation">Motivation</a>
+      <a href="https://joerossi.co/affirmation">Affirmations</a>
+      <a href="https://joerossi.co/daily-practice">Daily Practice</a>
+    </nav>
+  </header>
+
+  <div id="pgos-title-block">
+    <span id="pgos-eyebrow">Preempt Global</span>
+    <h1 id="pgos-title">Owner's Second Eyes</h1>
+    <span id="pgos-slogan">Paper mistakes are free.</span>
   </div>
 
   <!-- CONTRIBUTION GRID -->
@@ -59,19 +71,74 @@ body {
   color: #1a1a1a;
   font-family: Georgia, serif;
   min-height: 100vh;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 40px 16px;
-}
-
-#pgos-wrap {
-  max-width: 680px;
-  width: 100%;
 }
 
 /* ── HEADER ── */
-#pgos-header {
+header {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 24px 24px 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 16px;
+}
+
+.header-home {
+  font-size: 13px;
+  font-style: italic;
+  color: #1a1a1a;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.header-home:hover { color: #aaaaaa; }
+
+.header-handle {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #aaaaaa;
+}
+
+.header-nav {
+  display: flex;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 14px;
+  flex-wrap: wrap;
+}
+
+.header-nav a {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #aaaaaa;
+  text-decoration: none;
+  margin-right: 24px;
+  padding-bottom: 2px;
+  transition: color 0.2s;
+}
+
+.header-nav a:hover { color: #1a1a1a; }
+
+.header-nav a.active {
+  color: #1a1a1a;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+/* ── PAGE WRAP ── */
+#pgos-wrap {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 40px 24px 64px;
+}
+
+/* ── PAGE HEADER ── */
+#pgos-title-block {
   margin-bottom: 48px;
   padding-bottom: 28px;
   border-bottom: 1px solid #e0e0e0;
@@ -214,7 +281,6 @@ body {
 .pgos-day-btn.pgos-active {
   color: #1a1a1a;
   border-color: #1a1a1a;
-  font-style: italic;
 }
 
 /* ── SECTION LABEL ── */
@@ -342,14 +408,14 @@ body {
 }
 
 @media (max-width: 600px) {
-  body { padding: 28px 20px; }
+  header { padding: 20px 20px 16px; }
+  #pgos-wrap { padding: 28px 20px 48px; }
   #pgos-title { font-size: 26px; }
   .pgos-day-btn { padding: 7px 13px; font-size: 13px; }
 }
 </style>
 
 <script>
-// ── SUPABASE DETAILS ──
 var SUPABASE_URL = 'https://rvwyjipseusvqjqbwken.supabase.co';
 var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ2d3lqaXBzZXVzdnFqcWJ3a2VuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NDA4MDAsImV4cCI6MjA5MjAxNjgwMH0.UFYPZndWuY3uDOWovjxa7qreidWM9sacUlIS9iteMXc';
 
@@ -535,29 +601,23 @@ function scoreToColor(score, total) {
 function pgosRenderGrid(savedScores) {
   var grid = document.getElementById('pgos-grid');
   grid.innerHTML = '';
-
   var today = new Date();
   today.setHours(0,0,0,0);
-
   var start = new Date(today);
   start.setDate(start.getDate() - (26 * 7));
   var dow = start.getDay();
   var rewind = dow === 0 ? -6 : 1 - dow;
   start.setDate(start.getDate() + rewind);
-
   var cursor = new Date(start);
   while (cursor <= today) {
     var col = document.createElement('div');
     col.className = 'pgos-grid-col';
-
     for (var r = 0; r < 7; r++) {
       var cellDate = new Date(cursor);
       cellDate.setDate(cellDate.getDate() + r);
       var cell = document.createElement('div');
       cell.className = 'pgos-grid-cell';
-
       var cellDow = cellDate.getDay();
-
       if (cellDow === 0 || cellDow === 6) {
         cell.style.background = 'transparent';
         cell.style.border = 'none';
@@ -567,7 +627,6 @@ function pgosRenderGrid(savedScores) {
         var mm = String(cellDate.getMonth()+1).padStart(2,'0');
         var dd2 = String(cellDate.getDate()).padStart(2,'0');
         var dateStr = cellDate.getFullYear() + '-' + mm + '-' + dd2;
-
         if (savedScores[dateStr]) {
           var s = savedScores[dateStr];
           cell.style.background = scoreToColor(s.score, s.total);
@@ -576,14 +635,11 @@ function pgosRenderGrid(savedScores) {
           cell.setAttribute('data-tip', dateStr);
         }
       }
-
       col.appendChild(cell);
     }
-
     grid.appendChild(col);
     cursor.setDate(cursor.getDate() + 7);
   }
-
   setTimeout(function(){
     var scroll = document.getElementById('pgos-grid-scroll');
     scroll.scrollLeft = scroll.scrollWidth;
@@ -610,15 +666,9 @@ window.pgosSubmitDay = async function() {
   var checked = countChecked();
   var total = countTotalTasks();
   var date = todayStr();
-
-  if (total === 0) {
-    status.textContent = 'Select a day tab first.';
-    return;
-  }
-
+  if (total === 0) { status.textContent = 'Select a day tab first.'; return; }
   btn.disabled = true;
   status.textContent = 'Saving…';
-
   try {
     var result = await db.from('daily_scores').upsert({ date: date, score: checked, total: total });
     if (result.error) throw result.error;
@@ -628,7 +678,6 @@ window.pgosSubmitDay = async function() {
     console.error('Submit error:', e);
     status.textContent = 'Error saving. Check your Supabase URL and key above.';
   }
-
   btn.disabled = false;
 };
 
@@ -636,7 +685,6 @@ window.pgosShowDay = function(day, btn) {
   pgosCurrentDay = day;
   document.querySelectorAll('.pgos-day-btn').forEach(function(b){ b.classList.remove('pgos-active'); });
   if (btn) btn.classList.add('pgos-active');
-
   var d = pgosData[day];
   var html = '';
   d.sections.forEach(function(section){
