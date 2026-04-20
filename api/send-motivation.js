@@ -41,31 +41,32 @@ function pickRandom(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-function buildEmailHtml(goals, pinnedImage, otherImages, message) {
-  const goalItems = goals.length > 0
-    ? goals.map(g => `<li style="margin-bottom:10px; font-size:16px; line-height:1.5;">${g.text}</li>`).join('')
+function buildEmailHtml(goal, pinnedImage, randomImage, message) {
+  const goalBlock = goal
+    ? `<li style="margin-bottom:10px; font-size:16px; line-height:1.5;">${goal.text}</li>`
     : '<li style="color:#888;">No goals set yet. Go add some.</li>';
 
-  const pinnedBlock = pinnedImage
-    ? `
-      <div style="background:#0a0a0a; padding:28px 28px 0;">
-        <h2 style="color:gold; font-size:14px; letter-spacing:3px; text-transform:uppercase; margin:0 0 16px;">
-          📌 Always Remember This
-        </h2>
-        <img src="${pinnedImage.url}" alt="pinned motivation"
-          style="width:100%; max-width:500px; border-radius:6px; display:block; margin:0 auto; border:3px solid gold;" />
-      </div>
-    `
-    : '';
+  const pinnedBlock = pinnedImage ? `
+    <div style="background:#0a0a0a; padding:28px 28px 0;">
+      <h2 style="color:gold; font-size:14px; letter-spacing:3px; text-transform:uppercase; margin:0 0 16px;">
+        📌 Always Remember This
+      </h2>
+      <img src="${pinnedImage.url}" alt="pinned motivation"
+        style="width:100%; max-width:500px; border-radius:6px; display:block; margin:0 auto; border:3px solid gold;" />
+    </div>
+  ` : '';
 
-  const otherImageBlocks = otherImages.length > 0
-    ? otherImages.map(img => `
-        <div style="margin-bottom:16px;">
-          <img src="${img.url}" alt="motivation"
-            style="width:100%; max-width:500px; border-radius:6px; display:block; margin:0 auto; border:3px solid #d62828;" />
-        </div>
-      `).join('')
-    : '';
+  const randomImageBlock = randomImage ? `
+    <div style="background:#0a0a0a; padding:28px;">
+      <h2 style="color:#d62828; font-size:14px; letter-spacing:3px; text-transform:uppercase; margin:0 0 20px;">
+        🔥 Remember Why
+      </h2>
+      <div style="margin-bottom:16px;">
+        <img src="${randomImage.url}" alt="motivation"
+          style="width:100%; max-width:500px; border-radius:6px; display:block; margin:0 auto; border:3px solid #d62828;" />
+      </div>
+    </div>
+  ` : '';
 
   return `
     <!DOCTYPE html>
@@ -74,43 +75,30 @@ function buildEmailHtml(goals, pinnedImage, otherImages, message) {
     <body style="margin:0; padding:0; background:#0a0a0a; font-family: Arial, sans-serif;">
       <div style="max-width:600px; margin:0 auto; padding:0;">
 
-        <!-- Header -->
         <div style="background:#d62828; padding:24px 28px;">
           <h1 style="margin:0; color:#f0ede8; font-size:28px; letter-spacing:4px; text-transform:uppercase;">⚡ NO EXCUSES</h1>
           <p style="margin:6px 0 0; color:#ffcccc; font-size:12px; letter-spacing:2px; text-transform:uppercase;">Your accountability check-in</p>
         </div>
 
-        <!-- Main Message -->
         <div style="background:#1a1a1a; padding:32px 28px; border-left:4px solid #d62828; margin:0;">
           <p style="color:#f0ede8; font-size:22px; font-weight:700; line-height:1.4; margin:0;">
             "${message}"
           </p>
         </div>
 
-        <!-- Pinned Image — always appears -->
         ${pinnedBlock}
 
-        <!-- Goals -->
         <div style="background:#111; padding:28px;">
           <h2 style="color:#d62828; font-size:14px; letter-spacing:3px; text-transform:uppercase; margin:0 0 16px;">
             🎯 What You're Fighting For
           </h2>
           <ul style="color:#f0ede8; padding-left:20px; margin:0;">
-            ${goalItems}
+            ${goalBlock}
           </ul>
         </div>
 
-        <!-- Other Images -->
-        ${otherImageBlocks ? `
-        <div style="background:#0a0a0a; padding:28px;">
-          <h2 style="color:#d62828; font-size:14px; letter-spacing:3px; text-transform:uppercase; margin:0 0 20px;">
-            🔥 Remember Why
-          </h2>
-          ${otherImageBlocks}
-        </div>
-        ` : ''}
+        ${randomImageBlock}
 
-        <!-- Footer -->
         <div style="background:#0a0a0a; padding:20px 28px; border-top:1px solid #1a1a1a;">
           <p style="color:#444; font-size:12px; margin:0; text-align:center; letter-spacing:1px;">
             YOU ASKED FOR THIS. NO EXCUSES.
@@ -134,12 +122,14 @@ module.exports = async function handler(req, res) {
       sbFetch('/rest/v1/images?order=created_at.asc')
     ]);
 
-    // Split into pinned and unpinned
     const pinnedImage = images.find(img => img.pinned) || null;
-    const otherImages = images.filter(img => !img.pinned);
+    const unpinnedImages = images.filter(img => !img.pinned);
+
+    const randomGoal = goals.length > 0 ? pickRandom(goals) : null;
+    const randomImage = unpinnedImages.length > 0 ? pickRandom(unpinnedImages) : null;
 
     const message = pickRandom(messages);
-    const html = buildEmailHtml(goals, pinnedImage, otherImages, message);
+    const html = buildEmailHtml(randomGoal, pinnedImage, randomImage, message);
 
     const emailRes = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -164,4 +154,4 @@ module.exports = async function handler(req, res) {
     console.error('Send motivation error:', err);
     return res.status(500).json({ success: false, error: err.message });
   }
-}
+};
