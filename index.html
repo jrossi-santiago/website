@@ -4,323 +4,233 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Joseph Rossi</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,300&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --bg: #0a0a08;
-    --surface: #111110;
-    --border: #252520;
-    --border-bright: #3a3a32;
-    --text: #e8e4d8;
-    --muted: #6b6b5e;
-    --dim: #3a3a30;
-    --accent: #c8b87a;
-    --accent-dim: #7a6e42;
-    --green: #4a7c59;
-    --green-bright: #6aaa7a;
-  }
-
-  html { scroll-behavior: smooth; }
-
   body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
+    background: #ffffff;
+    color: #1a1a1a;
+    font-family: Georgia, serif;
+    font-size: 15px;
     line-height: 1.7;
     min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  ::selection { background: var(--accent-dim); color: var(--text); }
-
-  .scanline {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0,0,0,0.03) 2px,
-      rgba(0,0,0,0.03) 4px
-    );
-    pointer-events: none;
-    z-index: 100;
   }
 
   .wrap {
-    max-width: 720px;
+    max-width: 680px;
     margin: 0 auto;
     padding: 0 24px;
   }
 
+  /* ── NAV ── */
   nav {
-    padding: 28px 0 0;
+    padding: 32px 0 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    opacity: 0;
-    animation: fadeUp 0.6s ease forwards;
-    animation-delay: 0.1s;
   }
 
   .nav-handle {
-    font-size: 12px;
-    color: var(--accent);
-    letter-spacing: 0.08em;
+    font-size: 11px;
+    color: #aaaaaa;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
   }
 
   .nav-links {
     display: flex;
-    gap: 24px;
+    gap: 28px;
     list-style: none;
   }
 
   .nav-links a {
     font-size: 11px;
-    color: var(--muted);
+    color: #aaaaaa;
     text-decoration: none;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
     transition: color 0.2s;
   }
 
-  .nav-links a:hover { color: var(--text); }
+  .nav-links a:hover { color: #1a1a1a; }
 
+  /* ── HERO ── */
   .hero {
     padding: 80px 0 64px;
+    border-bottom: 1px solid #e0e0e0;
   }
 
   .hero-prompt {
     font-size: 11px;
-    color: var(--accent-dim);
-    letter-spacing: 0.1em;
-    margin-bottom: 20px;
-    opacity: 0;
-    animation: fadeUp 0.6s ease forwards;
-    animation-delay: 0.2s;
+    color: #aaaaaa;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
   }
-
-  .hero-prompt::before { content: '> '; color: var(--green-bright); }
 
   .hero-name {
-    font-size: clamp(32px, 6vw, 52px);
-    font-weight: 300;
-    letter-spacing: -0.02em;
-    line-height: 1.1;
-    color: var(--text);
-    margin-bottom: 28px;
-    opacity: 0;
-    animation: fadeUp 0.6s ease forwards;
-    animation-delay: 0.35s;
-  }
-
-  .hero-name em {
-    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: normal;
     font-style: italic;
-    color: var(--accent);
-    font-size: 1.05em;
+    line-height: 1.25;
+    color: #1a1a1a;
+    margin-bottom: 32px;
   }
 
   .hero-bio {
-    font-size: 13px;
-    color: var(--muted);
-    max-width: 480px;
-    line-height: 1.8;
-    border-left: 1px solid var(--border-bright);
-    padding-left: 20px;
-    opacity: 0;
-    animation: fadeUp 0.6s ease forwards;
-    animation-delay: 0.5s;
+    font-size: 15px;
+    color: #555555;
+    max-width: 520px;
+    line-height: 1.9;
+    border-left: 1px solid #e0e0e0;
+    padding-left: 24px;
   }
 
   .hero-bio strong {
-    color: var(--text);
-    font-weight: 400;
+    color: #1a1a1a;
+    font-weight: normal;
+    font-style: italic;
   }
 
   .hero-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-top: 32px;
-    opacity: 0;
-    animation: fadeUp 0.6s ease forwards;
-    animation-delay: 0.65s;
+    margin-top: 36px;
   }
 
   .tag {
     font-size: 10px;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    border: 1px solid var(--border);
-    padding: 4px 10px;
+    letter-spacing: 0.14em;
+    color: #aaaaaa;
+    border: 1px solid #e0e0e0;
+    padding: 4px 12px;
     text-transform: uppercase;
   }
 
-  .section-divider {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 32px;
-    opacity: 0;
-    animation: fadeUp 0.6s ease forwards;
-    animation-delay: 0.75s;
+  /* ── PROJECTS ── */
+  #projects {
+    padding: 56px 0 80px;
   }
 
-  .section-divider span {
-    font-size: 10px;
-    color: var(--accent-dim);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-
-  .section-divider::before {
-    content: '//';
-    color: var(--dim);
+  .section-label {
     font-size: 11px;
-  }
-
-  .section-divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #aaaaaa;
+    margin-bottom: 32px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #e0e0e0;
   }
 
   .projects {
     display: flex;
     flex-direction: column;
-    gap: 1px;
-    margin-bottom: 80px;
   }
 
   .project {
-    border: 1px solid var(--border);
-    padding: 24px 28px;
-    background: var(--surface);
-    transition: border-color 0.2s, background 0.2s;
-    cursor: default;
-    opacity: 0;
-    animation: fadeUp 0.5s ease forwards;
-    position: relative;
+    padding: 28px 0;
+    border-bottom: 1px solid #f0f0f0;
   }
 
-  .project::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 2px;
-    background: var(--border);
-    transition: background 0.2s;
-  }
-
-  .project:hover { border-color: var(--border-bright); background: #141412; }
-  .project:hover::before { background: var(--accent); }
+  .project:last-child { border-bottom: none; }
 
   .project-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     gap: 16px;
   }
 
   .project-name {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text);
-    letter-spacing: 0.02em;
+    font-size: 17px;
+    font-style: italic;
+    font-weight: normal;
+    color: #1a1a1a;
   }
 
   .project-status {
     font-size: 10px;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     white-space: nowrap;
-    padding: 3px 8px;
-    border: 1px solid;
     flex-shrink: 0;
+    margin-top: 4px;
   }
 
-  .status-live { color: var(--green-bright); border-color: var(--green); }
-  .status-building { color: var(--accent); border-color: var(--accent-dim); }
-  .status-personal { color: var(--muted); border-color: var(--dim); }
+  .status-live    { color: #1a1a1a; }
+  .status-building { color: #aaaaaa; }
+  .status-personal { color: #aaaaaa; }
 
   .project-type {
-    font-size: 10px;
-    color: var(--accent-dim);
-    letter-spacing: 0.08em;
+    font-size: 11px;
+    color: #aaaaaa;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
 
   .project-desc {
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.75;
-    max-width: 520px;
+    font-size: 14px;
+    color: #555555;
+    line-height: 1.85;
+    max-width: 540px;
+    font-style: italic;
   }
 
   .project-link {
     display: inline-block;
     margin-top: 14px;
-    font-size: 11px;
-    color: var(--accent-dim);
+    font-size: 12px;
+    color: #aaaaaa;
     text-decoration: none;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     transition: color 0.2s;
   }
 
-  .project-link:hover { color: var(--accent); }
+  .project-link:hover { color: #1a1a1a; }
   .project-link::after { content: ' →'; }
 
+  /* ── FOOTER ── */
   footer {
-    border-top: 1px solid var(--border);
-    padding: 28px 0 40px;
+    border-top: 1px solid #e0e0e0;
+    padding: 28px 0 48px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     gap: 12px;
-    opacity: 0;
-    animation: fadeUp 0.5s ease forwards;
-    animation-delay: 1.4s;
   }
 
   .footer-left {
     font-size: 11px;
-    color: var(--dim);
-    letter-spacing: 0.04em;
+    color: #cccccc;
+    letter-spacing: 0.08em;
+    font-style: italic;
   }
 
-  .footer-links { display: flex; gap: 20px; }
+  .footer-links { display: flex; gap: 24px; }
 
   .footer-links a {
     font-size: 11px;
-    color: var(--muted);
+    color: #aaaaaa;
     text-decoration: none;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     transition: color 0.2s;
   }
 
-  .footer-links a:hover { color: var(--accent); }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+  .footer-links a:hover { color: #1a1a1a; }
 
   @media (max-width: 480px) {
     .hero { padding: 56px 0 48px; }
-    .project-header { flex-direction: column; gap: 8px; }
+    .project-header { flex-direction: column; gap: 6px; }
+    nav { padding: 24px 0 0; }
   }
 </style>
 </head>
 <body>
-<div class="scanline"></div>
 <div class="wrap">
 
   <nav>
@@ -332,8 +242,8 @@
   </nav>
 
   <section class="hero">
-    <p class="hero-prompt">architect. builder. father.</p>
-    <h1 class="hero-name">Building a way out.<br><em>Iteration by iteration.</em></h1>
+    <p class="hero-prompt">Architect. Builder. Father.</p>
+    <h1 class="hero-name">Building a way out.<br>Iteration by iteration.</h1>
     <p class="hero-bio">
       <strong>Architect by profession.</strong> Building a consulting business and a portfolio of apps so my time belongs to me. Catholic. Father. Obsessed with things that last.<br><br>
       Everything here is something I built — for my business, for myself, or for my family. Some are live. Some are in progress. All of them are real.
@@ -348,43 +258,43 @@
   </section>
 
   <div id="projects">
-    <div class="section-divider"><span>projects</span></div>
+    <div class="section-label">Projects</div>
     <div class="projects">
 
-      <div class="project" style="animation-delay: 0.85s">
+      <div class="project">
         <div class="project-header">
           <span class="project-name">RFI Calculator</span>
-          <span class="project-status status-building">building</span>
+          <span class="project-status status-building">Building</span>
         </div>
-        <p class="project-type">business tool — data center consulting</p>
+        <p class="project-type">Business tool — data center consulting</p>
         <p class="project-desc">A free tool for owners and developers to calculate RFI costs on large-scale commercial and data center projects. Built so people can work with us before committing to anything.</p>
         <a href="#" class="project-link">try it</a>
       </div>
 
-      <div class="project" style="animation-delay: 0.95s">
+      <div class="project">
         <div class="project-header">
           <span class="project-name">Motivation App</span>
-          <span class="project-status status-personal">personal</span>
+          <span class="project-status status-personal">Personal</span>
         </div>
-        <p class="project-type">personal tool — daily use</p>
+        <p class="project-type">Personal tool — daily use</p>
         <p class="project-desc">Hard truths delivered daily. Custom goals, photos that mean something, no soft platitudes. Built it because nothing like it existed. I use it every day.</p>
       </div>
 
-      <div class="project" style="animation-delay: 1.05s">
+      <div class="project">
         <div class="project-header">
           <span class="project-name">Catholic Affirmations</span>
-          <span class="project-status status-building">building</span>
+          <span class="project-status status-building">Building</span>
         </div>
-        <p class="project-type">personal tool — faith</p>
+        <p class="project-type">Personal tool — faith</p>
         <p class="project-desc">Scripture and Catholic affirmations delivered at random points throughout the day. Built for an audience of one first. An app I wanted to exist, so I'm building it.</p>
       </div>
 
-      <div class="project" style="animation-delay: 1.15s">
+      <div class="project">
         <div class="project-header">
           <span class="project-name">Kids Projects</span>
-          <span class="project-status status-building">in progress</span>
+          <span class="project-status status-building">In progress</span>
         </div>
-        <p class="project-type">family — legacy</p>
+        <p class="project-type">Family — legacy</p>
         <p class="project-desc">Building things my kids will actually grow up using. Not because they'll make money. Because I want them to know their dad built things — and that they can too.</p>
       </div>
 
@@ -392,7 +302,7 @@
   </div>
 
   <footer>
-    <span class="footer-left">// built by hand. updated as things ship.</span>
+    <span class="footer-left">Built by hand. Updated as things ship.</span>
     <div class="footer-links">
       <a href="https://twitter.com/thejosephrossi" target="_blank">twitter</a>
     </div>
