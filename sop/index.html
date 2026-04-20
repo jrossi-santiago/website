@@ -437,13 +437,13 @@ var db = {
         return { data: data, error: res.ok ? null : data };
       },
       upsert: async function(row) {
-        var res = await fetch(SUPABASE_URL + '/rest/v1/' + table, {
+        var res = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?on_conflict=date', {
           method: 'POST',
           headers: {
             'apikey': SUPABASE_ANON_KEY,
             'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
             'Content-Type': 'application/json',
-            'Prefer': 'resolution=merge-duplicates'
+            'Prefer': 'resolution=merge-duplicates,return=minimal'
           },
           body: JSON.stringify(row)
         });
