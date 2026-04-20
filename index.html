@@ -19,178 +19,90 @@
   .wrap {
     max-width: 680px;
     margin: 0 auto;
-    padding: 48px 24px;
+    padding: 0 24px;
   }
 
-  /* ── TOP SECTION ── */
-  .top {
-    margin-bottom: 48px;
-    padding-bottom: 40px;
+  /* ── HEADER ── */
+  header {
+    padding: 24px 0 20px;
     border-bottom: 1px solid #e0e0e0;
   }
 
-  .handle {
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 16px;
+  }
+
+  .header-home {
+    font-size: 13px;
+    font-style: italic;
+    color: #1a1a1a;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .header-home:hover { color: #aaaaaa; }
+
+  .header-handle {
     font-size: 11px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: #aaaaaa;
-    margin-bottom: 20px;
-    display: block;
   }
 
-  .bio {
-    font-size: 15px;
-    color: #555555;
-    line-height: 1.9;
-    font-style: italic;
-    max-width: 480px;
-  }
-
-  .bio strong {
-    color: #1a1a1a;
-    font-weight: normal;
-  }
-
-  /* ── PROJECTS ── */
-  .section-label {
-    font-size: 11px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: #aaaaaa;
-    margin-bottom: 20px;
-  }
-
-  .projects {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    margin-bottom: 48px;
-  }
-
-  .project {
-    padding: 18px 0;
-    border-bottom: 1px solid #f0f0f0;
-    text-decoration: none;
-    display: block;
-  }
-
-  .project:nth-child(odd) {
-    padding-right: 32px;
-    border-right: 1px solid #f0f0f0;
-  }
-
-  .project:nth-child(even) {
-    padding-left: 32px;
-  }
-
-  /* Kids Projects — spans both columns */
-  .project.full-width {
-    grid-column: 1 / -1;
-    padding-right: 0;
-    padding-left: 0;
-    border-right: none;
-    border-bottom: none;
-  }
-
-  .project-name {
-    font-size: 15px;
-    font-style: italic;
-    color: #1a1a1a;
-    margin-bottom: 4px;
-    transition: color 0.2s;
-  }
-
-  .project-status {
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #aaaaaa;
-    transition: color 0.2s;
-  }
-
-  a.project:hover .project-name { color: #aaaaaa; }
-  a.project:hover .project-status { color: #1a1a1a; }
-
-  /* ── FOOTER ── */
-  footer {
-    padding-top: 28px;
-    border-top: 1px solid #e0e0e0;
+  .header-nav {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    gap: 0;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 14px;
+    flex-wrap: wrap;
   }
 
-  .footer-left {
+  .header-nav a {
     font-size: 11px;
-    color: #cccccc;
-    font-style: italic;
-  }
-
-  .footer-right a {
-    font-size: 11px;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: #aaaaaa;
     text-decoration: none;
+    margin-right: 24px;
+    padding-bottom: 2px;
     transition: color 0.2s;
   }
 
-  .footer-right a:hover { color: #1a1a1a; }
-
-  @media (max-width: 480px) {
-    .projects { grid-template-columns: 1fr; }
-    .project:nth-child(odd) { padding-right: 0; border-right: none; }
-    .project:nth-child(even) { padding-left: 0; }
-    .project.full-width { grid-column: 1; }
+  .header-nav a:hover { color: #1a1a1a; }
+  .header-nav a.active {
+    color: #1a1a1a;
+    border-bottom: 1px solid #1a1a1a;
   }
+
+  /* ── PAGE CONTENT ── */
+  .page-content {
+    padding: 48px 0;
+  }
+
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <div class="top">
-    <span class="handle">@thejosephrossi</span>
-    <p class="bio">
-      <strong>Architect by profession.</strong> Building a consulting business and a portfolio of apps so my time belongs to me. Catholic. Father. Obsessed with things that last.
-    </p>
-  </div>
-
-  <div class="section-label">Projects</div>
-
-  <div class="projects">
-
-    <a href="https://www.josephrossi.co/sop" class="project">
-      <div class="project-name">PG - SOP</div>
-      <div class="project-status">Business</div>
-    </a>
-
-    <a href="https://www.josephrossi.co/motivation" class="project">
-      <div class="project-name">Motivation App</div>
-      <div class="project-status">Personal</div>
-    </a>
-
-    <a href="https://www.josephrossi.co/affirmations" class="project">
-      <div class="project-name">Catholic Affirmations</div>
-      <div class="project-status">Building</div>
-    </a>
-
-    <a href="https://calculator.preemptglobal.com/" class="project">
-      <div class="project-name">RFI Calculator</div>
-      <div class="project-status">Building</div>
-    </a>
-
-    <div class="project full-width">
-      <div class="project-name">Kids Projects</div>
-      <div class="project-status">In progress</div>
+  <header>
+    <div class="header-top">
+      <a href="https://joerossi.co" class="header-home">Joseph Rossi</a>
+      <span class="header-handle">@thejosephrossi</span>
     </div>
+    <nav class="header-nav">
+      <a href="https://joerossi.co" class="active">Home</a>
+      <a href="https://joerossi.co/sop">SOP</a>
+      <a href="https://joerossi.co/motivation">Motivation</a>
+      <a href="https://joerossi.co/affirmation">Affirmations</a>
+      <a href="https://joerossi.co/daily-practice">Daily Practice</a>
+    </nav>
+  </header>
 
+  <div class="page-content">
   </div>
-
-  <footer>
-    <span class="footer-left">Built by hand. Updated as things ship.</span>
-    <div class="footer-right">
-      <a href="https://twitter.com/thejosephrossi" target="_blank">twitter</a>
-    </div>
-  </footer>
 
 </div>
 </body>
