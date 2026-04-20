@@ -24,17 +24,9 @@
 
   /* ── TOP SECTION ── */
   .top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
     margin-bottom: 48px;
     padding-bottom: 40px;
     border-bottom: 1px solid #e0e0e0;
-    gap: 2rem;
-  }
-
-  .top-left {
-    flex: 1;
   }
 
   .handle {
@@ -51,34 +43,13 @@
     color: #555555;
     line-height: 1.9;
     font-style: italic;
-    max-width: 420px;
+    max-width: 480px;
   }
 
   .bio strong {
     color: #1a1a1a;
     font-weight: normal;
   }
-
-  /* ── NAV LINKS (top right) ── */
-  .top-right {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding-top: 2px;
-    flex-shrink: 0;
-  }
-
-  .top-right a {
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: #aaaaaa;
-    text-decoration: none;
-    text-align: right;
-    transition: color 0.2s;
-  }
-
-  .top-right a:hover { color: #1a1a1a; }
 
   /* ── PROJECTS ── */
   .section-label {
@@ -98,6 +69,8 @@
   .project {
     padding: 18px 0;
     border-bottom: 1px solid #f0f0f0;
+    text-decoration: none;
+    display: block;
   }
 
   .project:nth-child(odd) {
@@ -109,11 +82,21 @@
     padding-left: 32px;
   }
 
+  /* Kids Projects — spans both columns */
+  .project.full-width {
+    grid-column: 1 / -1;
+    padding-right: 0;
+    padding-left: 0;
+    border-right: none;
+    border-bottom: none;
+  }
+
   .project-name {
     font-size: 15px;
     font-style: italic;
     color: #1a1a1a;
     margin-bottom: 4px;
+    transition: color 0.2s;
   }
 
   .project-status {
@@ -121,7 +104,11 @@
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: #aaaaaa;
+    transition: color 0.2s;
   }
+
+  a.project:hover .project-name { color: #aaaaaa; }
+  a.project:hover .project-status { color: #1a1a1a; }
 
   /* ── FOOTER ── */
   footer {
@@ -150,12 +137,10 @@
   .footer-right a:hover { color: #1a1a1a; }
 
   @media (max-width: 480px) {
-    .top { flex-direction: column; gap: 24px; }
-    .top-right { flex-direction: row; gap: 20px; }
-    .top-right a { text-align: left; }
     .projects { grid-template-columns: 1fr; }
     .project:nth-child(odd) { padding-right: 0; border-right: none; }
     .project:nth-child(even) { padding-left: 0; }
+    .project.full-width { grid-column: 1; }
   }
 </style>
 </head>
@@ -163,37 +148,37 @@
 <div class="wrap">
 
   <div class="top">
-    <div class="top-left">
-      <span class="handle">@thejosephrossi</span>
-      <p class="bio">
-        <strong>Architect by profession.</strong> Building a consulting business and a portfolio of apps so my time belongs to me. Catholic. Father. Obsessed with things that last.
-      </p>
-    </div>
-    <div class="top-right">
-      <a href="https://twitter.com/thejosephrossi" target="_blank">twitter</a>
-    </div>
+    <span class="handle">@thejosephrossi</span>
+    <p class="bio">
+      <strong>Architect by profession.</strong> Building a consulting business and a portfolio of apps so my time belongs to me. Catholic. Father. Obsessed with things that last.
+    </p>
   </div>
 
   <div class="section-label">Projects</div>
 
   <div class="projects">
 
-    <div class="project">
-      <div class="project-name">RFI Calculator</div>
-      <div class="project-status">Building</div>
-    </div>
+    <a href="https://joerossi.co/sop" class="project">
+      <div class="project-name">Owner's Second Eyes</div>
+      <div class="project-status">Business</div>
+    </a>
 
-    <div class="project">
+    <a href="https://joerossi.co/motivation" class="project">
       <div class="project-name">Motivation App</div>
       <div class="project-status">Personal</div>
-    </div>
+    </a>
 
-    <div class="project">
+    <a href="https://joerossi.co/affirmation" class="project">
       <div class="project-name">Catholic Affirmations</div>
       <div class="project-status">Building</div>
-    </div>
+    </a>
 
-    <div class="project">
+    <a href="#" class="project">
+      <div class="project-name">RFI Calculator</div>
+      <div class="project-status">Building</div>
+    </a>
+
+    <div class="project full-width">
       <div class="project-name">Kids Projects</div>
       <div class="project-status">In progress</div>
     </div>
