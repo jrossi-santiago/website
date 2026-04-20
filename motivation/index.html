@@ -16,61 +16,115 @@
 
     /* ── HEADER ── */
     header {
-      padding: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 16px;
       border-bottom: 1px solid #e0e0e0;
     }
 
-    header h1 {
-      font-size: clamp(20px, 3vw, 28px);
-      font-weight: normal;
-      font-style: italic;
-      color: #1a1a1a;
-      letter-spacing: 0.02em;
+    .header-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 24px 24px 20px;
     }
 
-    header p {
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 16px;
+    }
+
+    .header-home {
+      font-size: 13px;
+      font-style: italic;
+      color: #1a1a1a;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .header-home:hover { color: #aaaaaa; }
+
+    .header-handle {
       font-size: 11px;
-      color: #aaaaaa;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      margin-top: 6px;
+      color: #aaaaaa;
     }
 
-    .fire-btn {
-      background: transparent;
+    .header-nav {
+      display: flex;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .header-nav a {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #aaaaaa;
+      text-decoration: none;
+      margin-right: 24px;
+      padding-bottom: 2px;
+      transition: color 0.2s;
+    }
+
+    .header-nav a:hover { color: #1a1a1a; }
+
+    .header-nav a.active {
       color: #1a1a1a;
-      border: 1px solid #1a1a1a;
-      padding: 10px 28px;
-      font-family: Georgia, serif;
-      font-style: italic;
-      font-size: 14px;
-      cursor: pointer;
-      transition: background 0.15s, color 0.15s;
-      letter-spacing: 0.04em;
+      border-bottom: 1px solid #1a1a1a;
     }
 
-    .fire-btn:hover {
-      background: #1a1a1a;
-      color: #ffffff;
-    }
-
-    .fire-btn:disabled {
-      border-color: #e0e0e0;
-      color: #cccccc;
-      cursor: not-allowed;
-      background: transparent;
-    }
-
-    /* ── CONTAINER ── */
+    /* ── PAGE WRAP ── */
     .container {
       max-width: 680px;
       margin: 0 auto;
       padding: 48px 24px;
+    }
+
+    /* ── PAGE TITLE ── */
+    .page-title {
+      margin-bottom: 48px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .page-title h1 {
+      font-size: clamp(24px, 4vw, 36px);
+      font-style: italic;
+      font-weight: normal;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+
+    .page-title p {
+      font-size: 13px;
+      color: #aaaaaa;
+      font-style: italic;
+    }
+
+    .send-btn {
+      float: right;
+      font-family: Georgia, serif;
+      font-style: italic;
+      font-size: 14px;
+      background: transparent;
+      color: #1a1a1a;
+      border: 1px solid #1a1a1a;
+      padding: 10px 28px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .send-btn:hover {
+      background: #1a1a1a;
+      color: #ffffff;
+    }
+
+    .send-btn:disabled {
+      border-color: #e0e0e0;
+      color: #cccccc;
+      cursor: not-allowed;
+      background: transparent;
     }
 
     /* ── SECTION ── */
@@ -105,9 +159,7 @@
       transition: border-color 0.2s;
     }
 
-    textarea:focus {
-      border-bottom-color: #aaaaaa;
-    }
+    textarea:focus { border-bottom-color: #aaaaaa; }
 
     textarea::placeholder {
       color: #cccccc;
@@ -121,12 +173,28 @@
       margin-top: 16px;
     }
 
+    .fire-btn {
+      font-family: Georgia, serif;
+      font-style: italic;
+      font-size: 14px;
+      background: transparent;
+      color: #1a1a1a;
+      border: 1px solid #1a1a1a;
+      padding: 10px 28px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .fire-btn:hover {
+      background: #1a1a1a;
+      color: #ffffff;
+    }
+
     /* ── GOALS LIST ── */
     .goals-list {
       margin-top: 24px;
       display: flex;
       flex-direction: column;
-      gap: 0;
     }
 
     .goal-item {
@@ -138,9 +206,7 @@
       gap: 16px;
     }
 
-    .goal-item:last-child {
-      border-bottom: none;
-    }
+    .goal-item:last-child { border-bottom: none; }
 
     .goal-item p {
       font-size: 15px;
@@ -183,7 +249,7 @@
     }
 
     .upload-area .upload-icon {
-      font-size: 24px;
+      font-size: 20px;
       margin-bottom: 10px;
       display: block;
       color: #cccccc;
@@ -205,9 +271,7 @@
       border: 1px solid #e0e0e0;
     }
 
-    .image-card.pinned {
-      border: 2px solid #1a1a1a;
-    }
+    .image-card.pinned { border: 2px solid #1a1a1a; }
 
     .image-card img {
       width: 100%;
@@ -270,7 +334,6 @@
       display: none;
     }
 
-    /* ── EMPTY STATE ── */
     .empty-state {
       color: #cccccc;
       font-size: 13px;
@@ -301,249 +364,260 @@
     .status-bar.error { color: #888888; }
 
     @media (max-width: 480px) {
-      header { padding: 20px; }
+      .header-inner { padding: 20px 20px 16px; }
       .container { padding: 36px 20px; }
       .upload-area { padding: 24px; }
+      .page-title h1 { font-size: 24px; }
+      .send-btn { float: none; width: 100%; margin-bottom: 16px; }
     }
   </style>
 </head>
 <body>
 
-<header>
-  <div>
-    <h1>No Excuses</h1>
-    <p>Your personal accountability system</p>
-  </div>
-  <button class="fire-btn" id="sendNowBtn">Send Now</button>
-</header>
-
-<div class="container">
-
-  <div class="section">
-    <div class="section-title">Goals &amp; Why You're Doing This</div>
-    <textarea id="goalInput" placeholder="What are you working toward? Be specific."></textarea>
-    <div class="btn-row">
-      <button class="fire-btn" id="addGoalBtn">Add Goal</button>
+  <header>
+    <div class="header-inner">
+      <div class="header-top">
+        <a href="https://joerossi.co" class="header-home">Joseph Rossi</a>
+        <span class="header-handle">@thejosephrossi</span>
+      </div>
+      <nav class="header-nav">
+        <a href="https://joerossi.co">Home</a>
+        <a href="https://joerossi.co/sop">SOP</a>
+        <a href="https://joerossi.co/motivation" class="active">Motivation</a>
+        <a href="https://joerossi.co/affirmation">Affirmations</a>
+        <a href="https://joerossi.co/daily-practice">Daily Practice</a>
+      </nav>
     </div>
-    <div class="goals-list" id="goalsList">
-      <p class="empty-state" id="goalsEmpty">No goals yet. Add one above.</p>
+  </header>
+
+  <div class="container">
+
+    <div class="page-title">
+      <button class="send-btn" id="sendNowBtn">Send Now</button>
+      <h1>No Excuses</h1>
+      <p>Your personal accountability system</p>
     </div>
+
+    <div class="section">
+      <div class="section-title">Goals &amp; Why You're Doing This</div>
+      <textarea id="goalInput" placeholder="What are you working toward? Be specific."></textarea>
+      <div class="btn-row">
+        <button class="fire-btn" id="addGoalBtn">Add Goal</button>
+      </div>
+      <div class="goals-list" id="goalsList">
+        <p class="empty-state">No goals yet. Add one above.</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Motivation Images</div>
+      <div class="upload-area" id="uploadArea">
+        <span class="upload-icon">↑</span>
+        <p>Tap to upload an image that fires you up</p>
+        <p style="font-size:11px; margin-top:6px;">JPG, PNG, WEBP accepted</p>
+      </div>
+      <input type="file" id="imageInput" accept="image/*" style="display:none;" />
+      <p class="uploading-indicator" id="uploadingIndicator">Uploading image…</p>
+      <p class="pin-legend">Tap the pin icon on any image to pin it — pinned images appear in every email.</p>
+      <div class="image-grid" id="imageGrid"></div>
+    </div>
+
   </div>
 
-  <div class="section">
-    <div class="section-title">Motivation Images</div>
-    <div class="upload-area" id="uploadArea">
-      <span class="upload-icon">↑</span>
-      <p>Tap to upload an image that fires you up</p>
-      <p style="font-size:11px; margin-top:6px;">JPG, PNG, WEBP accepted</p>
-    </div>
-    <input type="file" id="imageInput" accept="image/*" style="display:none;" />
-    <p class="uploading-indicator" id="uploadingIndicator">Uploading image…</p>
-    <p class="pin-legend">Tap the pin icon on any image to pin it — pinned images appear in every email.</p>
-    <div class="image-grid" id="imageGrid"></div>
-  </div>
+  <div class="status-bar" id="statusBar"></div>
 
-</div>
+  <script>
+    const SUPABASE_URL = 'https://urfsijczxmngbixprdkq.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZnNpamN6eG1uZ2JpeHByZGtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTU1NzIsImV4cCI6MjA5MTA3MTU3Mn0.KxNLu5Rg0A0IdxQbaAapDa-vmTkVmeUlub689o0ZOaM';
+    const CLOUDINARY_CLOUD_NAME = 'dasjoaf0h';
+    const CLOUDINARY_UPLOAD_PRESET = 'motivation_uploads';
 
-<div class="status-bar" id="statusBar"></div>
-
-<script>
-  const SUPABASE_URL = 'https://urfsijczxmngbixprdkq.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZnNpamN6eG1uZ2JpeHByZGtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTU1NzIsImV4cCI6MjA5MTA3MTU3Mn0.KxNLu5Rg0A0IdxQbaAapDa-vmTkVmeUlub689o0ZOaM';
-  const CLOUDINARY_CLOUD_NAME = 'dasjoaf0h';
-  const CLOUDINARY_UPLOAD_PRESET = 'motivation_uploads';
-
-  async function sbFetch(path, method, body) {
-    method = method || 'GET';
-    const opts = {
-      method: method,
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-        'Prefer': 'return=representation'
-      }
-    };
-    if (body) opts.body = JSON.stringify(body);
-    const res = await fetch(SUPABASE_URL + path, opts);
-    if (!res.ok) throw new Error(await res.text());
-    const text = await res.text();
-    return text ? JSON.parse(text) : [];
-  }
-
-  function showStatus(msg, type) {
-    var bar = document.getElementById('statusBar');
-    bar.textContent = msg;
-    bar.className = 'status-bar show ' + (type || 'success');
-    setTimeout(function() { bar.className = 'status-bar'; }, 3500);
-  }
-
-  var goals = [];
-
-  function loadGoals() {
-    sbFetch('/rest/v1/goals?order=created_at.asc')
-      .then(function(data) { goals = data; renderGoals(); })
-      .catch(function(e) { console.error('Load goals error:', e); });
-  }
-
-  function renderGoals() {
-    var list = document.getElementById('goalsList');
-    list.innerHTML = '';
-    if (goals.length === 0) {
-      list.innerHTML = '<p class="empty-state">No goals yet. Add one above.</p>';
-      return;
+    async function sbFetch(path, method, body) {
+      method = method || 'GET';
+      const opts = {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'Prefer': 'return=representation'
+        }
+      };
+      if (body) opts.body = JSON.stringify(body);
+      const res = await fetch(SUPABASE_URL + path, opts);
+      if (!res.ok) throw new Error(await res.text());
+      const text = await res.text();
+      return text ? JSON.parse(text) : [];
     }
-    goals.forEach(function(g) {
-      var div = document.createElement('div');
-      div.className = 'goal-item';
-      div.innerHTML = '<p>' + escapeHtml(g.text) + '</p><button class="delete-btn" data-id="' + g.id + '">✕</button>';
-      div.querySelector('.delete-btn').addEventListener('click', function() { deleteGoal(g.id); });
-      list.appendChild(div);
-    });
-  }
 
-  function addGoal() {
-    var input = document.getElementById('goalInput');
-    var text = input.value.trim();
-    if (!text) { showStatus('Type a goal first.', 'error'); return; }
-    sbFetch('/rest/v1/goals', 'POST', { text: text })
-      .then(function(result) {
-        goals.push(result[0]);
-        renderGoals();
-        input.value = '';
-        showStatus('Goal saved.', 'success');
-      })
-      .catch(function() { showStatus('Error saving goal.', 'error'); });
-  }
+    function showStatus(msg, type) {
+      var bar = document.getElementById('statusBar');
+      bar.textContent = msg;
+      bar.className = 'status-bar show ' + (type || 'success');
+      setTimeout(function() { bar.className = 'status-bar'; }, 3500);
+    }
 
-  function deleteGoal(id) {
-    sbFetch('/rest/v1/goals?id=eq.' + id, 'DELETE')
-      .then(function() {
-        goals = goals.filter(function(g) { return g.id !== id; });
-        renderGoals();
-      })
-      .catch(function() { showStatus('Error deleting goal.', 'error'); });
-  }
+    var goals = [];
 
-  var images = [];
+    function loadGoals() {
+      sbFetch('/rest/v1/goals?order=created_at.asc')
+        .then(function(data) { goals = data; renderGoals(); })
+        .catch(function(e) { console.error('Load goals error:', e); });
+    }
 
-  function loadImages() {
-    sbFetch('/rest/v1/images?order=created_at.asc')
-      .then(function(data) { images = data; renderImages(); })
-      .catch(function(e) { console.error('Load images error:', e); });
-  }
-
-  function renderImages() {
-    var grid = document.getElementById('imageGrid');
-    grid.innerHTML = '';
-    images.forEach(function(img) {
-      var card = document.createElement('div');
-      card.className = 'image-card' + (img.pinned ? ' pinned' : '');
-      card.innerHTML =
-        '<img src="' + img.url + '" alt="motivation" loading="lazy" />' +
-        '<button class="img-delete">✕</button>' +
-        '<button class="img-pin">📌</button>';
-      card.querySelector('.img-delete').addEventListener('click', function() { deleteImage(img.id); });
-      card.querySelector('.img-pin').addEventListener('click', function() { pinImage(img.id, img.pinned); });
-      grid.appendChild(card);
-    });
-  }
-
-  function pinImage(id, currentlyPinned) {
-    sbFetch('/rest/v1/images?pinned=not.is.null', 'PATCH', { pinned: false })
-      .then(function() {
-        if (!currentlyPinned) {
-          return sbFetch('/rest/v1/images?id=eq.' + id, 'PATCH', { pinned: true })
-            .then(function() { showStatus('Pinned — this image will appear in every email.', 'success'); });
-        } else {
-          showStatus('Unpinned.', 'success');
-        }
-      })
-      .then(function() {
-        return sbFetch('/rest/v1/images?order=created_at.asc');
-      })
-      .then(function(data) { images = data; renderImages(); })
-      .catch(function(e) { console.error(e); showStatus('Error pinning image.', 'error'); });
-  }
-
-  function handleImageUpload(event) {
-    var file = event.target.files[0];
-    if (!file) return;
-
-    document.getElementById('uploadingIndicator').style.display = 'block';
-
-    var formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-
-    fetch('https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD_NAME + '/image/upload', {
-      method: 'POST',
-      body: formData
-    })
-    .then(function(r) { return r.json(); })
-    .then(function(cloudData) {
-      if (!cloudData.secure_url) throw new Error('Cloudinary upload failed');
-      return sbFetch('/rest/v1/images', 'POST', { url: cloudData.secure_url, pinned: false });
-    })
-    .then(function(result) {
-      images.push(result[0]);
-      renderImages();
-      showStatus('Image uploaded.', 'success');
-    })
-    .catch(function(e) {
-      console.error(e);
-      showStatus('Image upload failed. Try again.', 'error');
-    })
-    .finally(function() {
-      document.getElementById('uploadingIndicator').style.display = 'none';
-      document.getElementById('imageInput').value = '';
-    });
-  }
-
-  function deleteImage(id) {
-    sbFetch('/rest/v1/images?id=eq.' + id, 'DELETE')
-      .then(function() {
-        images = images.filter(function(i) { return i.id !== id; });
-        renderImages();
-      })
-      .catch(function() { showStatus('Error deleting image.', 'error'); });
-  }
-
-  function sendNow() {
-    var btn = document.getElementById('sendNowBtn');
-    btn.disabled = true;
-    btn.textContent = 'Sending…';
-    fetch('/api/send-motivation', { method: 'POST' })
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        if (data.success) {
-          showStatus('Email sent. Check your inbox.', 'success');
-        } else {
-          showStatus('Send failed: ' + (data.error || 'unknown error'), 'error');
-        }
-      })
-      .catch(function() { showStatus('Send failed. Check console.', 'error'); })
-      .finally(function() {
-        btn.disabled = false;
-        btn.textContent = 'Send Now';
+    function renderGoals() {
+      var list = document.getElementById('goalsList');
+      list.innerHTML = '';
+      if (goals.length === 0) {
+        list.innerHTML = '<p class="empty-state">No goals yet. Add one above.</p>';
+        return;
+      }
+      goals.forEach(function(g) {
+        var div = document.createElement('div');
+        div.className = 'goal-item';
+        div.innerHTML = '<p>' + escapeHtml(g.text) + '</p><button class="delete-btn" data-id="' + g.id + '">✕</button>';
+        div.querySelector('.delete-btn').addEventListener('click', function() { deleteGoal(g.id); });
+        list.appendChild(div);
       });
-  }
+    }
 
-  function escapeHtml(text) {
-    var d = document.createElement('div');
-    d.appendChild(document.createTextNode(text));
-    return d.innerHTML;
-  }
+    function addGoal() {
+      var input = document.getElementById('goalInput');
+      var text = input.value.trim();
+      if (!text) { showStatus('Type a goal first.', 'error'); return; }
+      sbFetch('/rest/v1/goals', 'POST', { text: text })
+        .then(function(result) {
+          goals.push(result[0]);
+          renderGoals();
+          input.value = '';
+          showStatus('Goal saved.', 'success');
+        })
+        .catch(function() { showStatus('Error saving goal.', 'error'); });
+    }
 
-  document.getElementById('sendNowBtn').addEventListener('click', sendNow);
-  document.getElementById('addGoalBtn').addEventListener('click', addGoal);
-  document.getElementById('uploadArea').addEventListener('click', function() {
-    document.getElementById('imageInput').click();
-  });
-  document.getElementById('imageInput').addEventListener('change', handleImageUpload);
+    function deleteGoal(id) {
+      sbFetch('/rest/v1/goals?id=eq.' + id, 'DELETE')
+        .then(function() {
+          goals = goals.filter(function(g) { return g.id !== id; });
+          renderGoals();
+        })
+        .catch(function() { showStatus('Error deleting goal.', 'error'); });
+    }
 
-  loadGoals();
-  loadImages();
-</script>
+    var images = [];
+
+    function loadImages() {
+      sbFetch('/rest/v1/images?order=created_at.asc')
+        .then(function(data) { images = data; renderImages(); })
+        .catch(function(e) { console.error('Load images error:', e); });
+    }
+
+    function renderImages() {
+      var grid = document.getElementById('imageGrid');
+      grid.innerHTML = '';
+      images.forEach(function(img) {
+        var card = document.createElement('div');
+        card.className = 'image-card' + (img.pinned ? ' pinned' : '');
+        card.innerHTML =
+          '<img src="' + img.url + '" alt="motivation" loading="lazy" />' +
+          '<button class="img-delete">✕</button>' +
+          '<button class="img-pin">📌</button>';
+        card.querySelector('.img-delete').addEventListener('click', function() { deleteImage(img.id); });
+        card.querySelector('.img-pin').addEventListener('click', function() { pinImage(img.id, img.pinned); });
+        grid.appendChild(card);
+      });
+    }
+
+    function pinImage(id, currentlyPinned) {
+      sbFetch('/rest/v1/images?pinned=not.is.null', 'PATCH', { pinned: false })
+        .then(function() {
+          if (!currentlyPinned) {
+            return sbFetch('/rest/v1/images?id=eq.' + id, 'PATCH', { pinned: true })
+              .then(function() { showStatus('Pinned — this image will appear in every email.', 'success'); });
+          } else {
+            showStatus('Unpinned.', 'success');
+          }
+        })
+        .then(function() { return sbFetch('/rest/v1/images?order=created_at.asc'); })
+        .then(function(data) { images = data; renderImages(); })
+        .catch(function(e) { console.error(e); showStatus('Error pinning image.', 'error'); });
+    }
+
+    function handleImageUpload(event) {
+      var file = event.target.files[0];
+      if (!file) return;
+      document.getElementById('uploadingIndicator').style.display = 'block';
+      var formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+      fetch('https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD_NAME + '/image/upload', {
+        method: 'POST',
+        body: formData
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(cloudData) {
+        if (!cloudData.secure_url) throw new Error('Cloudinary upload failed');
+        return sbFetch('/rest/v1/images', 'POST', { url: cloudData.secure_url, pinned: false });
+      })
+      .then(function(result) {
+        images.push(result[0]);
+        renderImages();
+        showStatus('Image uploaded.', 'success');
+      })
+      .catch(function(e) {
+        console.error(e);
+        showStatus('Image upload failed. Try again.', 'error');
+      })
+      .finally(function() {
+        document.getElementById('uploadingIndicator').style.display = 'none';
+        document.getElementById('imageInput').value = '';
+      });
+    }
+
+    function deleteImage(id) {
+      sbFetch('/rest/v1/images?id=eq.' + id, 'DELETE')
+        .then(function() {
+          images = images.filter(function(i) { return i.id !== id; });
+          renderImages();
+        })
+        .catch(function() { showStatus('Error deleting image.', 'error'); });
+    }
+
+    function sendNow() {
+      var btn = document.getElementById('sendNowBtn');
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+      fetch('/api/send-motivation', { method: 'POST' })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.success) {
+            showStatus('Email sent. Check your inbox.', 'success');
+          } else {
+            showStatus('Send failed: ' + (data.error || 'unknown error'), 'error');
+          }
+        })
+        .catch(function() { showStatus('Send failed. Check console.', 'error'); })
+        .finally(function() {
+          btn.disabled = false;
+          btn.textContent = 'Send Now';
+        });
+    }
+
+    function escapeHtml(text) {
+      var d = document.createElement('div');
+      d.appendChild(document.createTextNode(text));
+      return d.innerHTML;
+    }
+
+    document.getElementById('sendNowBtn').addEventListener('click', sendNow);
+    document.getElementById('addGoalBtn').addEventListener('click', addGoal);
+    document.getElementById('uploadArea').addEventListener('click', function() {
+      document.getElementById('imageInput').click();
+    });
+    document.getElementById('imageInput').addEventListener('change', handleImageUpload);
+
+    loadGoals();
+    loadImages();
+  </script>
 </body>
 </html>
