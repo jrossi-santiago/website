@@ -20,33 +20,87 @@
       flex-direction: column;
     }
 
-    #topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px 28px;
+    /* ── HEADER ── */
+    header {
+      border-bottom: 1px solid #e0e0e0;
+      flex-shrink: 0;
     }
 
-    #app-title {
-      font-size: 12px;
+    .header-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 24px 24px 20px;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 16px;
+    }
+
+    .header-home {
+      font-size: 13px;
+      font-style: italic;
+      color: #1a1a1a;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .header-home:hover { color: #aaaaaa; }
+
+    .header-right {
+      display: flex;
+      align-items: baseline;
+      gap: 20px;
+    }
+
+    .header-handle {
+      font-size: 11px;
       letter-spacing: 0.18em;
       text-transform: uppercase;
       color: #aaaaaa;
     }
 
     #streak-display {
-      font-size: 12px;
+      font-size: 11px;
       color: #aaaaaa;
       letter-spacing: 0.06em;
     }
 
     #streak-display span {
       color: #1a1a1a;
-      font-size: 17px;
+      font-size: 14px;
       font-weight: bold;
-      margin-left: 5px;
+      margin-left: 4px;
     }
 
+    .header-nav {
+      display: flex;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .header-nav a {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #aaaaaa;
+      text-decoration: none;
+      margin-right: 24px;
+      padding-bottom: 2px;
+      transition: color 0.2s;
+    }
+
+    .header-nav a:hover { color: #1a1a1a; }
+
+    .header-nav a.active {
+      color: #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+
+    /* ── MAIN ── */
     #main {
       flex: 1;
       display: flex;
@@ -78,13 +132,8 @@
       transition: background 0.3s;
     }
 
-    .dot.done {
-      background: #888888;
-    }
-
-    .dot.current {
-      background: #1a1a1a;
-    }
+    .dot.done { background: #888888; }
+    .dot.current { background: #1a1a1a; }
 
     #progress-indicator {
       font-size: 11px;
@@ -131,19 +180,9 @@
       font-size: 13px;
     }
 
-    #type-input:focus {
-      border-bottom-color: #aaaaaa;
-    }
-
-    #type-input.error {
-      border-bottom-color: #cccccc;
-      color: #aaaaaa;
-    }
-
-    #type-input.success {
-      border-bottom-color: #1a1a1a;
-      color: #1a1a1a;
-    }
+    #type-input:focus { border-bottom-color: #aaaaaa; }
+    #type-input.error { border-bottom-color: #cccccc; color: #aaaaaa; }
+    #type-input.success { border-bottom-color: #1a1a1a; color: #1a1a1a; }
 
     #hint-text {
       margin-top: 14px;
@@ -154,9 +193,7 @@
       transition: color 0.2s;
     }
 
-    #hint-text.visible {
-      color: #aaaaaa;
-    }
+    #hint-text.visible { color: #aaaaaa; }
 
     #locked-view {
       display: none;
@@ -201,17 +238,32 @@
     }
 
     @media (max-width: 480px) {
-      #topbar { padding: 16px 20px; }
-      #main { padding: 32px 20px; justify-content: flex-start; padding-top: 52px; }
+      .header-inner { padding: 20px 20px 16px; }
+      .header-handle { display: none; }
+      #main { padding: 32px 20px; justify-content: flex-start; padding-top: 48px; }
     }
   </style>
 </head>
 <body>
 
-  <div id="topbar">
-    <div id="app-title">Daily Practice</div>
-    <div id="streak-display">Streak <span id="streak-count">0</span></div>
-  </div>
+  <header>
+    <div class="header-inner">
+      <div class="header-top">
+        <a href="https://joerossi.co" class="header-home">Joseph Rossi</a>
+        <div class="header-right">
+          <div id="streak-display">Streak <span id="streak-count">0</span></div>
+          <span class="header-handle">@thejosephrossi</span>
+        </div>
+      </div>
+      <nav class="header-nav">
+        <a href="https://joerossi.co">Home</a>
+        <a href="https://joerossi.co/sop">SOP</a>
+        <a href="https://joerossi.co/motivation">Motivation</a>
+        <a href="https://joerossi.co/affirmation" class="active">Affirmations</a>
+        <a href="https://joerossi.co/daily-practice">Daily Practice</a>
+      </nav>
+    </div>
+  </header>
 
   <div id="main">
 
@@ -261,20 +313,16 @@
     }
 
     function pickFive() {
-      // At least 1 from each category, remaining 3 random from either
       const affPick  = shuffle(AFFIRMATIONS)[0];
       const goalPick = shuffle(GOALS)[0];
-
       const used = [
         { text: affPick,  category: 'Affirmation' },
         { text: goalPick, category: 'Goal' },
       ];
-
       const remaining = [
         ...AFFIRMATIONS.filter(x => x !== affPick).map(x => ({ text: x, category: 'Affirmation' })),
         ...GOALS.filter(x => x !== goalPick).map(x => ({ text: x, category: 'Goal' })),
       ];
-
       const extra = shuffle(remaining).slice(0, 3);
       return shuffle([...used, ...extra]);
     }
@@ -325,7 +373,6 @@
     function showLocked(sess) {
       document.getElementById('active-view').style.display = 'none';
       document.getElementById('locked-view').style.display = 'block';
-
       const list = document.getElementById('locked-items-list');
       list.innerHTML = '';
       sess.items.forEach(item => {
@@ -337,7 +384,6 @@
         `;
         list.appendChild(div);
       });
-
       startCountdown();
     }
 
@@ -376,20 +422,16 @@
 
     document.getElementById('type-input').addEventListener('keydown', function(e) {
       if (e.key !== 'Enter') return;
-
       const typed   = this.value.trim();
       const correct = session.items[currentIndex].text.trim();
-
       if (typed === correct) {
         this.className = 'success';
         session.completedCount++;
         saveSession(session);
-
         if (session.completedCount === 5) {
           const today   = todayStr();
           const lastDay = getLastDay();
           let streak    = loadStreak();
-
           if (lastDay !== today) {
             const yesterday = new Date();
             yesterday.setDate(yesterday.getDate() - 1);
@@ -402,7 +444,6 @@
             localStorage.setItem(KEY_STREAK, streak);
             localStorage.setItem(KEY_LAST_DAY, today);
           }
-
           updateStreakDisplay(streak);
           setTimeout(() => showLocked(session), 700);
         } else {
@@ -429,7 +470,6 @@
       const stored = loadSession();
       const today  = todayStr();
       updateStreakDisplay(loadStreak());
-
       if (stored && stored.day === today) {
         session = stored;
         if (session.completedCount >= 5) {
