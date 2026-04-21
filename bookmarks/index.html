@@ -786,7 +786,7 @@ async function aiSearch(query) {
   }
 
   // Cap at 800 bookmarks to stay within API size limits
-  const bookmarksToSearch = allBookmarks.slice(0, 800);
+  const bookmarksToSearch = allBookmarks.slice(0, 300);
   const summary = bookmarksToSearch.map(function(b, i) {
     return '[' + i + '] @' + cleanText(b.screen_name) + ': ' + cleanText(b.full_text).slice(0, 200);
   }).join('\n');
@@ -817,7 +817,7 @@ async function aiSearch(query) {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error?.message || 'API error');
+      throw new Error(JSON.stringify(data.error) || 'API error');
     }
 
     const text = data.content[0].text;
