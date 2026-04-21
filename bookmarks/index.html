@@ -787,7 +787,7 @@ async function aiSearch(query) {
   // Send one batch of bookmarks to Claude and return matching ORIGINAL indexes
   async function searchBatch(batch, batchStartIndex, query) {
     const summary = batch.map(function(b, i) {
-      return '[' + (batchStartIndex + i) + '] @' + cleanText(b.screen_name) + ': ' + cleanText(b.full_text).slice(0, 180);
+      return '[' + (batchStartIndex + i) + '] @' + cleanText(b.screen_name) + ': ' + cleanText(b.full_text).slice(0, 120);
     }).join('\n');
 
     const prompt = 'You are searching through Twitter bookmarks. Find matches for the query below.\n\n' +
@@ -835,7 +835,7 @@ async function aiSearch(query) {
   answerBox.classList.add('visible');
 
   try {
-    const CHUNK = 250; // bookmarks per batch
+    const CHUNK = 150; // bookmarks per batch
     const total = allBookmarks.length;
     const numBatches = Math.ceil(total / CHUNK);
     let allMatchedIndexes = [];
@@ -850,7 +850,7 @@ async function aiSearch(query) {
       allMatchedIndexes = allMatchedIndexes.concat(indexes);
 
       // Small pause between batches to avoid rate limits
-      if (b < numBatches - 1) await new Promise(function(r) { setTimeout(r, 500); });
+      if (b < numBatches - 1) await new Promise(function(r) { setTimeout(r, 3000); });
     }
 
     // Deduplicate and fetch matched bookmarks
