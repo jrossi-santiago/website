@@ -776,21 +776,27 @@ async function aiSearch(query) {
   btn.innerHTML = '<span class="spinner"></span>Thinking...';
   btn.disabled = true;
 
-  // Build a compact summary of bookmarks for Claude to read
-  const summary = allBookmarks.map((b, i) =>
-    `[${i}] @${b.screen_name}: ${(b.full_text || '').slice(0, 280)}`
-  ).join('\n');
+  // Clean text to remove broken emoji and control chars that cause JSON errors
+  function cleanText(str) {
+    if (!str) return '';
+    return str
+      .replace(/[\uD800-\uDFFF]/g, '')
+      .replace(/[\u0000-\u001F\u007F]/g, ' ')
+      .trim();
+  }
 
-  const prompt = `You are a helpful assistant searching through a user's Twitter bookmarks.
+  // Cap at 800 bookmarks to stay within API size limits
+  const bookmarksToSearch = allBookmarks.slice(0, 800);
+  const summary = bookmarksToSearch.map(function(b, i) {
+    return '[' + i + '] @' + cleanText(b.screen_name) + ': ' + cleanText(b.full_text).slice(0, 200);
+  }).join('\n');
 
-Here are all their bookmarks (format: [index] @handle: tweet text):
-${summary}
-
-User's question: "${query}"
-
-First, give a short helpful answer to their question based on what's in their bookmarks (2-4 sentences max).
-Then, list the index numbers of the most relevant bookmarks, like: MATCHES: 3,7,12,25
-Only include indexes of bookmarks that genuinely match. If nothing matches, say so and write MATCHES: none.`;
+  const prompt = 'You are a helpful assistant searching through a Twitter bookmarks collection.\n\n' +
+    'Here are the bookmarks (format: [index] @handle: tweet text):\n' +
+    summary + '\n\n' +
+    'Question: "' + cleanText(query) + '"\n\n' +
+    'Give a short helpful answer (2-4 sentences). Then list matching indexes like: MATCHES: 3,7,12\n' +
+    'If nothing matches, write MATCHES: none.';
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
