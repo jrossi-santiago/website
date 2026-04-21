@@ -556,22 +556,73 @@ function handleFile(e) {
   if (f) processFile(f);
 }
 
+function extractBookmarks(data) {
+  // Case 1: already a plain array
+  if (Array.isArray(data)) return data;
+
+  // Case 2: object with a key that holds an array — try common key names
+  const commonKeys = ['bookmarks', 'data', 'tweets', 'items', 'results'];
+  for (const key of commonKeys) {
+    if (data[key] && Array.isArray(data[key])) return data[key];
+  }
+
+  // Case 3: any key at all that holds an array
+  for (const key of Object.keys(data)) {
+    if (Array.isArray(data[key]) && data[key].length > 0) return data[key];
+  }
+
+  // Case 4: single object wrapped — make it a one-item array
+  if (typeof data === 'object') return [data];
+
+  return null;
+}
+
+function normalizeBookmark(b) {
+  // Handle different field name variations from different export tools
+  return {
+    full_text:              b.full_text || b.text || b.content || b.tweet_text || '',
+    name:                   b.name || b.author_name || b.user_name || b.author || '',
+    screen_name:            b.screen_name || b.username || b.handle || b.user?.screen_name || '',
+    tweet_url:              b.tweet_url || b.url || b.link || b.permalink || '',
+    bookmark_date:          b.bookmark_date || b.bookmarked_at || b.created_at || b.date || '',
+    profile_image_url_https: b.profile_image_url_https || b.profile_image_url || b.avatar || b.user?.profile_image_url_https || '',
+    extended_media:         b.extended_media || b.media || b.attachments || []
+  };
+}
+
 function processFile(file) {
+  fileStatus.style.color = 'var(--accent)';
+  fileStatus.textContent = 'Reading file...';
+  fileStatus.style.display = 'block';
+
   const reader = new FileReader();
   reader.onload = function(e) {
     try {
-      const data = JSON.parse(e.target.result);
-      if (!Array.isArray(data)) throw new Error('Not an array');
-      allBookmarks = data;
+      const raw = JSON.parse(e.target.result);
+      const extracted = extractBookmarks(raw);
+
+      if (!extracted || extracted.length === 0) {
+        throw new Error('No bookmarks found in this file');
+      }
+
+      allBookmarks = extracted.map(normalizeBookmark);
       fileLoaded = true;
-      fileStatus.textContent = `✓ ${data.length} bookmarks loaded`;
+      fileStatus.textContent = `✓ ${allBookmarks.length} bookmarks loaded`;
+      fileStatus.style.color = 'var(--accent)';
       fileStatus.style.display = 'block';
       checkReady();
     } catch(err) {
-      fileStatus.textContent = '✗ Could not read file. Make sure it's a valid bookmarks JSON.';
+      fileStatus.textContent = '✗ ' + (err.message || 'Could not read file — make sure it is the bookmarks JSON from the export tool');
       fileStatus.style.color = 'var(--danger)';
       fileStatus.style.display = 'block';
+      fileLoaded = false;
+      checkReady();
     }
+  };
+  reader.onerror = function() {
+    fileStatus.textContent = '✗ File could not be read — try again';
+    fileStatus.style.color = 'var(--danger)';
+    fileStatus.style.display = 'block';
   };
   reader.readAsText(file);
 }
