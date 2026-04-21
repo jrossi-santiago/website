@@ -376,6 +376,25 @@
   }
   .card-link:hover { opacity: 1; }
 
+  .card-link-only {
+    border-color: #2a3520;
+    background: #111a0d;
+  }
+  .card-link-only:hover { border-color: #3a4a28; }
+
+  .link-only-badge {
+    display: inline-block;
+    font-size: 10px;
+    color: var(--accent);
+    background: var(--accent-dim);
+    border: 1px solid rgba(200,245,100,0.2);
+    border-radius: 6px;
+    padding: 3px 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    align-self: flex-start;
+  }
+
   .empty-state {
     text-align: center;
     padding: 60px 20px;
@@ -802,7 +821,6 @@ function renderCards(bookmarks, highlightQuery) {
 
   bookmarks.forEach((b, idx) => {
     const card = document.createElement('div');
-    card.className = 'card';
     card.style.animationDelay = `${Math.min(idx * 30, 300)}ms`;
 
     // Date formatting
@@ -810,12 +828,20 @@ function renderCards(bookmarks, highlightQuery) {
       ? new Date(b.bookmark_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
       : '';
 
-    // Text with keyword highlighting
-    let tweetText = escapeHtml(b.full_text || '');
+    // Detect link-only tweets (blank or only a t.co URL)
+    const textRaw = (b.full_text || '').trim();
+    const tcoOnlyRegex = /^https:\/\/t\.co\/\S+\s*$/;
+    const isLinkOnly = !textRaw || tcoOnlyRegex.test(textRaw);
+    card.className = isLinkOnly ? 'card card-link-only' : 'card';
+
+    // Strip trailing t.co links from display text
+    let displayText = textRaw.replace(/https:\/\/t\.co\/\S+/g, '').trim();
+    if (!displayText) displayText = textRaw;
+    let tweetText = escapeHtml(displayText);
     if (highlightQuery) {
       const words = highlightQuery.trim().split(/\s+/).filter(Boolean);
       words.forEach(w => {
-        const re = new RegExp(`(${escapeRe(w)})`, 'gi');
+        const re = new RegExp('(' + escapeRe(w) + ')', 'gi');
         tweetText = tweetText.replace(re, '<span class="highlight">$1</span>');
       });
     }
@@ -824,28 +850,36 @@ function renderCards(bookmarks, highlightQuery) {
     let mediaHTML = '';
     if (b.extended_media && b.extended_media.length > 0) {
       const imgs = b.extended_media
-        .filter(m => m.media_url_https || m.media_url)
+        .filter(function(m) { return m.media_url_https || m.media_url; })
         .slice(0, 4)
-        .map(m => {
+        .map(function(m) {
           const src = m.media_url_https || m.media_url;
-          return `<img src="${src}" loading="lazy" alt="media" onclick="openLightbox('${src}')" onerror="this.style.display='none'"/>`;
+          return '<img src="' + src + '" loading="lazy" alt="media" onclick="openLightbox(\'' + src + '\')" onerror="this.style.display=\'none\'"/>';
         }).join('');
-      if (imgs) mediaHTML = `<div class="card-media">${imgs}</div>`;
+      if (imgs) mediaHTML = '<div class="card-media">' + imgs + '</div>';
     }
 
-    card.innerHTML = `
-      <div class="card-author">
-        <img class="avatar" src="${b.profile_image_url_https || ''}" alt="" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 36 36%22><rect fill=%22%231e1e1e%22 width=%2236%22 height=%2236%22 rx=%2218%22/></svg>'" />
-        <div class="author-info">
-          <div class="author-name">${escapeHtml(b.name || '')}</div>
-          <div class="author-handle">@${escapeHtml(b.screen_name || '')}</div>
-        </div>
-        <div class="card-date">${dateStr}</div>
-      </div>
-      <div class="card-text">${tweetText}</div>
-      ${mediaHTML}
-      ${b.tweet_url ? `<a class="card-link" href="${b.tweet_url}" target="_blank">↗ View on X</a>` : ''}
-    `;
+    const linkBadge = isLinkOnly ? '<div class="link-only-badge">🔗 Article / Link</div>' : '';
+    const textBlock = displayText ? '<div class="card-text">' + tweetText + '</div>' : '';
+    const viewLink = b.tweet_url
+      ? '<a class="card-link" href="' + b.tweet_url + '" target="_blank">' + (isLinkOnly ? '↗ Open on X to view article' : '↗ View on X') + '</a>'
+      : '';
+
+    const avatarFallback = 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 36 36%22><rect fill=%22%231e1e1e%22 width=%2236%22 height=%2236%22 rx=%2218%22/></svg>';
+
+    card.innerHTML =
+      '<div class="card-author">' +
+        '<img class="avatar" src="' + (b.profile_image_url_https || '') + '" alt="" onerror="this.src=\'' + avatarFallback + '\'" />' +
+        '<div class="author-info">' +
+          '<div class="author-name">' + escapeHtml(b.name || '') + '</div>' +
+          '<div class="author-handle">@' + escapeHtml(b.screen_name || '') + '</div>' +
+        '</div>' +
+        '<div class="card-date">' + dateStr + '</div>' +
+      '</div>' +
+      linkBadge +
+      textBlock +
+      mediaHTML +
+      viewLink;
 
     list.appendChild(card);
   });
