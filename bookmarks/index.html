@@ -3,743 +3,499 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bookmark Brain</title>
+<title>Bookmarks</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap');
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --bg: #0e0e0e;
-    --surface: #161616;
-    --surface2: #1e1e1e;
-    --border: #2a2a2a;
-    --accent: #c8f564;
-    --accent-dim: rgba(200,245,100,0.12);
-    --text: #f0f0f0;
-    --muted: #666;
-    --danger: #ff5f57;
-  }
+body {
+  background: #ffffff;
+  color: #1a1a1a;
+  font-family: Georgia, serif;
+  font-size: 15px;
+  line-height: 1.7;
+  min-height: 100vh;
+}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── HEADER ── */
+header {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 24px 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 16px;
+}
+.header-home {
+  font-size: 13px;
+  font-style: italic;
+  color: #1a1a1a;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.header-home:hover { color: #aaaaaa; }
+.header-handle {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #aaaaaa;
+}
+.header-nav {
+  display: flex;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 14px;
+  flex-wrap: wrap;
+}
+.header-nav a {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #aaaaaa;
+  text-decoration: none;
+  margin-right: 24px;
+  padding-bottom: 2px;
+  transition: color 0.2s;
+}
+.header-nav a:hover { color: #1a1a1a; }
+.header-nav a.active {
+  color: #1a1a1a;
+  border-bottom: 1px solid #1a1a1a;
+}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    min-height: 100vh;
-    font-size: 14px;
-  }
+/* ── WRAP ── */
+.wrap {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 24px 64px;
+}
 
-  /* ── SETUP SCREEN ── */
-  #setup-screen {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    gap: 32px;
-  }
+/* ── PAGE TITLE ── */
+.page-title-block {
+  margin: 40px 0 32px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid #e0e0e0;
+}
+.page-title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+.page-title {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: clamp(24px, 4vw, 36px);
+  font-weight: normal;
+  color: #1a1a1a;
+  line-height: 1.2;
+}
+.page-slogan {
+  font-size: 13px;
+  color: #aaaaaa;
+  font-style: italic;
+}
+.reset-btn {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 12px;
+  color: #aaaaaa;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s;
+  white-space: nowrap;
+  display: none;
+}
+.reset-btn:hover { color: #1a1a1a; }
 
-  .logo {
-    font-family: 'Instrument Serif', serif;
-    font-size: clamp(2.2rem, 6vw, 3.6rem);
-    color: var(--accent);
-    letter-spacing: -1px;
-    line-height: 1;
-    text-align: center;
-  }
-  .logo span {
-    color: var(--muted);
-    font-style: italic;
-    font-size: 0.55em;
-    display: block;
-    margin-top: 4px;
-    letter-spacing: 0;
-  }
+/* ── SETUP SCREEN ── */
+#setup-screen {
+  padding: 40px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  max-width: 480px;
+}
+.setup-label {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #aaaaaa;
+  margin-bottom: 10px;
+}
+.setup-input {
+  width: 100%;
+  font-family: Georgia, serif;
+  font-size: 14px;
+  color: #1a1a1a;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  border-radius: 0;
+}
+.setup-input:focus { border-color: #1a1a1a; }
+.file-drop {
+  border: 1px dashed #e0e0e0;
+  padding: 28px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  position: relative;
+}
+.file-drop:hover, .file-drop.dragover { border-color: #1a1a1a; }
+.file-drop input[type="file"] {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+}
+.file-drop-icon { font-size: 1.4rem; margin-bottom: 8px; }
+.file-drop-text { font-size: 13px; color: #aaaaaa; font-style: italic; line-height: 1.7; }
+.file-drop-text strong { color: #1a1a1a; font-style: normal; }
+.file-status { margin-top: 10px; font-size: 13px; font-style: italic; display: none; }
+.setup-btn {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  background: transparent;
+  color: #1a1a1a;
+  border: 1px solid #1a1a1a;
+  padding: 12px 40px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  width: 100%;
+}
+.setup-btn:hover { background: #1a1a1a; color: #ffffff; }
+.setup-btn:disabled { border-color: #e0e0e0; color: #cccccc; cursor: not-allowed; background: transparent; }
+.setup-note { font-size: 12px; color: #aaaaaa; font-style: italic; line-height: 1.8; }
+.setup-note a { color: #1a1a1a; }
 
-  .setup-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 28px;
-    width: 100%;
-    max-width: 540px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
+/* ── APP SCREEN ── */
+#app-screen { display: none; flex-direction: column; }
 
-  .setup-label {
-    font-size: 11px;
-    color: var(--accent);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
+/* ── SEARCH BAR ── */
+.search-bar {
+  padding: 24px 0 20px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.mode-tabs { display: flex; }
+.mode-tab {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 13px;
+  background: transparent;
+  border: 1px solid #e0e0e0;
+  color: #aaaaaa;
+  padding: 6px 18px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  margin-right: -1px;
+}
+.mode-tab:hover { color: #1a1a1a; border-color: #aaaaaa; }
+.mode-tab.active { color: #1a1a1a; border-color: #1a1a1a; position: relative; z-index: 1; }
+.search-row { display: flex; }
+.search-input {
+  flex: 1;
+  font-family: Georgia, serif;
+  font-size: 14px;
+  color: #1a1a1a;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-right: none;
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  border-radius: 0;
+}
+.search-input:focus { border-color: #1a1a1a; }
+.search-btn {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 13px;
+  background: transparent;
+  color: #1a1a1a;
+  border: 1px solid #1a1a1a;
+  padding: 10px 24px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+.search-btn:hover { background: #1a1a1a; color: #ffffff; }
+.search-btn:disabled { border-color: #e0e0e0; color: #cccccc; cursor: not-allowed; background: transparent; }
 
-  .setup-input {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
-    padding: 12px 14px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .setup-input:focus { border-color: var(--accent); }
-  input[type="password"].setup-input { letter-spacing: 2px; }
+/* ── AI ANSWER ── */
+.ai-answer { padding: 16px 0; border-bottom: 1px solid #e0e0e0; display: none; }
+.ai-answer.visible { display: block; }
+.ai-answer-label { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #aaaaaa; margin-bottom: 6px; }
+.ai-answer-text { font-size: 14px; color: #1a1a1a; font-style: italic; line-height: 1.7; }
 
-  .file-drop {
-    border: 2px dashed var(--border);
-    border-radius: 10px;
-    padding: 28px 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-  }
-  .file-drop:hover, .file-drop.dragover {
-    border-color: var(--accent);
-    background: var(--accent-dim);
-  }
-  .file-drop input[type="file"] {
-    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
-  }
-  .file-drop-icon { font-size: 2rem; margin-bottom: 8px; }
-  .file-drop-text { color: var(--muted); font-size: 13px; line-height: 1.6; }
-  .file-drop-text strong { color: var(--text); }
-  .file-status {
-    margin-top: 8px;
-    font-size: 12px;
-    color: var(--accent);
-    display: none;
-  }
+/* ── RESULTS ── */
+.results-header {
+  padding: 18px 0 16px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #aaaaaa;
+}
+.results-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+@media (min-width: 700px) {
+  .results-list { grid-template-columns: repeat(3, 1fr); }
+}
 
-  .btn {
-    background: var(--accent);
-    color: #0e0e0e;
-    border: none;
-    border-radius: 10px;
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
-    font-weight: 500;
-    padding: 14px 20px;
-    cursor: pointer;
-    width: 100%;
-    transition: opacity 0.2s, transform 0.1s;
-    letter-spacing: 0.5px;
-  }
-  .btn:hover { opacity: 0.88; }
-  .btn:active { transform: scale(0.98); }
-  .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+/* ── CARDS ── */
+.card {
+  padding: 20px;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: fadeUp 0.2s ease both;
+}
+@media (min-width: 700px) {
+  .card { border-right: 1px solid #f0f0f0; }
+  .card:nth-child(3n) { border-right: none; }
+}
+.card-link-only { background: #fafafa; }
 
-  .setup-note {
-    font-size: 11px;
-    color: var(--muted);
-    text-align: center;
-    line-height: 1.7;
-  }
-  .setup-note a { color: var(--accent); text-decoration: none; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-  /* ── MAIN APP ── */
-  #app-screen { display: none; flex-direction: column; min-height: 100vh; }
+.card-author { display: flex; align-items: center; gap: 10px; }
+.avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; background: #f0f0f0; flex-shrink: 0; }
+.author-info { flex: 1; min-width: 0; }
+.author-name { font-size: 13px; color: #1a1a1a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.author-handle { font-size: 11px; color: #aaaaaa; font-style: italic; }
+.card-date { font-size: 11px; color: #aaaaaa; white-space: nowrap; flex-shrink: 0; font-style: italic; }
+.card-text { font-size: 14px; line-height: 1.65; color: #1a1a1a; word-break: break-word; }
+.highlight { background: #f0f0f0; padding: 0 2px; }
 
-  .topbar {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 14px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
-  .topbar-logo {
-    font-family: 'Instrument Serif', serif;
-    font-size: 1.3rem;
-    color: var(--accent);
-  }
-  .topbar-meta {
-    font-size: 11px;
-    color: var(--muted);
-  }
-  .topbar-reset {
-    background: none;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--muted);
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    padding: 6px 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .topbar-reset:hover { border-color: var(--danger); color: var(--danger); }
+/* Media */
+.card-media { display: grid; gap: 2px; overflow: hidden; background: #f0f0f0; }
+.card-media.count-1 { grid-template-columns: 1fr; }
+.card-media.count-1 img { width: 100%; max-height: 360px; object-fit: contain; background: #f8f8f8; }
+.card-media.count-2 { grid-template-columns: 1fr 1fr; }
+.card-media.count-2 img { width: 100%; height: 180px; object-fit: cover; }
+.card-media.count-3 { grid-template-columns: 1fr 1fr; grid-template-rows: 140px 140px; }
+.card-media.count-3 img:first-child { grid-row: 1/3; height: 282px; width: 100%; object-fit: cover; }
+.card-media.count-3 img:not(:first-child) { height: 140px; width: 100%; object-fit: cover; }
+.card-media.count-4 { grid-template-columns: 1fr 1fr; }
+.card-media.count-4 img { height: 160px; width: 100%; object-fit: cover; }
+.card-media img { display: block; cursor: pointer; transition: opacity 0.15s; }
+.card-media img:hover { opacity: 0.85; }
 
-  .search-area {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-  }
+.link-only-badge { font-size: 11px; color: #aaaaaa; font-style: italic; }
+.card-link { font-size: 11px; color: #aaaaaa; text-decoration: none; font-style: italic; transition: color 0.15s; }
+.card-link:hover { color: #1a1a1a; }
 
-  .search-row {
-    display: flex;
-    gap: 10px;
-    align-items: stretch;
-  }
+.empty-state { padding: 60px 0; color: #aaaaaa; font-style: italic; font-size: 14px; display: none; grid-column: 1/-1; }
 
-  .search-input {
-    flex: 1;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    font-size: 14px;
-    padding: 12px 16px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .search-input:focus { border-color: var(--accent); }
+/* Spinner */
+.spinner {
+  display: inline-block; width: 12px; height: 12px;
+  border: 1.5px solid #1a1a1a; border-top-color: transparent;
+  border-radius: 50%; animation: spin 0.7s linear infinite;
+  vertical-align: middle; margin-right: 6px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
-  .search-btn {
-    background: var(--accent);
-    color: #0e0e0e;
-    border: none;
-    border-radius: 10px;
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    font-weight: 500;
-    padding: 12px 16px;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: opacity 0.2s;
-  }
-  .search-btn:hover { opacity: 0.85; }
-  .search-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+/* Lightbox */
+.lightbox {
+  display: none; position: fixed; inset: 0;
+  background: rgba(255,255,255,0.96); z-index: 100;
+  align-items: center; justify-content: center; padding: 40px;
+}
+.lightbox.open { display: flex; }
+.lightbox img { max-width: 100%; max-height: 90vh; object-fit: contain; }
+.lightbox-close {
+  position: absolute; top: 20px; right: 24px;
+  background: none; border: none; font-family: Georgia, serif;
+  font-style: italic; font-size: 13px; color: #aaaaaa; cursor: pointer; transition: color 0.15s;
+}
+.lightbox-close:hover { color: #1a1a1a; }
 
-  .mode-tabs {
-    display: flex;
-    gap: 6px;
-  }
-  .mode-tab {
-    background: none;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--muted);
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    padding: 6px 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.5px;
-  }
-  .mode-tab.active {
-    background: var(--accent-dim);
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-
-  /* AI answer box */
-  .ai-answer {
-    background: var(--accent-dim);
-    border: 1px solid rgba(200,245,100,0.25);
-    border-radius: 12px;
-    padding: 16px;
-    font-size: 13px;
-    line-height: 1.7;
-    color: var(--text);
-    display: none;
-    margin: 16px 20px 0;
-  }
-  .ai-answer.visible { display: block; }
-  .ai-answer-label {
-    font-size: 10px;
-    color: var(--accent);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-
-  /* Results */
-  .results-header {
-    padding: 14px 20px 0;
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 1px;
-  }
-
-  .results-list {
-    padding: 12px 20px 80px;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
-    align-items: start;
-  }
-
-  @media (min-width: 900px) {
-    .results-list {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    transition: border-color 0.2s;
-    animation: fadeUp 0.25s ease both;
-  }
-  .card:hover { border-color: #3a3a3a; }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .card-author {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    object-fit: cover;
-    background: var(--surface2);
-    flex-shrink: 0;
-  }
-  .author-info { flex: 1; min-width: 0; }
-  .author-name {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .author-handle {
-    font-size: 11px;
-    color: var(--muted);
-  }
-  .card-date {
-    font-size: 10px;
-    color: var(--muted);
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-
-  .card-text {
-    font-size: 13px;
-    line-height: 1.65;
-    color: #d0d0d0;
-    word-break: break-word;
-  }
-  .card-text .highlight {
-    background: rgba(200,245,100,0.22);
-    color: var(--accent);
-    border-radius: 3px;
-    padding: 0 2px;
-  }
-
-  .card-media {
-    display: grid;
-    gap: 3px;
-    border-radius: 12px;
-    overflow: hidden;
-    background: var(--surface2);
-  }
-  /* 1 image — full width, natural aspect ratio, max height */
-  .card-media.count-1 {
-    grid-template-columns: 1fr;
-  }
-  .card-media.count-1 img {
-    width: 100%;
-    max-height: 400px;
-    object-fit: contain;
-    background: #000;
-  }
-  /* 2 images — side by side */
-  .card-media.count-2 {
-    grid-template-columns: 1fr 1fr;
-  }
-  .card-media.count-2 img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-  }
-  /* 3 images — one big left, two stacked right */
-  .card-media.count-3 {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 150px 150px;
-  }
-  .card-media.count-3 img:first-child {
-    grid-row: 1 / 3;
-    height: 303px;
-    width: 100%;
-    object-fit: cover;
-  }
-  .card-media.count-3 img:not(:first-child) {
-    height: 150px;
-    width: 100%;
-    object-fit: cover;
-  }
-  /* 4 images — 2x2 grid */
-  .card-media.count-4 {
-    grid-template-columns: 1fr 1fr;
-  }
-  .card-media.count-4 img {
-    height: 180px;
-    width: 100%;
-    object-fit: cover;
-  }
-  .card-media img {
-    display: block;
-    cursor: pointer;
-    transition: opacity 0.2s;
-    background: #000;
-  }
-  .card-media img:hover { opacity: 0.85; }
-
-  .card-link {
-    font-size: 11px;
-    color: var(--accent);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    opacity: 0.75;
-    transition: opacity 0.2s;
-  }
-  .card-link:hover { opacity: 1; }
-
-  .card-link-only {
-    border-color: #2a3520;
-    background: #111a0d;
-  }
-  .card-link-only:hover { border-color: #3a4a28; }
-
-  .link-only-badge {
-    display: inline-block;
-    font-size: 10px;
-    color: var(--accent);
-    background: var(--accent-dim);
-    border: 1px solid rgba(200,245,100,0.2);
-    border-radius: 6px;
-    padding: 3px 8px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    align-self: flex-start;
-  }
-
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 2;
-    display: none;
-  }
-  .empty-state .big { font-size: 2.5rem; display: block; margin-bottom: 12px; }
-
-  /* Loading spinner */
-  .spinner {
-    display: inline-block;
-    width: 14px; height: 14px;
-    border: 2px solid #0e0e0e;
-    border-top-color: transparent;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    vertical-align: middle;
-    margin-right: 6px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* Image lightbox */
-  .lightbox {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.9);
-    z-index: 100;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-  .lightbox.open { display: flex; }
-  .lightbox img { max-width: 100%; max-height: 90vh; border-radius: 10px; object-fit: contain; }
-  .lightbox-close {
-    position: absolute; top: 16px; right: 20px;
-    background: none; border: none; color: #fff; font-size: 1.8rem; cursor: pointer;
-  }
-
-  @media (max-width: 480px) {
-    .setup-card { padding: 20px; }
-    .search-btn { padding: 12px 12px; font-size: 11px; }
-    .card-media img { width: 100%; }
-  }
+@media (max-width: 600px) {
+  header, .wrap { padding-left: 20px; padding-right: 20px; }
+  header { max-width: 100%; }
+  .wrap { max-width: 100%; }
+}
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════
-     SETUP SCREEN
-═══════════════════════════════════════════ -->
-<div id="setup-screen">
-  <div class="logo">
-    Bookmark Brain
-    <span>your twitter bookmarks, searchable</span>
+<header>
+  <div class="header-top">
+    <a href="https://josephrossi.co" class="header-home">Never Stop</a>
+    <span class="header-handle">@thejosephrossi</span>
+  </div>
+  <nav class="header-nav">
+    <a href="https://www.josephrossi.co">Home</a>
+    <a href="https://www.josephrossi.co/sop">SOP</a>
+    <a href="https://www.josephrossi.co/motivation">Motivation</a>
+    <a href="https://www.josephrossi.co/affirmations">Affirmations</a>
+    <a href="#" class="active">Bookmarks</a>
+  </nav>
+</header>
+
+<div class="wrap">
+
+  <div class="page-title-block">
+    <div class="page-title-row">
+      <h1 class="page-title">Bookmarks</h1>
+      <button class="reset-btn" id="reset-btn">Reset</button>
+    </div>
+    <span class="page-slogan">Everything worth saving, searchable.</span>
   </div>
 
-  <div class="setup-card">
+  <!-- SETUP -->
+  <div id="setup-screen">
     <div>
       <div class="setup-label">Claude API Key</div>
-      <input
-        type="password"
-        id="api-key-input"
-        class="setup-input"
-        placeholder="sk-ant-api03-..."
-        autocomplete="off"
-      />
+      <input type="password" id="api-key-input" class="setup-input" placeholder="sk-ant-api03-..." autocomplete="off" />
     </div>
-
     <div>
-      <div class="setup-label">Your Bookmarks File</div>
+      <div class="setup-label">Bookmarks File</div>
       <div class="file-drop" id="file-drop">
         <input type="file" id="file-input" accept=".json" />
         <div class="file-drop-icon">📂</div>
         <div class="file-drop-text">
-          <strong>Drop your bookmarks.json here</strong><br>
-          or click to choose file
+          <strong>Drop your bookmarks.json here</strong><br>or click to choose file
         </div>
         <div class="file-status" id="file-status"></div>
       </div>
     </div>
-
-    <button class="btn" id="launch-btn" disabled>Load My Bookmarks →</button>
+    <button class="setup-btn" id="launch-btn" disabled>Load Bookmarks</button>
+    <p class="setup-note">
+      Your key and bookmarks are saved to this device only — nothing goes to any server except Anthropic when you use AI search.<br>
+      <a href="https://console.anthropic.com" target="_blank">Get your API key at console.anthropic.com</a>
+    </p>
   </div>
 
-  <div class="setup-note">
-    Your API key and bookmarks never leave your browser.<br>
-    Nothing is stored on any server.<br>
-    <a href="https://console.anthropic.com" target="_blank">Get your API key at console.anthropic.com</a>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════
-     MAIN APP SCREEN
-═══════════════════════════════════════════ -->
-<div id="app-screen">
-  <div class="topbar">
-    <div class="topbar-logo">Bookmark Brain</div>
-    <div class="topbar-meta" id="topbar-count"></div>
-    <button class="topbar-reset" id="reset-btn">↩ Reset</button>
-  </div>
-
-  <div class="search-area">
-    <div class="mode-tabs">
-      <button class="mode-tab active" id="tab-keyword" onclick="setMode('keyword')">⚡ Keyword</button>
-      <button class="mode-tab" id="tab-ai" onclick="setMode('ai')">✦ Ask AI</button>
+  <!-- APP -->
+  <div id="app-screen">
+    <div class="search-bar">
+      <div class="mode-tabs">
+        <button class="mode-tab active" id="tab-keyword" onclick="setMode('keyword')">Keyword</button>
+        <button class="mode-tab" id="tab-ai" onclick="setMode('ai')">Ask AI</button>
+      </div>
+      <div class="search-row">
+        <input type="text" class="search-input" id="search-input" placeholder="Search your bookmarks..." autocomplete="off" />
+        <button class="search-btn" id="search-btn" onclick="doSearch()">Search</button>
+      </div>
     </div>
-    <div class="search-row">
-      <input
-        type="text"
-        class="search-input"
-        id="search-input"
-        placeholder="Search your bookmarks..."
-        autocomplete="off"
-      />
-      <button class="search-btn" id="search-btn" onclick="doSearch()">Search</button>
+
+    <div class="ai-answer" id="ai-answer">
+      <div class="ai-answer-label">AI</div>
+      <div class="ai-answer-text" id="ai-answer-text"></div>
+    </div>
+
+    <div class="results-header" id="results-header"></div>
+    <div class="results-list" id="results-list">
+      <div class="empty-state" id="empty-state">No bookmarks matched that search.</div>
     </div>
   </div>
 
-  <div class="ai-answer" id="ai-answer">
-    <div class="ai-answer-label">✦ AI Answer</div>
-    <div id="ai-answer-text"></div>
-  </div>
-
-  <div class="results-header" id="results-header"></div>
-
-  <div class="results-list" id="results-list"></div>
-
-  <div class="empty-state" id="empty-state">
-    <span class="big">🔍</span>
-    No bookmarks matched that search.<br>
-    Try different keywords or ask AI a broader question.
-  </div>
 </div>
 
-<!-- Lightbox for images -->
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
-  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <button class="lightbox-close" onclick="closeLightbox()">close</button>
   <img id="lightbox-img" src="" alt=""/>
 </div>
 
 <script>
-// ─────────────────────────────────────────────
-// STATE
-// ─────────────────────────────────────────────
 let allBookmarks = [];
 let apiKey = '';
 let currentMode = 'keyword';
 
-// ─────────────────────────────────────────────
-// LOCALSTORAGE — save data so it persists on refresh
-// localStorage is built into every browser and keeps data
-// on this device until the user clicks Reset
-// ─────────────────────────────────────────────
 function saveToStorage() {
-  try {
-    localStorage.setItem('bb_apikey', apiKey);
-    localStorage.setItem('bb_bookmarks', JSON.stringify(allBookmarks));
-  } catch(e) {
-    console.warn('Could not save to localStorage:', e);
-  }
+  try { localStorage.setItem('bb_apikey', apiKey); localStorage.setItem('bb_bookmarks', JSON.stringify(allBookmarks)); } catch(e) {}
 }
-
 function clearStorage() {
-  try {
-    localStorage.removeItem('bb_apikey');
-    localStorage.removeItem('bb_bookmarks');
-  } catch(e) {}
+  try { localStorage.removeItem('bb_apikey'); localStorage.removeItem('bb_bookmarks'); } catch(e) {}
 }
-
 function loadFromStorage() {
   try {
-    const savedKey = localStorage.getItem('bb_apikey');
-    const savedBookmarks = localStorage.getItem('bb_bookmarks');
-    if (savedKey && savedBookmarks) {
-      apiKey = savedKey;
-      allBookmarks = JSON.parse(savedBookmarks);
-      return true;
-    }
-  } catch(e) {
-    console.warn('Could not load from localStorage:', e);
-  }
+    var k = localStorage.getItem('bb_apikey');
+    var b = localStorage.getItem('bb_bookmarks');
+    if (k && b) { apiKey = k; allBookmarks = JSON.parse(b); return true; }
+  } catch(e) {}
   return false;
 }
 
-// ─────────────────────────────────────────────
-// SETUP SCREEN LOGIC
-// ─────────────────────────────────────────────
-const apiKeyInput  = document.getElementById('api-key-input');
-const fileInput    = document.getElementById('file-input');
-const fileDrop     = document.getElementById('file-drop');
-const fileStatus   = document.getElementById('file-status');
-const launchBtn    = document.getElementById('launch-btn');
-
+const apiKeyInput = document.getElementById('api-key-input');
+const fileInput   = document.getElementById('file-input');
+const fileDrop    = document.getElementById('file-drop');
+const fileStatus  = document.getElementById('file-status');
+const launchBtn   = document.getElementById('launch-btn');
 let fileLoaded = false;
 
-// On page load — check if we already have saved data and skip setup
-// We use setTimeout so renderCards (defined later in the script) is available
 setTimeout(function() {
-  if (loadFromStorage()) {
-    document.getElementById('setup-screen').style.display = 'none';
-    const app = document.getElementById('app-screen');
-    app.style.display = 'flex';
-    document.getElementById('topbar-count').textContent = allBookmarks.length + ' bookmarks';
-    renderCards(allBookmarks, '');
-  }
+  if (loadFromStorage()) { showApp(); renderCards(allBookmarks, ''); }
 }, 0);
 
 apiKeyInput.addEventListener('input', checkReady);
-fileInput.addEventListener('change', handleFile);
-
-// Drag and drop
-fileDrop.addEventListener('dragover', e => { e.preventDefault(); fileDrop.classList.add('dragover'); });
-fileDrop.addEventListener('dragleave', () => fileDrop.classList.remove('dragover'));
-fileDrop.addEventListener('drop', e => {
-  e.preventDefault();
-  fileDrop.classList.remove('dragover');
-  const f = e.dataTransfer.files[0];
-  if (f) processFile(f);
-});
-
-function handleFile(e) {
-  const f = e.target.files[0];
-  if (f) processFile(f);
-}
+fileInput.addEventListener('change', function(e) { if (e.target.files[0]) processFile(e.target.files[0]); });
+fileDrop.addEventListener('dragover', function(e) { e.preventDefault(); fileDrop.classList.add('dragover'); });
+fileDrop.addEventListener('dragleave', function() { fileDrop.classList.remove('dragover'); });
+fileDrop.addEventListener('drop', function(e) { e.preventDefault(); fileDrop.classList.remove('dragover'); if (e.dataTransfer.files[0]) processFile(e.dataTransfer.files[0]); });
 
 function extractBookmarks(data) {
-  // Case 1: already a plain array
   if (Array.isArray(data)) return data;
-
-  // Case 2: object with a key that holds an array — try common key names
-  const commonKeys = ['bookmarks', 'data', 'tweets', 'items', 'results'];
-  for (const key of commonKeys) {
-    if (data[key] && Array.isArray(data[key])) return data[key];
-  }
-
-  // Case 3: any key at all that holds an array
-  for (const key of Object.keys(data)) {
-    if (Array.isArray(data[key]) && data[key].length > 0) return data[key];
-  }
-
-  // Case 4: single object wrapped — make it a one-item array
-  if (typeof data === 'object') return [data];
-
+  var keys = ['bookmarks','data','tweets','items','results'];
+  for (var i=0;i<keys.length;i++) { if (data[keys[i]] && Array.isArray(data[keys[i]])) return data[keys[i]]; }
+  var all = Object.keys(data);
+  for (var j=0;j<all.length;j++) { if (Array.isArray(data[all[j]]) && data[all[j]].length>0) return data[all[j]]; }
+  if (typeof data==='object') return [data];
   return null;
 }
 
 function normalizeBookmark(b) {
-  // Handle different field name variations from different export tools
   return {
-    full_text:              b.full_text || b.text || b.content || b.tweet_text || '',
-    name:                   b.name || b.author_name || b.user_name || b.author || '',
-    screen_name:            b.screen_name || b.username || b.handle || b.user?.screen_name || '',
-    tweet_url:              b.tweet_url || b.url || b.link || b.permalink || '',
-    bookmark_date:          b.bookmark_date || b.bookmarked_at || b.created_at || b.date || '',
-    profile_image_url_https: b.profile_image_url_https || b.profile_image_url || b.avatar || b.user?.profile_image_url_https || '',
-    extended_media:         b.extended_media || b.media || b.attachments || []
+    full_text: b.full_text||b.text||b.content||b.tweet_text||'',
+    name: b.name||b.author_name||b.user_name||b.author||'',
+    screen_name: b.screen_name||b.username||b.handle||(b.user&&b.user.screen_name)||'',
+    tweet_url: b.tweet_url||b.url||b.link||b.permalink||'',
+    bookmark_date: b.bookmark_date||b.bookmarked_at||b.created_at||b.date||'',
+    profile_image_url_https: b.profile_image_url_https||b.profile_image_url||b.avatar||(b.user&&b.user.profile_image_url_https)||'',
+    extended_media: b.extended_media||b.media||b.attachments||[]
   };
 }
 
 function processFile(file) {
-  fileStatus.style.color = 'var(--accent)';
+  fileStatus.style.color = '#1a1a1a';
   fileStatus.textContent = 'Reading file...';
   fileStatus.style.display = 'block';
-
-  const reader = new FileReader();
+  var reader = new FileReader();
   reader.onload = function(e) {
     try {
-      const raw = JSON.parse(e.target.result);
-      const extracted = extractBookmarks(raw);
-
-      if (!extracted || extracted.length === 0) {
-        throw new Error('No bookmarks found in this file');
-      }
-
+      var raw = JSON.parse(e.target.result);
+      var extracted = extractBookmarks(raw);
+      if (!extracted||extracted.length===0) throw new Error('No bookmarks found');
       allBookmarks = extracted.map(normalizeBookmark);
       fileLoaded = true;
-      fileStatus.textContent = `✓ ${allBookmarks.length} bookmarks loaded`;
-      fileStatus.style.color = 'var(--accent)';
-      fileStatus.style.display = 'block';
+      fileStatus.textContent = '✓ ' + allBookmarks.length + ' bookmarks loaded';
       checkReady();
     } catch(err) {
-      fileStatus.textContent = '✗ ' + (err.message || 'Could not read file — make sure it is the bookmarks JSON from the export tool');
-      fileStatus.style.color = 'var(--danger)';
-      fileStatus.style.display = 'block';
+      fileStatus.textContent = '✗ ' + (err.message||'Could not read file');
+      fileStatus.style.color = '#cc0000';
       fileLoaded = false;
       checkReady();
     }
   };
-  reader.onerror = function() {
-    fileStatus.textContent = '✗ File could not be read — try again';
-    fileStatus.style.color = 'var(--danger)';
-    fileStatus.style.display = 'block';
-  };
+  reader.onerror = function() { fileStatus.textContent = '✗ File could not be read'; fileStatus.style.color='#cc0000'; };
   reader.readAsText(file);
 }
 
@@ -747,286 +503,178 @@ function checkReady() {
   launchBtn.disabled = !(apiKeyInput.value.trim().startsWith('sk-ant') && fileLoaded);
 }
 
-document.getElementById('launch-btn').addEventListener('click', () => {
-  apiKey = apiKeyInput.value.trim();
-  saveToStorage(); // save so it persists on refresh
+function showApp() {
   document.getElementById('setup-screen').style.display = 'none';
-  const app = document.getElementById('app-screen');
-  app.style.display = 'flex';
-  document.getElementById('topbar-count').textContent = allBookmarks.length + ' bookmarks';
+  document.getElementById('app-screen').style.display = 'flex';
+  document.getElementById('reset-btn').style.display = 'inline-block';
+}
+
+launchBtn.addEventListener('click', function() {
+  apiKey = apiKeyInput.value.trim();
+  saveToStorage();
+  showApp();
   renderCards(allBookmarks, '');
 });
 
-document.getElementById('reset-btn').addEventListener('click', () => {
-  if (confirm('Reset will clear your saved data on this device and return to the setup screen. Continue?')) {
-    clearStorage(); // wipe saved data
+document.getElementById('reset-btn').addEventListener('click', function() {
+  if (confirm('Reset will clear your saved data on this device. Continue?')) {
+    clearStorage();
     document.getElementById('setup-screen').style.display = 'flex';
     document.getElementById('app-screen').style.display = 'none';
-    allBookmarks = [];
-    apiKey = '';
-    fileLoaded = false;
-    apiKeyInput.value = '';
-    fileInput.value = '';
-    fileStatus.style.display = 'none';
-    launchBtn.disabled = true;
+    document.getElementById('reset-btn').style.display = 'none';
+    allBookmarks=[]; apiKey=''; fileLoaded=false;
+    apiKeyInput.value=''; fileInput.value='';
+    fileStatus.style.display='none'; launchBtn.disabled=true;
   }
 });
 
-// ─────────────────────────────────────────────
-// MODE TABS
-// ─────────────────────────────────────────────
 function setMode(mode) {
   currentMode = mode;
-  document.getElementById('tab-keyword').classList.toggle('active', mode === 'keyword');
-  document.getElementById('tab-ai').classList.toggle('active', mode === 'ai');
-  const input = document.getElementById('search-input');
-  input.placeholder = mode === 'ai'
-    ? 'Ask anything — "find tweets about productivity"...'
-    : 'Search by keyword...';
+  document.getElementById('tab-keyword').classList.toggle('active', mode==='keyword');
+  document.getElementById('tab-ai').classList.toggle('active', mode==='ai');
+  document.getElementById('search-input').placeholder = mode==='ai' ? 'Ask anything — "find tweets about branding"...' : 'Search by keyword...';
   document.getElementById('ai-answer').classList.remove('visible');
 }
 
-// ─────────────────────────────────────────────
-// SEARCH
-// ─────────────────────────────────────────────
-document.getElementById('search-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') doSearch();
-});
+document.getElementById('search-input').addEventListener('keydown', function(e) { if (e.key==='Enter') doSearch(); });
 
 async function doSearch() {
-  const query = document.getElementById('search-input').value.trim();
-  if (!query) {
-    renderCards(allBookmarks, '');
-    return;
-  }
-  if (currentMode === 'keyword') {
-    keywordSearch(query);
-  } else {
-    await aiSearch(query);
-  }
+  var query = document.getElementById('search-input').value.trim();
+  if (!query) { renderCards(allBookmarks,''); return; }
+  if (currentMode==='keyword') keywordSearch(query);
+  else await aiSearch(query);
 }
 
 function keywordSearch(query) {
-  const lower = query.toLowerCase();
-  const words = lower.split(/\s+/);
-  const results = allBookmarks.filter(b => {
-    const haystack = [
-      b.full_text || '',
-      b.name || '',
-      b.screen_name || '',
-    ].join(' ').toLowerCase();
-    return words.every(w => haystack.includes(w));
+  var words = query.toLowerCase().split(/\s+/);
+  var results = allBookmarks.filter(function(b) {
+    var hay = [b.full_text||'',b.name||'',b.screen_name||''].join(' ').toLowerCase();
+    return words.every(function(w) { return hay.includes(w); });
   });
   document.getElementById('ai-answer').classList.remove('visible');
   renderCards(results, query);
 }
 
 async function aiSearch(query) {
-  const btn = document.getElementById('search-btn');
+  var btn = document.getElementById('search-btn');
   btn.disabled = true;
 
-  // Clean text — removes broken emoji and control characters
-  function cleanText(str) {
+  function clean(str) {
     if (!str) return '';
-    return str
-      .replace(/[\uD800-\uDFFF]/g, '')
-      .replace(/[\u0000-\u001F\u007F]/g, ' ')
-      .trim();
+    return str.replace(/[\uD800-\uDFFF]/g,'').replace(/[\u0000-\u001F\u007F]/g,' ').trim();
   }
 
-  // Send one batch of bookmarks to Claude and return matching ORIGINAL indexes
-  async function searchBatch(batch, batchStartIndex, query) {
-    const summary = batch.map(function(b, i) {
-      return '[' + (batchStartIndex + i) + '] @' + cleanText(b.screen_name) + ': ' + cleanText(b.full_text).slice(0, 120);
+  async function searchBatch(batch, startIdx, q) {
+    var summary = batch.map(function(b,i) {
+      return '[' + (startIdx+i) + '] @' + clean(b.screen_name) + ': ' + clean(b.full_text).slice(0,120);
     }).join('\n');
-
-    const prompt = 'You are searching through Twitter bookmarks. Find matches for the query below.\n\n' +
-      'Bookmarks (format: [index] @handle: text):\n' +
-      summary + '\n\n' +
-      'Query: "' + cleanText(query) + '"\n\n' +
-      'Reply ONLY with matching indexes like: MATCHES: 3,7,12\n' +
-      'If nothing matches write: MATCHES: none\n' +
-      'No other text.';
-
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    var prompt = 'Search Twitter bookmarks for the query. Reply ONLY with matching indexes.\n\nBookmarks:\n' + summary + '\n\nQuery: "' + clean(q) + '"\n\nFormat: MATCHES: 3,7,12 or MATCHES: none';
+    var res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 300,
-        messages: [{ role: 'user', content: prompt }]
-      })
+      headers: { 'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' },
+      body: JSON.stringify({ model:'claude-haiku-4-5-20251001', max_tokens:300, messages:[{role:'user',content:prompt}] })
     });
-
-    const rawText = await response.text();
-    let data;
-    try { data = JSON.parse(rawText); } catch(e) { throw new Error('Bad response: ' + rawText.slice(0, 200)); }
-    if (!response.ok) {
-      const errMsg = (data.error && data.error.message) ? data.error.message : rawText.slice(0, 300);
-      throw new Error('HTTP ' + response.status + ': ' + errMsg);
-    }
-
-    const text = data.content[0].text;
-    const matchesIdx = text.indexOf('MATCHES:');
-    if (matchesIdx === -1) return [];
-    const matchStr = text.slice(matchesIdx + 8).trim();
-    if (matchStr.toLowerCase() === 'none') return [];
-    return (matchStr.match(/\d+/g) || []).map(function(n) { return parseInt(n); });
+    var raw = await res.text();
+    var data;
+    try { data = JSON.parse(raw); } catch(e) { throw new Error('Bad response'); }
+    if (!res.ok) throw new Error('HTTP ' + res.status + ': ' + (data.error&&data.error.message||raw.slice(0,200)));
+    var text = data.content[0].text;
+    var idx = text.indexOf('MATCHES:');
+    if (idx===-1) return [];
+    var ms = text.slice(idx+8).trim();
+    if (ms.toLowerCase()==='none') return [];
+    return (ms.match(/\d+/g)||[]).map(Number);
   }
 
-  // Show progress in the AI answer box
-  const answerBox = document.getElementById('ai-answer');
-  const answerText = document.getElementById('ai-answer-text');
+  var answerBox = document.getElementById('ai-answer');
+  var answerEl = document.getElementById('ai-answer-text');
   answerBox.classList.add('visible');
 
   try {
-    const CHUNK = 150; // bookmarks per batch
-    const total = allBookmarks.length;
-    const numBatches = Math.ceil(total / CHUNK);
-    let allMatchedIndexes = [];
-
-    for (let b = 0; b < numBatches; b++) {
-      const start = b * CHUNK;
-      const batch = allBookmarks.slice(start, start + CHUNK);
-      btn.innerHTML = '<span class="spinner"></span>Searching ' + (start + 1) + '–' + Math.min(start + CHUNK, total) + ' of ' + total + '...';
-      answerText.textContent = 'Scanning batch ' + (b + 1) + ' of ' + numBatches + '...';
-
-      const indexes = await searchBatch(batch, start, query);
-      allMatchedIndexes = allMatchedIndexes.concat(indexes);
-
-      // Small pause between batches to avoid rate limits
-      if (b < numBatches - 1) await new Promise(function(r) { setTimeout(r, 3000); });
+    var CHUNK = 150, total = allBookmarks.length, batches = Math.ceil(total/CHUNK), matched = [];
+    for (var i=0; i<batches; i++) {
+      var start = i*CHUNK;
+      btn.innerHTML = '<span class="spinner"></span>' + (start+1) + '–' + Math.min(start+CHUNK,total) + ' of ' + total;
+      answerEl.textContent = 'Scanning ' + (i+1) + ' of ' + batches + '...';
+      var hits = await searchBatch(allBookmarks.slice(start,start+CHUNK), start, query);
+      matched = matched.concat(hits);
+      if (i < batches-1) await new Promise(function(r){setTimeout(r,3000);});
     }
-
-    // Deduplicate and fetch matched bookmarks
-    const unique = [...new Set(allMatchedIndexes)].sort(function(a,b){return a-b;});
-    const results = unique.map(function(i) { return allBookmarks[i]; }).filter(Boolean);
-
-    answerText.textContent = 'Found ' + results.length + ' match' + (results.length !== 1 ? 'es' : '') + ' across all ' + total + ' bookmarks.';
-    renderCards(results, '');
-
+    var unique = [...new Set(matched)].sort(function(a,b){return a-b;});
+    var results = unique.map(function(i){return allBookmarks[i];}).filter(Boolean);
+    answerEl.textContent = 'Found ' + results.length + ' match' + (results.length!==1?'es':'') + ' across all ' + total + ' bookmarks.';
+    renderCards(results,'');
   } catch(err) {
-    answerText.textContent = '⚠ Error: ' + err.message;
-    renderCards([], '');
+    answerEl.textContent = '⚠ ' + err.message;
+    renderCards([],'');
   } finally {
     btn.innerHTML = 'Search';
     btn.disabled = false;
   }
 }
 
-// ─────────────────────────────────────────────
-// RENDER CARDS
-// ─────────────────────────────────────────────
 function renderCards(bookmarks, highlightQuery) {
-  const list = document.getElementById('results-list');
-  const header = document.getElementById('results-header');
-  const empty = document.getElementById('empty-state');
-
+  var list = document.getElementById('results-list');
+  var header = document.getElementById('results-header');
+  var empty = document.getElementById('empty-state');
   list.innerHTML = '';
+  list.appendChild(empty);
 
-  if (bookmarks.length === 0) {
-    empty.style.display = 'block';
-    header.textContent = '';
-    return;
-  }
+  if (bookmarks.length===0) { empty.style.display='block'; header.textContent=''; return; }
+  empty.style.display='none';
+  header.textContent = bookmarks.length + ' bookmark' + (bookmarks.length!==1?'s':'');
 
-  empty.style.display = 'none';
-  header.textContent = `${bookmarks.length} bookmark${bookmarks.length !== 1 ? 's' : ''}`;
+  var avatarFallback = 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect fill=%22%23f0f0f0%22 width=%2232%22 height=%2232%22 rx=%2216%22/></svg>';
 
-  bookmarks.forEach((b, idx) => {
-    const card = document.createElement('div');
-    card.style.animationDelay = (Math.min(idx * 20, 180)) + 'ms';
+  bookmarks.forEach(function(b, idx) {
+    var card = document.createElement('div');
+    card.style.animationDelay = Math.min(idx*20,180)+'ms';
 
-    // Date formatting
-    const dateStr = b.bookmark_date
-      ? new Date(b.bookmark_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-      : '';
-
-    // Detect link-only tweets (blank or only a t.co URL)
-    const textRaw = (b.full_text || '').trim();
-    const tcoOnlyRegex = /^https:\/\/t\.co\/\S+\s*$/;
-    const isLinkOnly = !textRaw || tcoOnlyRegex.test(textRaw);
+    var dateStr = b.bookmark_date ? new Date(b.bookmark_date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
+    var textRaw = (b.full_text||'').trim();
+    var isLinkOnly = !textRaw || /^https:\/\/t\.co\/\S+\s*$/.test(textRaw);
     card.className = isLinkOnly ? 'card card-link-only' : 'card';
 
-    // Strip trailing t.co links from display text
-    let displayText = textRaw.replace(/https:\/\/t\.co\/\S+/g, '').trim();
-    if (!displayText) displayText = textRaw;
-    let tweetText = escapeHtml(displayText);
+    var displayText = textRaw.replace(/https:\/\/t\.co\/\S+/g,'').trim() || textRaw;
+    var tweetText = escHtml(displayText);
     if (highlightQuery) {
-      const words = highlightQuery.trim().split(/\s+/).filter(Boolean);
-      words.forEach(w => {
-        const re = new RegExp('(' + escapeRe(w) + ')', 'gi');
-        tweetText = tweetText.replace(re, '<span class="highlight">$1</span>');
+      highlightQuery.trim().split(/\s+/).filter(Boolean).forEach(function(w) {
+        tweetText = tweetText.replace(new RegExp('('+escRe(w)+')','gi'),'<span class="highlight">$1</span>');
       });
     }
 
-    // Media images
-    let mediaHTML = '';
-    if (b.extended_media && b.extended_media.length > 0) {
-      const mediaItems = b.extended_media
-        .filter(function(m) { return m.media_url_https || m.media_url; })
-        .slice(0, 4);
-      const count = mediaItems.length;
-      const imgs = mediaItems.map(function(m) {
-          const src = m.media_url_https || m.media_url;
-          return '<img src="' + src + '" loading="lazy" alt="media" onclick="openLightbox(\'' + src + '\')" onerror="this.style.display=\'none\'"/>';
-        }).join('');
-      if (imgs) mediaHTML = '<div class="card-media count-' + count + '">' + imgs + '</div>';
+    var mediaHTML = '';
+    if (b.extended_media&&b.extended_media.length>0) {
+      var items = b.extended_media.filter(function(m){return m.media_url_https||m.media_url;}).slice(0,4);
+      var imgs = items.map(function(m){
+        var src=m.media_url_https||m.media_url;
+        return '<img src="'+src+'" loading="lazy" alt="" onclick="openLightbox(\''+src+'\')" onerror="this.style.display=\'none\'"/>';
+      }).join('');
+      if (imgs) mediaHTML = '<div class="card-media count-'+items.length+'">'+imgs+'</div>';
     }
-
-    const linkBadge = isLinkOnly ? '<div class="link-only-badge">🔗 Article / Link</div>' : '';
-    const textBlock = displayText ? '<div class="card-text">' + tweetText + '</div>' : '';
-    const viewLink = b.tweet_url
-      ? '<a class="card-link" href="' + b.tweet_url + '" target="_blank">' + (isLinkOnly ? '↗ Open on X to view article' : '↗ View on X') + '</a>'
-      : '';
-
-    const avatarFallback = 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 36 36%22><rect fill=%22%231e1e1e%22 width=%2236%22 height=%2236%22 rx=%2218%22/></svg>';
 
     card.innerHTML =
       '<div class="card-author">' +
-        '<img class="avatar" src="' + (b.profile_image_url_https || '') + '" alt="" onerror="this.src=\'' + avatarFallback + '\'" />' +
+        '<img class="avatar" src="'+(b.profile_image_url_https||'')+'" alt="" onerror="this.src=\''+avatarFallback+'\'" />' +
         '<div class="author-info">' +
-          '<div class="author-name">' + escapeHtml(b.name || '') + '</div>' +
-          '<div class="author-handle">@' + escapeHtml(b.screen_name || '') + '</div>' +
+          '<div class="author-name">'+escHtml(b.name||'')+'</div>' +
+          '<div class="author-handle">@'+escHtml(b.screen_name||'')+'</div>' +
         '</div>' +
-        '<div class="card-date">' + dateStr + '</div>' +
+        '<div class="card-date">'+dateStr+'</div>' +
       '</div>' +
-      linkBadge +
-      textBlock +
+      (isLinkOnly ? '<div class="link-only-badge">link / article</div>' : '') +
+      (displayText ? '<div class="card-text">'+tweetText+'</div>' : '') +
       mediaHTML +
-      viewLink;
+      (b.tweet_url ? '<a class="card-link" href="'+b.tweet_url+'" target="_blank">'+(isLinkOnly?'open on x ↗':'view on x ↗')+'</a>' : '');
 
     list.appendChild(card);
   });
 }
 
-// ─────────────────────────────────────────────
-// LIGHTBOX
-// ─────────────────────────────────────────────
-function openLightbox(src) {
-  document.getElementById('lightbox-img').src = src;
-  document.getElementById('lightbox').classList.add('open');
-}
-function closeLightbox() {
-  document.getElementById('lightbox').classList.remove('open');
-}
-
-// ─────────────────────────────────────────────
-// HELPERS
-// ─────────────────────────────────────────────
-function escapeHtml(str) {
-  return String(str)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-function escapeRe(str) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
+function openLightbox(src) { document.getElementById('lightbox-img').src=src; document.getElementById('lightbox').classList.add('open'); }
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
 </script>
 </body>
 </html>
