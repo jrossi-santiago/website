@@ -10,6 +10,9 @@
 
   var currentPath = window.location.pathname.replace(/\/$/, '') || '/';
 
+  // Bookmarks needs a wider header to match its 960px layout
+  var maxWidth = currentPath.startsWith('/bookmarks') ? '960px' : '680px';
+
   var navHTML = links.map(function(link) {
     var linkPath = link.href.replace('https://www.josephrossi.co', '') || '/';
     var isActive = currentPath === linkPath || (linkPath !== '/' && currentPath.startsWith(linkPath));
@@ -17,8 +20,8 @@
   }).join('');
 
   var headerHTML =
-    '<header>' +
-      '<div class="header-inner">' +
+    '<header style="border-bottom: 1px solid #e0e0e0;">' +
+      '<div style="max-width:' + maxWidth + '; margin: 0 auto; padding: 24px 24px 20px;">' +
         '<div class="header-top">' +
           '<a href="https://josephrossi.co" class="header-home">Never Stop</a>' +
           '<span class="header-handle">@thejosephrossi</span>' +
