@@ -596,6 +596,42 @@ let apiKey = '';
 let currentMode = 'keyword';
 
 // ─────────────────────────────────────────────
+// LOCALSTORAGE — save data so it persists on refresh
+// localStorage is built into every browser and keeps data
+// on this device until the user clicks Reset
+// ─────────────────────────────────────────────
+function saveToStorage() {
+  try {
+    localStorage.setItem('bb_apikey', apiKey);
+    localStorage.setItem('bb_bookmarks', JSON.stringify(allBookmarks));
+  } catch(e) {
+    console.warn('Could not save to localStorage:', e);
+  }
+}
+
+function clearStorage() {
+  try {
+    localStorage.removeItem('bb_apikey');
+    localStorage.removeItem('bb_bookmarks');
+  } catch(e) {}
+}
+
+function loadFromStorage() {
+  try {
+    const savedKey = localStorage.getItem('bb_apikey');
+    const savedBookmarks = localStorage.getItem('bb_bookmarks');
+    if (savedKey && savedBookmarks) {
+      apiKey = savedKey;
+      allBookmarks = JSON.parse(savedBookmarks);
+      return true;
+    }
+  } catch(e) {
+    console.warn('Could not load from localStorage:', e);
+  }
+  return false;
+}
+
+// ─────────────────────────────────────────────
 // SETUP SCREEN LOGIC
 // ─────────────────────────────────────────────
 const apiKeyInput  = document.getElementById('api-key-input');
@@ -605,6 +641,18 @@ const fileStatus   = document.getElementById('file-status');
 const launchBtn    = document.getElementById('launch-btn');
 
 let fileLoaded = false;
+
+// On page load — check if we already have saved data and skip setup
+// We use setTimeout so renderCards (defined later in the script) is available
+setTimeout(function() {
+  if (loadFromStorage()) {
+    document.getElementById('setup-screen').style.display = 'none';
+    const app = document.getElementById('app-screen');
+    app.style.display = 'flex';
+    document.getElementById('topbar-count').textContent = allBookmarks.length + ' bookmarks';
+    renderCards(allBookmarks, '');
+  }
+}, 0);
 
 apiKeyInput.addEventListener('input', checkReady);
 fileInput.addEventListener('change', handleFile);
@@ -701,15 +749,17 @@ function checkReady() {
 
 document.getElementById('launch-btn').addEventListener('click', () => {
   apiKey = apiKeyInput.value.trim();
+  saveToStorage(); // save so it persists on refresh
   document.getElementById('setup-screen').style.display = 'none';
   const app = document.getElementById('app-screen');
   app.style.display = 'flex';
-  document.getElementById('topbar-count').textContent = `${allBookmarks.length} bookmarks`;
+  document.getElementById('topbar-count').textContent = allBookmarks.length + ' bookmarks';
   renderCards(allBookmarks, '');
 });
 
 document.getElementById('reset-btn').addEventListener('click', () => {
-  if (confirm('Go back to the setup screen?')) {
+  if (confirm('Reset will clear your saved data on this device and return to the setup screen. Continue?')) {
+    clearStorage(); // wipe saved data
     document.getElementById('setup-screen').style.display = 'flex';
     document.getElementById('app-screen').style.display = 'none';
     allBookmarks = [];
