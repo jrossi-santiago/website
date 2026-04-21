@@ -138,6 +138,12 @@ function buildEmailHtml(goal, pinnedImage, randomImage, message) {
 
 export default async function handler(req, res) {
 
+  // Check secret to block unauthorized requests
+  const secret = req.headers['x-cron-secret'];
+  if (secret !== process.env.CRON_SECRET) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
   try {
     const currentWindow = getCurrentWindow();
 
