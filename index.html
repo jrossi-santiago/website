@@ -83,26 +83,13 @@
       transition: color 0.2s;
     }
 
-    .nav-group a:hover .nav-link-title {
-      color: #ffffff;
-    }
+    .nav-group a:hover .nav-link-title { color: #ffffff; }
+    .nav-group a:hover .nav-link-desc { color: #888888; }
 
-    .nav-group a:hover .nav-link-desc {
-      color: #888888;
-    }
-
-    /* ── MOBILE ── */
     @media (max-width: 480px) {
-      .site-image {
-        padding: 40px 0 28px;
-      }
-      .nav-link-title {
-        font-size: 19px;
-      }
-      .nav-group a {
-        flex-wrap: wrap;
-        gap: 4px;
-      }
+      .site-image { padding: 40px 0 28px; }
+      .nav-link-title { font-size: 19px; }
+      .nav-group a { flex-wrap: wrap; gap: 4px; }
     }
   </style>
 </head>
@@ -110,7 +97,7 @@
   <div class="wrap">
 
     <div class="site-image">
-      <img src="/sketch.png" alt="profile image">
+      <img src="/sketch.jpg" alt="home">
     </div>
 
     <nav class="nav-groups">
@@ -120,6 +107,10 @@
         <a href="/sop">
           <span class="nav-link-title">SOP</span>
           <span class="nav-link-desc">Preempt Global's Consistency</span>
+        </a>
+        <a href="/network">
+          <span class="nav-link-title">Network</span>
+          <span class="nav-link-desc">Professional Connections</span>
         </a>
       </div>
 
@@ -140,7 +131,6 @@
       </div>
 
     </nav>
-
   </div>
 </body>
 </html>
