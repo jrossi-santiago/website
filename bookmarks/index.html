@@ -70,89 +70,44 @@ body {
   padding: 0;
   transition: color 0.15s;
   white-space: nowrap;
-  display: none;
   letter-spacing: 0.08em;
 }
-
 .reset-btn:hover { color: #e0e0e0; }
 
-/* ── SETUP SCREEN ── */
-#setup-screen {
-  padding: 40px 0;
+/* ── LOADING SCREEN ── */
+#loading-screen {
+  padding: 60px 0;
   display: flex;
-  flex-direction: column;
-  gap: 28px;
-  max-width: 480px;
-}
-
-.setup-label {
-  font-family: 'Lato', sans-serif;
-  font-weight: 300;
-  font-size: 10px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: #555555;
-  margin-bottom: 10px;
-}
-
-.setup-input {
-  width: 100%;
+  align-items: center;
+  gap: 12px;
   font-family: 'Lato', sans-serif;
   font-weight: 300;
   font-size: 14px;
-  color: #e0e0e0;
-  background: #1a1a1a;
-  border: 1px solid #2a2a2a;
-  padding: 10px 14px;
-  outline: none;
-  transition: border-color 0.2s;
-  border-radius: 0;
-}
-
-.setup-input:focus { border-color: #555555; }
-
-.setup-btn {
-  font-family: 'Lato', sans-serif;
-  font-weight: 300;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  font-size: 13px;
-  background: transparent;
-  color: #e0e0e0;
-  border: 1px solid #e0e0e0;
-  padding: 12px 40px;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-  width: 100%;
-}
-
-.setup-btn:hover { background: #e0e0e0; color: #111111; }
-.setup-btn:disabled { border-color: #2a2a2a; color: #333333; cursor: not-allowed; background: transparent; }
-
-.setup-note {
-  font-size: 12px;
-  font-family: 'Lato', sans-serif;
-  font-weight: 300;
   color: #555555;
   font-style: italic;
-  line-height: 1.8;
 }
 
-.setup-note a { color: #e0e0e0; }
+/* ── ERROR SCREEN ── */
+#error-screen {
+  padding: 40px 0;
+  display: none;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 480px;
+}
 
-.setup-error {
-  font-size: 13px;
+.error-text {
   font-family: 'Lato', sans-serif;
   font-weight: 300;
+  font-size: 14px;
   color: #888888;
   font-style: italic;
-  display: none;
+  line-height: 1.7;
 }
 
 /* ── APP SCREEN ── */
 #app-screen { display: none; flex-direction: column; }
 
-/* ── SEARCH BAR ── */
 .search-bar {
   padding: 24px 0 20px;
   border-bottom: 1px solid #2a2a2a;
@@ -217,7 +172,6 @@ body {
 .search-btn:hover { background: #e0e0e0; color: #111111; }
 .search-btn:disabled { border-color: #2a2a2a; color: #333333; cursor: not-allowed; background: transparent; }
 
-/* ── AI ANSWER ── */
 .ai-answer { padding: 16px 0; border-bottom: 1px solid #2a2a2a; display: none; }
 .ai-answer.visible { display: block; }
 
@@ -240,7 +194,6 @@ body {
   line-height: 1.7;
 }
 
-/* ── RESULTS ── */
 .results-header {
   padding: 18px 0 16px;
   font-family: 'Lato', sans-serif;
@@ -258,7 +211,6 @@ body {
   width: 100%;
 }
 
-/* ── CARDS ── */
 .card {
   padding: 20px;
   border-bottom: 1px solid #1e1e1e;
@@ -304,25 +256,20 @@ body {
 
 .empty-state { padding: 60px 0; color: #555555; font-style: italic; font-family: 'Lato', sans-serif; font-weight: 300; font-size: 14px; display: none; grid-column: 1/-1; }
 
-.loading-state {
-  padding: 60px 0;
-  color: #555555;
-  font-style: italic;
-  font-family: 'Lato', sans-serif;
-  font-weight: 300;
-  font-size: 14px;
-  display: none;
-  align-items: center;
-  gap: 10px;
-}
-
 .spinner {
+  display: inline-block; width: 12px; height: 12px;
+  border: 1.5px solid #555555; border-top-color: transparent;
+  border-radius: 50%; animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.search-spinner {
   display: inline-block; width: 12px; height: 12px;
   border: 1.5px solid #e0e0e0; border-top-color: transparent;
   border-radius: 50%; animation: spin 0.7s linear infinite;
   vertical-align: middle; margin-right: 6px;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
 
 .lightbox {
   display: none; position: fixed; inset: 0;
@@ -357,23 +304,19 @@ body {
   <div class="page-title-block">
     <div class="page-title-row">
       <h1 class="page-title">Bookmarks</h1>
-      <button class="reset-btn" id="reset-btn">Reset</button>
+      <button class="reset-btn" id="reset-btn" onclick="retryLoad()">Reload</button>
     </div>
     <span class="page-slogan">Everything worth saving, searchable.</span>
   </div>
 
-  <!-- SETUP -->
-  <div id="setup-screen">
-    <div>
-      <div class="setup-label">Claude API Key</div>
-      <input type="password" id="api-key-input" class="setup-input" placeholder="sk-ant-api03-..." autocomplete="off" />
-    </div>
-    <button class="setup-btn" id="launch-btn" disabled>Load Bookmarks</button>
-    <div class="setup-error" id="setup-error"></div>
-    <p class="setup-note">
-      Your API key is saved to this device only — nothing goes to any server except Anthropic when you use AI search.<br>
-      <a href="https://console.anthropic.com" target="_blank">Get your API key at console.anthropic.com</a>
-    </p>
+  <!-- LOADING -->
+  <div id="loading-screen">
+    <span class="spinner"></span> Loading bookmarks...
+  </div>
+
+  <!-- ERROR -->
+  <div id="error-screen">
+    <div class="error-text" id="error-text"></div>
   </div>
 
   <!-- APP SEARCH AREA -->
@@ -413,79 +356,57 @@ body {
 
 <script>
 // ── SUPABASE CONFIG ──
-var SUPABASE_URL = 'https://rvwyjipseusvqjqbwken.supabase.co';
 var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ2d3lqaXBzZXVzdnFqcWJ3a2VuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NDA4MDAsImV4cCI6MjA5MjAxNjgwMH0.UFYPZndWuY3uDOWovjxa7qreidWM9sacUlIS9iteMXc';
-var BOOKMARKS_FILE_URL = 'https://rvwyjipseusvqjqbwken.supabase.co/storage/v1/object/public/bookmarks/bookmarks.json';
+var BOOKMARKS_URL = 'https://rvwyjipseusvqjqbwken.supabase.co/storage/v1/object/public/bookmarks/bookmarks.json';
+var APIKEY_URL    = 'https://rvwyjipseusvqjqbwken.supabase.co/storage/v1/object/public/bookmarks/apikey.txt';
 
-let allBookmarks = [];
-let apiKey = '';
-let currentMode = 'keyword';
+var allBookmarks = [];
+var claudeApiKey = '';
+var currentMode = 'keyword';
 
-function saveApiKey() {
-  try { localStorage.setItem('bb_apikey', apiKey); } catch(e) {}
-}
-function clearStorage() {
-  try { localStorage.removeItem('bb_apikey'); } catch(e) {}
-}
-function loadApiKey() {
-  try { return localStorage.getItem('bb_apikey') || ''; } catch(e) { return ''; }
-}
+// Kick everything off on page load
+loadEverything();
 
-const apiKeyInput = document.getElementById('api-key-input');
-const launchBtn   = document.getElementById('launch-btn');
-const setupError  = document.getElementById('setup-error');
-
-// Check if API key already saved — if so skip straight to loading
-var savedKey = loadApiKey();
-if (savedKey) {
-  apiKey = savedKey;
-  loadBookmarksAndShow();
-}
-
-apiKeyInput.addEventListener('input', function() {
-  launchBtn.disabled = !apiKeyInput.value.trim().startsWith('sk-ant');
-});
-
-launchBtn.addEventListener('click', function() {
-  apiKey = apiKeyInput.value.trim();
-  saveApiKey();
-  loadBookmarksAndShow();
-});
-
-async function loadBookmarksAndShow() {
-  // Show a loading message in setup area while fetching
-  launchBtn.disabled = true;
-  launchBtn.textContent = 'Loading bookmarks...';
-  setupError.style.display = 'none';
-
+async function loadEverything() {
+  showScreen('loading');
   try {
-    var res = await fetch(BOOKMARKS_FILE_URL, {
-      headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-      }
-    });
+    // Fetch both files from Supabase at the same time
+    var headers = { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY };
 
-    if (!res.ok) throw new Error('Could not load bookmarks file (HTTP ' + res.status + '). Make sure the bucket is public and the file is named bookmarks.json.');
+    var [keyRes, bookmarksRes] = await Promise.all([
+      fetch(APIKEY_URL, { headers: headers }),
+      fetch(BOOKMARKS_URL, { headers: headers })
+    ]);
 
-    var raw = await res.json();
+    if (!keyRes.ok) throw new Error('Could not load apikey.txt from Supabase (HTTP ' + keyRes.status + '). Make sure the file exists in your bookmarks bucket.');
+    if (!bookmarksRes.ok) throw new Error('Could not load bookmarks.json from Supabase (HTTP ' + bookmarksRes.status + '). Make sure the file exists in your bookmarks bucket.');
+
+    claudeApiKey = (await keyRes.text()).trim();
+    if (!claudeApiKey) throw new Error('apikey.txt is empty. Make sure your Claude API key is saved inside it.');
+
+    var raw = await bookmarksRes.json();
     var extracted = extractBookmarks(raw);
-    if (!extracted || extracted.length === 0) throw new Error('No bookmarks found in file.');
+    if (!extracted || extracted.length === 0) throw new Error('No bookmarks found in bookmarks.json.');
     allBookmarks = extracted.map(normalizeBookmark);
 
-    showApp();
+    showScreen('app');
     renderCards(allBookmarks, '');
+
   } catch(err) {
-    // Show error on setup screen
-    setupError.textContent = '⚠ ' + err.message;
-    setupError.style.display = 'block';
-    launchBtn.textContent = 'Load Bookmarks';
-    launchBtn.disabled = false;
-    // If we auto-skipped setup, show setup screen again
-    document.getElementById('setup-screen').style.display = 'flex';
-    document.getElementById('app-screen').style.display = 'none';
-    document.getElementById('reset-btn').style.display = 'none';
+    document.getElementById('error-text').textContent = '⚠ ' + err.message;
+    showScreen('error');
   }
+}
+
+function retryLoad() {
+  loadEverything();
+}
+
+function showScreen(name) {
+  document.getElementById('loading-screen').style.display = name === 'loading' ? 'flex' : 'none';
+  document.getElementById('error-screen').style.display  = name === 'error'   ? 'flex' : 'none';
+  document.getElementById('app-screen').style.display    = name === 'app'     ? 'flex' : 'none';
+  document.getElementById('reset-btn').style.display     = name === 'app'     ? 'inline-block' : 'none';
 }
 
 function extractBookmarks(data) {
@@ -509,26 +430,6 @@ function normalizeBookmark(b) {
     extended_media: b.extended_media||b.media||b.attachments||[]
   };
 }
-
-function showApp() {
-  document.getElementById('setup-screen').style.display = 'none';
-  document.getElementById('app-screen').style.display = 'flex';
-  document.getElementById('reset-btn').style.display = 'inline-block';
-}
-
-document.getElementById('reset-btn').addEventListener('click', function() {
-  if (confirm('Reset will clear your saved API key on this device. Continue?')) {
-    clearStorage();
-    document.getElementById('setup-screen').style.display = 'flex';
-    document.getElementById('app-screen').style.display = 'none';
-    document.getElementById('reset-btn').style.display = 'none';
-    allBookmarks = []; apiKey = '';
-    apiKeyInput.value = '';
-    launchBtn.disabled = true;
-    launchBtn.textContent = 'Load Bookmarks';
-    setupError.style.display = 'none';
-  }
-});
 
 function setMode(mode) {
   currentMode = mode;
@@ -573,7 +474,7 @@ async function aiSearch(query) {
     var prompt = 'Search Twitter bookmarks for the query. Reply ONLY with matching indexes.\n\nBookmarks:\n' + summary + '\n\nQuery: "' + clean(q) + '"\n\nFormat: MATCHES: 3,7,12 or MATCHES: none';
     var res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' },
+      headers: { 'Content-Type':'application/json','x-api-key':claudeApiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' },
       body: JSON.stringify({ model:'claude-haiku-4-5-20251001', max_tokens:300, messages:[{role:'user',content:prompt}] })
     });
     var raw = await res.text();
@@ -596,7 +497,7 @@ async function aiSearch(query) {
     var CHUNK = 150, total = allBookmarks.length, batches = Math.ceil(total/CHUNK), matched = [];
     for (var i=0; i<batches; i++) {
       var start = i*CHUNK;
-      btn.innerHTML = '<span class="spinner"></span>' + (start+1) + '–' + Math.min(start+CHUNK,total) + ' of ' + total;
+      btn.innerHTML = '<span class="search-spinner"></span>' + (start+1) + '–' + Math.min(start+CHUNK,total) + ' of ' + total;
       answerEl.textContent = 'Scanning ' + (i+1) + ' of ' + batches + '...';
       var hits = await searchBatch(allBookmarks.slice(start,start+CHUNK), start, query);
       matched = matched.concat(hits);
