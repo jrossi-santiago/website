@@ -18,37 +18,16 @@ body {
   overflow-x: hidden;
 }
 
-/* ── WRAP ── */
 .wrap {
   width: 100%;
+  max-width: 680px;
   margin: 0 auto;
   padding: 0 32px 64px;
-  box-sizing: border-box;
 }
-
-/* ── PROFILE PIC ── */
-.site-image {
-  padding: 60px 0 40px;
-}
-
-.site-image a { display: inline-block; }
-
-.site-image img {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  object-fit: cover;
-  display: block;
-  filter: invert(1);
-  border: 1px solid #333333;
-  transition: opacity 0.2s;
-}
-
-.site-image img:hover { opacity: 0.7; }
 
 /* ── PAGE TITLE ── */
 .page-title-block {
-  margin: 0 0 32px;
+  margin: 40px 0 32px;
   padding-bottom: 28px;
   border-bottom: 1px solid #2a2a2a;
 }
@@ -156,7 +135,6 @@ body {
 }
 
 .file-drop-text strong { color: #e0e0e0; font-style: normal; font-weight: 400; }
-
 .file-status { margin-top: 10px; font-size: 13px; font-style: italic; display: none; font-family: 'Lato', sans-serif; font-weight: 300; }
 
 .setup-btn {
@@ -175,13 +153,7 @@ body {
 }
 
 .setup-btn:hover { background: #e0e0e0; color: #111111; }
-
-.setup-btn:disabled {
-  border-color: #2a2a2a;
-  color: #333333;
-  cursor: not-allowed;
-  background: transparent;
-}
+.setup-btn:disabled { border-color: #2a2a2a; color: #333333; cursor: not-allowed; background: transparent; }
 
 .setup-note {
   font-size: 12px;
@@ -243,7 +215,6 @@ body {
 }
 
 .search-input:focus { border-color: #555555; }
-
 .search-input::placeholder { color: #333333; font-style: italic; }
 
 .search-btn {
@@ -297,12 +268,7 @@ body {
   color: #555555;
 }
 
-.results-list {
-  display: grid;
-  grid-template-columns: 1fr;
-  align-items: start;
-}
-
+.results-list { display: grid; grid-template-columns: 1fr; align-items: start; }
 @media (min-width: 600px) { .results-list { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 900px) { .results-list { grid-template-columns: repeat(3, 1fr); } }
 
@@ -330,14 +296,12 @@ body {
 
 .card-author { display: flex; align-items: center; gap: 10px; }
 .avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; background: #222222; flex-shrink: 0; }
-.author-info { flex: 1; min-width: 0; }
 .author-name { font-family: 'Lustria', serif; font-size: 13px; color: #e0e0e0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .author-handle { font-family: 'Lato', sans-serif; font-weight: 300; font-size: 11px; color: #555555; font-style: italic; }
 .card-date { font-family: 'Lato', sans-serif; font-weight: 300; font-size: 11px; color: #555555; white-space: nowrap; flex-shrink: 0; font-style: italic; }
 .card-text { font-family: 'Lato', sans-serif; font-weight: 300; font-size: 14px; line-height: 1.65; color: #e0e0e0; word-break: break-word; }
 .highlight { background: #2a2a2a; padding: 0 2px; color: #ffffff; }
 
-/* Media */
 .card-media { display: grid; gap: 2px; overflow: hidden; background: #1a1a1a; }
 .card-media.count-1 { grid-template-columns: 1fr; }
 .card-media.count-1 img { width: 100%; max-height: 360px; object-fit: contain; background: #1a1a1a; }
@@ -357,7 +321,6 @@ body {
 
 .empty-state { padding: 60px 0; color: #555555; font-style: italic; font-family: 'Lato', sans-serif; font-weight: 300; font-size: 14px; display: none; grid-column: 1/-1; }
 
-/* Spinner */
 .spinner {
   display: inline-block; width: 12px; height: 12px;
   border: 1.5px solid #e0e0e0; border-top-color: transparent;
@@ -366,7 +329,6 @@ body {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* Lightbox */
 .lightbox {
   display: none; position: fixed; inset: 0;
   background: rgba(17,17,17,0.97); z-index: 100;
@@ -385,17 +347,15 @@ body {
 
 @media (max-width: 600px) {
   .wrap { padding-left: 20px; padding-right: 20px; }
-  .site-image { padding: 40px 0 28px; }
 }
 </style>
 </head>
 <body>
 
-<div class="wrap">
+<div id="site-header"></div>
+<script src="/header.js"></script>
 
-  <div class="site-image">
-    <a href="/"><img src="/sketch.png" alt="home"></a>
-  </div>
+<div class="wrap">
 
   <div class="page-title-block">
     <div class="page-title-row">
@@ -674,12 +634,10 @@ function renderCards(bookmarks, highlightQuery) {
   bookmarks.forEach(function(b, idx) {
     var card = document.createElement('div');
     card.style.animationDelay = Math.min(idx*20,180)+'ms';
-
     var dateStr = b.bookmark_date ? new Date(b.bookmark_date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
     var textRaw = (b.full_text||'').trim();
     var isLinkOnly = !textRaw || /^https:\/\/t\.co\/\S+\s*$/.test(textRaw);
     card.className = isLinkOnly ? 'card card-link-only' : 'card';
-
     var displayText = textRaw.replace(/https:\/\/t\.co\/\S+/g,'').trim() || textRaw;
     var tweetText = escHtml(displayText);
     if (highlightQuery) {
@@ -687,7 +645,6 @@ function renderCards(bookmarks, highlightQuery) {
         tweetText = tweetText.replace(new RegExp('('+escRe(w)+')','gi'),'<span class="highlight">$1</span>');
       });
     }
-
     var mediaHTML = '';
     if (b.extended_media&&b.extended_media.length>0) {
       var items = b.extended_media.filter(function(m){return m.media_url_https||m.media_url;}).slice(0,4);
@@ -697,7 +654,6 @@ function renderCards(bookmarks, highlightQuery) {
       }).join('');
       if (imgs) mediaHTML = '<div class="card-media count-'+items.length+'">'+imgs+'</div>';
     }
-
     card.innerHTML =
       '<div class="card-author">' +
         '<img class="avatar" src="'+(b.profile_image_url_https||'')+'" alt="" onerror="this.src=\''+avatarFallback+'\'" />' +
@@ -711,7 +667,6 @@ function renderCards(bookmarks, highlightQuery) {
       (displayText ? '<div class="card-text">'+tweetText+'</div>' : '') +
       mediaHTML +
       (b.tweet_url ? '<a class="card-link" href="'+b.tweet_url+'" target="_blank">'+(isLinkOnly?'open on x ↗':'view on x ↗')+'</a>' : '');
-
     list.appendChild(card);
   });
 }
