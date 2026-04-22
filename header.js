@@ -3,7 +3,8 @@
     { label: 'SOP',          href: '/sop' },
     { label: 'Affirmations', href: '/affirmations' },
     { label: 'Motivation',   href: '/motivation' },
-    { label: 'Bookmarks',    href: '/bookmarks' }
+    { label: 'Bookmarks',    href: '/bookmarks' },
+    { label: 'Network',      href: '/network' }
   ];
 
   var currentPath = window.location.pathname.replace(/\/$/, '').toLowerCase();
@@ -90,7 +91,7 @@
   }\
 </style>\
 <div class="sh-wrap">\
-  <a class="sh-home" href="/"><img src="/sketch.png" alt="home"></a>\
+  <a class="sh-home" href="/"><img src="/sketch.jpg" alt="home"></a>\
   <div class="sh-divider"></div>\
   <nav class="sh-nav">' + navHTML + '</nav>\
 </div>';
