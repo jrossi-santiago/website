@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Home</title>
-  <!-- Google Fonts: Lustria for headings, Lato for body text -->
-  <!-- "Google Fonts" is a free service that loads beautiful fonts from the internet -->
   <link href="https://fonts.googleapis.com/css2?family=Lustria&family=Lato:wght@300;400&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -31,10 +29,11 @@
     }
 
     .site-image img {
-      width: 220px;
+      width: 180px;
       max-width: 100%;
       opacity: 0.85;
       display: block;
+      filter: invert(1);
     }
 
     /* ── NAV GROUPS ── */
@@ -43,10 +42,9 @@
     }
 
     .nav-group {
-      margin-bottom: 28px;
+      margin-bottom: 32px;
     }
 
-    /* Small uppercase category labels use Lato light */
     .nav-group-label {
       font-family: 'Lato', sans-serif;
       font-weight: 300;
@@ -54,27 +52,26 @@
       letter-spacing: 0.18em;
       text-transform: uppercase;
       color: #555555;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
 
     .nav-group a {
       display: flex;
       align-items: baseline;
-      gap: 12px;
+      gap: 10px;
       text-decoration: none;
-      padding: 3px 0;
+      padding: 4px 0;
     }
 
-    /* Big link titles use Lustria (serif heading font) */
     .nav-link-title {
       font-size: 22px;
       font-family: 'Lustria', serif;
       color: #e0e0e0;
       font-weight: normal;
       transition: color 0.2s;
+      white-space: nowrap;
     }
 
-    /* Descriptions use Lato light italic */
     .nav-link-desc {
       font-size: 13px;
       font-family: 'Lato', sans-serif;
@@ -98,14 +95,14 @@
         padding: 40px 0 28px;
       }
       .site-image img {
-        width: 160px;
+        width: 140px;
       }
       .nav-link-title {
         font-size: 19px;
       }
       .nav-group a {
         flex-wrap: wrap;
-        gap: 6px;
+        gap: 4px;
       }
     }
   </style>
@@ -113,35 +110,33 @@
 <body>
   <div class="wrap">
 
-    <!-- SKETCH IMAGE — replace src with your own image path, or delete this block if you don't have one -->
     <div class="site-image">
-      <img src="/sketch.png" alt="site illustration">
+      <img src="/sketch.jpg" alt="site illustration">
     </div>
 
-    <!-- NAV GROUPS -->
     <nav class="nav-groups">
 
       <div class="nav-group">
-        <a href="/affirmations">
-          <span class="nav-link-title">Affirmations</span>
-        </a>
-      </div>
-
-      <div class="nav-group">
+        <div class="nav-group-label">Business</div>
         <a href="/sop">
           <span class="nav-link-title">SOP</span>
+          <span class="nav-link-desc">Preempt Global's Consistency</span>
         </a>
       </div>
 
       <div class="nav-group">
+        <div class="nav-group-label">Personal</div>
+        <a href="/affirmations">
+          <span class="nav-link-title">Affirmations</span>
+          <span class="nav-link-desc">Daily Catholic Meditations</span>
+        </a>
         <a href="/motivation">
           <span class="nav-link-title">Motivation</span>
+          <span class="nav-link-desc">Constant Reminder Emails</span>
         </a>
-      </div>
-
-      <div class="nav-group">
         <a href="/bookmarks">
           <span class="nav-link-title">Bookmarks</span>
+          <span class="nav-link-desc">Search My Twitter Saves</span>
         </a>
       </div>
 
