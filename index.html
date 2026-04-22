@@ -4,13 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Home</title>
+  <!-- Google Fonts: Lustria for headings, Lato for body text -->
+  <!-- "Google Fonts" is a free service that loads beautiful fonts from the internet -->
+  <link href="https://fonts.googleapis.com/css2?family=Lustria&family=Lato:wght@300;400&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       background: #111111;
       color: #e8e8e8;
-      font-family: Georgia, serif;
+      font-family: 'Lato', sans-serif;
       font-size: 16px;
       line-height: 1.6;
       min-height: 100vh;
@@ -43,8 +46,10 @@
       margin-bottom: 28px;
     }
 
+    /* Small uppercase category labels use Lato light */
     .nav-group-label {
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
       font-size: 10px;
       letter-spacing: 0.18em;
       text-transform: uppercase;
@@ -60,17 +65,20 @@
       padding: 3px 0;
     }
 
+    /* Big link titles use Lustria (serif heading font) */
     .nav-link-title {
       font-size: 22px;
-      font-family: Georgia, serif;
+      font-family: 'Lustria', serif;
       color: #e0e0e0;
       font-weight: normal;
       transition: color 0.2s;
     }
 
+    /* Descriptions use Lato light italic */
     .nav-link-desc {
       font-size: 13px;
-      font-family: Georgia, serif;
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
       font-style: italic;
       color: #555555;
       transition: color 0.2s;
@@ -105,7 +113,7 @@
 <body>
   <div class="wrap">
 
-    <!-- SKETCH IMAGE — replace the src with your own image path if you have one -->
+    <!-- SKETCH IMAGE — replace src with your own image path, or delete this block if you don't have one -->
     <div class="site-image">
       <img src="/sketch.png" alt="site illustration">
     </div>
@@ -114,41 +122,26 @@
     <nav class="nav-groups">
 
       <div class="nav-group">
-        <div class="nav-group-label">Practice</div>
-        <a href="/case-studies">
-          <span class="nav-link-title">Case Studies</span>
-          <span class="nav-link-desc">Selected client work</span>
-        </a>
-        <a href="/playground">
-          <span class="nav-link-title">Playground</span>
-          <span class="nav-link-desc">Personal experiments</span>
-        </a>
-        <a href="/notes">
-          <span class="nav-link-title">Notes</span>
-          <span class="nav-link-desc">Short mind extracts</span>
+        <a href="/affirmations">
+          <span class="nav-link-title">Affirmations</span>
         </a>
       </div>
 
       <div class="nav-group">
-        <div class="nav-group-label">Career</div>
-        <a href="/past">
-          <span class="nav-link-title">Past</span>
-          <span class="nav-link-desc">Where I've been</span>
-        </a>
-        <a href="/now">
-          <span class="nav-link-title">Now</span>
-          <span class="nav-link-desc">What I'm doing</span>
+        <a href="/sop">
+          <span class="nav-link-title">SOP</span>
         </a>
       </div>
 
       <div class="nav-group">
-        <div class="nav-group-label">Info</div>
-        <a href="/contact">
-          <span class="nav-link-title">Contact</span>
-          <span class="nav-link-desc">Get in touch</span>
+        <a href="/motivation">
+          <span class="nav-link-title">Motivation</span>
         </a>
-        <a href="/socials">
-          <span class="nav-link-title">Socials</span>
+      </div>
+
+      <div class="nav-group">
+        <a href="/bookmarks">
+          <span class="nav-link-title">Bookmarks</span>
         </a>
       </div>
 
