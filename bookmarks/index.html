@@ -18,20 +18,17 @@ body {
   overflow-x: hidden;
 }
 
-/* ── INNER WIDTH for title/search ── */
 .wrap-inner {
   max-width: 680px;
   margin: 0 auto;
   padding: 0 32px;
 }
 
-/* ── FULL WIDTH for card grid ── */
 .wrap-full {
   width: 100%;
   padding: 0 32px 64px;
 }
 
-/* ── PAGE TITLE ── */
 .page-title-block {
   margin: 40px 0 32px;
   padding-bottom: 28px;
@@ -114,35 +111,6 @@ body {
 
 .setup-input:focus { border-color: #555555; }
 
-.file-drop {
-  border: 1px dashed #2a2a2a;
-  padding: 28px 20px;
-  text-align: center;
-  cursor: pointer;
-  transition: border-color 0.2s;
-  position: relative;
-}
-
-.file-drop:hover, .file-drop.dragover { border-color: #555555; }
-
-.file-drop input[type="file"] {
-  position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
-}
-
-.file-drop-icon { font-size: 1.4rem; margin-bottom: 8px; }
-
-.file-drop-text {
-  font-size: 13px;
-  font-family: 'Lato', sans-serif;
-  font-weight: 300;
-  color: #555555;
-  font-style: italic;
-  line-height: 1.7;
-}
-
-.file-drop-text strong { color: #e0e0e0; font-style: normal; font-weight: 400; }
-.file-status { margin-top: 10px; font-size: 13px; font-style: italic; display: none; font-family: 'Lato', sans-serif; font-weight: 300; }
-
 .setup-btn {
   font-family: 'Lato', sans-serif;
   font-weight: 300;
@@ -171,6 +139,15 @@ body {
 }
 
 .setup-note a { color: #e0e0e0; }
+
+.setup-error {
+  font-size: 13px;
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  color: #888888;
+  font-style: italic;
+  display: none;
+}
 
 /* ── APP SCREEN ── */
 #app-screen { display: none; flex-direction: column; }
@@ -327,6 +304,18 @@ body {
 
 .empty-state { padding: 60px 0; color: #555555; font-style: italic; font-family: 'Lato', sans-serif; font-weight: 300; font-size: 14px; display: none; grid-column: 1/-1; }
 
+.loading-state {
+  padding: 60px 0;
+  color: #555555;
+  font-style: italic;
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  font-size: 14px;
+  display: none;
+  align-items: center;
+  gap: 10px;
+}
+
 .spinner {
   display: inline-block; width: 12px; height: 12px;
   border: 1.5px solid #e0e0e0; border-top-color: transparent;
@@ -379,20 +368,10 @@ body {
       <div class="setup-label">Claude API Key</div>
       <input type="password" id="api-key-input" class="setup-input" placeholder="sk-ant-api03-..." autocomplete="off" />
     </div>
-    <div>
-      <div class="setup-label">Bookmarks File</div>
-      <div class="file-drop" id="file-drop">
-        <input type="file" id="file-input" accept=".json" />
-        <div class="file-drop-icon">📂</div>
-        <div class="file-drop-text">
-          <strong>Drop your bookmarks.json here</strong><br>or click to choose file
-        </div>
-        <div class="file-status" id="file-status"></div>
-      </div>
-    </div>
     <button class="setup-btn" id="launch-btn" disabled>Load Bookmarks</button>
+    <div class="setup-error" id="setup-error"></div>
     <p class="setup-note">
-      Your key and bookmarks are saved to this device only — nothing goes to any server except Anthropic when you use AI search.<br>
+      Your API key is saved to this device only — nothing goes to any server except Anthropic when you use AI search.<br>
       <a href="https://console.anthropic.com" target="_blank">Get your API key at console.anthropic.com</a>
     </p>
   </div>
@@ -433,41 +412,81 @@ body {
 </div>
 
 <script>
+// ── SUPABASE CONFIG ──
+var SUPABASE_URL = 'https://rvwyjipseusvqjqbwken.supabase.co';
+var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ2d3lqaXBzZXVzdnFqcWJ3a2VuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NDA4MDAsImV4cCI6MjA5MjAxNjgwMH0.UFYPZndWuY3uDOWovjxa7qreidWM9sacUlIS9iteMXc';
+var BOOKMARKS_FILE_URL = 'https://rvwyjipseusvqjqbwken.supabase.co/storage/v1/object/public/bookmarks/bookmarks.json';
+
 let allBookmarks = [];
 let apiKey = '';
 let currentMode = 'keyword';
 
-function saveToStorage() {
-  try { localStorage.setItem('bb_apikey', apiKey); localStorage.setItem('bb_bookmarks', JSON.stringify(allBookmarks)); } catch(e) {}
+function saveApiKey() {
+  try { localStorage.setItem('bb_apikey', apiKey); } catch(e) {}
 }
 function clearStorage() {
-  try { localStorage.removeItem('bb_apikey'); localStorage.removeItem('bb_bookmarks'); } catch(e) {}
+  try { localStorage.removeItem('bb_apikey'); } catch(e) {}
 }
-function loadFromStorage() {
-  try {
-    var k = localStorage.getItem('bb_apikey');
-    var b = localStorage.getItem('bb_bookmarks');
-    if (k && b) { apiKey = k; allBookmarks = JSON.parse(b); return true; }
-  } catch(e) {}
-  return false;
+function loadApiKey() {
+  try { return localStorage.getItem('bb_apikey') || ''; } catch(e) { return ''; }
 }
 
 const apiKeyInput = document.getElementById('api-key-input');
-const fileInput   = document.getElementById('file-input');
-const fileDrop    = document.getElementById('file-drop');
-const fileStatus  = document.getElementById('file-status');
 const launchBtn   = document.getElementById('launch-btn');
-let fileLoaded = false;
+const setupError  = document.getElementById('setup-error');
 
-setTimeout(function() {
-  if (loadFromStorage()) { showApp(); renderCards(allBookmarks, ''); }
-}, 0);
+// Check if API key already saved — if so skip straight to loading
+var savedKey = loadApiKey();
+if (savedKey) {
+  apiKey = savedKey;
+  loadBookmarksAndShow();
+}
 
-apiKeyInput.addEventListener('input', checkReady);
-fileInput.addEventListener('change', function(e) { if (e.target.files[0]) processFile(e.target.files[0]); });
-fileDrop.addEventListener('dragover', function(e) { e.preventDefault(); fileDrop.classList.add('dragover'); });
-fileDrop.addEventListener('dragleave', function() { fileDrop.classList.remove('dragover'); });
-fileDrop.addEventListener('drop', function(e) { e.preventDefault(); fileDrop.classList.remove('dragover'); if (e.dataTransfer.files[0]) processFile(e.dataTransfer.files[0]); });
+apiKeyInput.addEventListener('input', function() {
+  launchBtn.disabled = !apiKeyInput.value.trim().startsWith('sk-ant');
+});
+
+launchBtn.addEventListener('click', function() {
+  apiKey = apiKeyInput.value.trim();
+  saveApiKey();
+  loadBookmarksAndShow();
+});
+
+async function loadBookmarksAndShow() {
+  // Show a loading message in setup area while fetching
+  launchBtn.disabled = true;
+  launchBtn.textContent = 'Loading bookmarks...';
+  setupError.style.display = 'none';
+
+  try {
+    var res = await fetch(BOOKMARKS_FILE_URL, {
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+      }
+    });
+
+    if (!res.ok) throw new Error('Could not load bookmarks file (HTTP ' + res.status + '). Make sure the bucket is public and the file is named bookmarks.json.');
+
+    var raw = await res.json();
+    var extracted = extractBookmarks(raw);
+    if (!extracted || extracted.length === 0) throw new Error('No bookmarks found in file.');
+    allBookmarks = extracted.map(normalizeBookmark);
+
+    showApp();
+    renderCards(allBookmarks, '');
+  } catch(err) {
+    // Show error on setup screen
+    setupError.textContent = '⚠ ' + err.message;
+    setupError.style.display = 'block';
+    launchBtn.textContent = 'Load Bookmarks';
+    launchBtn.disabled = false;
+    // If we auto-skipped setup, show setup screen again
+    document.getElementById('setup-screen').style.display = 'flex';
+    document.getElementById('app-screen').style.display = 'none';
+    document.getElementById('reset-btn').style.display = 'none';
+  }
+}
 
 function extractBookmarks(data) {
   if (Array.isArray(data)) return data;
@@ -491,57 +510,23 @@ function normalizeBookmark(b) {
   };
 }
 
-function processFile(file) {
-  fileStatus.style.color = '#e0e0e0';
-  fileStatus.textContent = 'Reading file...';
-  fileStatus.style.display = 'block';
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      var raw = JSON.parse(e.target.result);
-      var extracted = extractBookmarks(raw);
-      if (!extracted||extracted.length===0) throw new Error('No bookmarks found');
-      allBookmarks = extracted.map(normalizeBookmark);
-      fileLoaded = true;
-      fileStatus.textContent = '✓ ' + allBookmarks.length + ' bookmarks loaded';
-      checkReady();
-    } catch(err) {
-      fileStatus.textContent = '✗ ' + (err.message||'Could not read file');
-      fileStatus.style.color = '#888888';
-      fileLoaded = false;
-      checkReady();
-    }
-  };
-  reader.onerror = function() { fileStatus.textContent = '✗ File could not be read'; fileStatus.style.color='#888888'; };
-  reader.readAsText(file);
-}
-
-function checkReady() {
-  launchBtn.disabled = !(apiKeyInput.value.trim().startsWith('sk-ant') && fileLoaded);
-}
-
 function showApp() {
   document.getElementById('setup-screen').style.display = 'none';
   document.getElementById('app-screen').style.display = 'flex';
   document.getElementById('reset-btn').style.display = 'inline-block';
 }
 
-launchBtn.addEventListener('click', function() {
-  apiKey = apiKeyInput.value.trim();
-  saveToStorage();
-  showApp();
-  renderCards(allBookmarks, '');
-});
-
 document.getElementById('reset-btn').addEventListener('click', function() {
-  if (confirm('Reset will clear your saved data on this device. Continue?')) {
+  if (confirm('Reset will clear your saved API key on this device. Continue?')) {
     clearStorage();
     document.getElementById('setup-screen').style.display = 'flex';
     document.getElementById('app-screen').style.display = 'none';
     document.getElementById('reset-btn').style.display = 'none';
-    allBookmarks=[]; apiKey=''; fileLoaded=false;
-    apiKeyInput.value=''; fileInput.value='';
-    fileStatus.style.display='none'; launchBtn.disabled=true;
+    allBookmarks = []; apiKey = '';
+    apiKeyInput.value = '';
+    launchBtn.disabled = true;
+    launchBtn.textContent = 'Load Bookmarks';
+    setupError.style.display = 'none';
   }
 });
 
