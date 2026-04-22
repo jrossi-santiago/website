@@ -23,17 +23,19 @@
       padding: 0 32px;
     }
 
-    /* ── SKETCH IMAGE ── */
+    /* ── PROFILE IMAGE ── */
     .site-image {
       padding: 60px 0 40px;
     }
 
     .site-image img {
-      width: 180px;
-      max-width: 100%;
-      opacity: 0.85;
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      object-fit: cover;
       display: block;
       filter: invert(1);
+      border: 1px solid #333333;
     }
 
     /* ── NAV GROUPS ── */
@@ -94,9 +96,6 @@
       .site-image {
         padding: 40px 0 28px;
       }
-      .site-image img {
-        width: 140px;
-      }
       .nav-link-title {
         font-size: 19px;
       }
@@ -111,7 +110,7 @@
   <div class="wrap">
 
     <div class="site-image">
-      <img src="/sketch.jpg" alt="site illustration">
+      <img src="/sketch.jpg" alt="profile image">
     </div>
 
     <nav class="nav-groups">
