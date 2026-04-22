@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Network</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lustria&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #111111;
+      color: #e8e8e8;
+      font-family: 'Lato', sans-serif;
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 32px 64px;
+    }
+
+    /* ── PAGE TITLE ── */
+    .page-title-block {
+      margin: 40px 0 40px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid #2a2a2a;
+    }
+
+    .page-title {
+      font-family: 'Lustria', serif;
+      font-size: clamp(24px, 4vw, 36px);
+      font-weight: normal;
+      color: #e0e0e0;
+      margin-bottom: 8px;
+    }
+
+    .page-slogan {
+      font-size: 13px;
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      color: #555555;
+      font-style: italic;
+    }
+
+    /* ── ADD FORM ── */
+    .add-form {
+      margin-bottom: 48px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid #2a2a2a;
+    }
+
+    .form-section-label {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #555555;
+      margin-bottom: 20px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field-label {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #555555;
+    }
+
+    .field-input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #2a2a2a;
+      color: #e0e0e0;
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 14px;
+      padding: 8px 0;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+
+    .field-input:focus { border-bottom-color: #555555; }
+    .field-input::placeholder { color: #333333; font-style: italic; }
+
+    .field-textarea {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #2a2a2a;
+      color: #e0e0e0;
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 14px;
+      padding: 8px 0;
+      outline: none;
+      resize: none;
+      min-height: 60px;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+
+    .field-textarea:focus { border-bottom-color: #555555; }
+    .field-textarea::placeholder { color: #333333; font-style: italic; }
+
+    .form-actions {
+      margin-top: 20px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .add-btn {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-size: 13px;
+      background: transparent;
+      color: #e0e0e0;
+      border: 1px solid #e0e0e0;
+      padding: 10px 32px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .add-btn:hover { background: #e0e0e0; color: #111111; }
+    .add-btn:disabled { border-color: #2a2a2a; color: #333333; cursor: not-allowed; background: transparent; }
+
+    /* ── COUNT ── */
+    .count-label {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #555555;
+      margin-bottom: 4px;
+    }
+
+    /* ── LIST ── */
+    .person-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 20px 0;
+      border-bottom: 1px solid #1e1e1e;
+      gap: 16px;
+      animation: fadeUp 0.2s ease both;
+    }
+
+    .person-row:last-child { border-bottom: none; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .person-info { flex: 1; min-width: 0; }
+
+    .person-name {
+      font-family: 'Lustria', serif;
+      font-size: 18px;
+      font-weight: normal;
+      color: #e0e0e0;
+      margin-bottom: 4px;
+    }
+
+    .person-meta {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 13px;
+      color: #555555;
+      margin-bottom: 6px;
+    }
+
+    .person-meta .meta-sep { color: #2a2a2a; margin: 0 6px; }
+
+    .person-notes {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 13px;
+      font-style: italic;
+      color: #444444;
+      line-height: 1.6;
+    }
+
+    .person-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .linkedin-btn {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: #555555;
+      text-decoration: none;
+      transition: color 0.15s;
+      white-space: nowrap;
+    }
+
+    .linkedin-btn:hover { color: #e0e0e0; }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      color: #2a2a2a;
+      cursor: pointer;
+      font-size: 12px;
+      font-family: 'Lato', sans-serif;
+      transition: color 0.15s;
+      padding: 0;
+    }
+
+    .delete-btn:hover { color: #e0e0e0; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 13px;
+      font-style: italic;
+      color: #333333;
+      padding: 24px 0;
+    }
+
+    /* ── STATUS BAR ── */
+    .status-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: #1a1a1a;
+      border-top: 1px solid #2a2a2a;
+      padding: 14px 24px;
+      font-size: 13px;
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-style: italic;
+      color: #555555;
+      text-align: center;
+      transform: translateY(100%);
+      transition: transform 0.3s;
+      z-index: 100;
+    }
+
+    .status-bar.show { transform: translateY(0); }
+    .status-bar.success { color: #e0e0e0; }
+    .status-bar.error { color: #888888; }
+
+    @media (max-width: 480px) {
+      .wrap { padding: 0 20px 48px; }
+      .form-row { grid-template-columns: 1fr; }
+      .page-title { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="site-header"></div>
+<script src="/header.js"></script>
+
+<div class="wrap">
+
+  <div class="page-title-block">
+    <div class="page-title">Network</div>
+    <div class="page-slogan">People worth keeping up with.</div>
+  </div>
+
+  <!-- ADD FORM -->
+  <div class="add-form">
+    <div class="form-section-label">Add a contact</div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <div class="field-label">Name</div>
+        <input class="field-input" type="text" id="input-name" placeholder="John Smith" autocomplete="off" />
+      </div>
+      <div class="form-field">
+        <div class="field-label">Role</div>
+        <input class="field-input" type="text" id="input-role" placeholder="VP of Sales" autocomplete="off" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <div class="field-label">Company</div>
+        <input class="field-input" type="text" id="input-company" placeholder="Acme Corp" autocomplete="off" />
+      </div>
+      <div class="form-field">
+        <div class="field-label">LinkedIn URL</div>
+        <input class="field-input" type="text" id="input-linkedin" placeholder="linkedin.com/in/..." autocomplete="off" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field full">
+        <div class="field-label">Notes</div>
+        <textarea class="field-textarea" id="input-notes" placeholder="Met at conference, follow up about..."></textarea>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="add-btn" id="add-btn">Add to Network</button>
+    </div>
+  </div>
+
+  <!-- LIST -->
+  <div class="count-label" id="count-label"></div>
+  <div id="people-list"></div>
+
+</div>
+
+<div class="status-bar" id="status-bar"></div>
+
+<script>
+  var SUPABASE_URL = 'https://rvwyjipseusvqjqbwken.supabase.co';
+  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ2d3lqaXBzZXVzdnFqcWJ3a2VuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NDA4MDAsImV4cCI6MjA5MjAxNjgwMH0.UFYPZndWuY3uDOWovjxa7qreidWM9sacUlIS9iteMXc';
+
+  async function sbFetch(path, method, body) {
+    method = method || 'GET';
+    var opts = {
+      method: method,
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'Prefer': 'return=representation'
+      }
+    };
+    if (body) opts.body = JSON.stringify(body);
+    var res = await fetch(SUPABASE_URL + path, opts);
+    if (!res.ok) throw new Error(await res.text());
+    var text = await res.text();
+    return text ? JSON.parse(text) : [];
+  }
+
+  function showStatus(msg, type) {
+    var bar = document.getElementById('status-bar');
+    bar.textContent = msg;
+    bar.className = 'status-bar show ' + (type || 'success');
+    setTimeout(function() { bar.className = 'status-bar'; }, 3000);
+  }
+
+  function escHtml(s) {
+    var d = document.createElement('div');
+    d.appendChild(document.createTextNode(s || ''));
+    return d.innerHTML;
+  }
+
+  var people = [];
+
+  function renderList() {
+    var list = document.getElementById('people-list');
+    var countEl = document.getElementById('count-label');
+    list.innerHTML = '';
+
+    if (people.length === 0) {
+      countEl.textContent = '';
+      list.innerHTML = '<div class="empty-state">No contacts yet. Add one above.</div>';
+      return;
+    }
+
+    countEl.textContent = people.length + ' contact' + (people.length !== 1 ? 's' : '');
+
+    people.forEach(function(p, idx) {
+      var row = document.createElement('div');
+      row.className = 'person-row';
+      row.style.animationDelay = Math.min(idx * 40, 200) + 'ms';
+
+      var meta = '';
+      if (p.role && p.company) {
+        meta = escHtml(p.role) + '<span class="meta-sep">·</span>' + escHtml(p.company);
+      } else if (p.role) {
+        meta = escHtml(p.role);
+      } else if (p.company) {
+        meta = escHtml(p.company);
+      }
+
+      var linkedinLink = p.linkedin_url
+        ? '<a class="linkedin-btn" href="' + escHtml(p.linkedin_url) + '" target="_blank">view on linkedin ↗</a>'
+        : '<span class="linkedin-btn" style="opacity:0; pointer-events:none;">—</span>';
+
+      row.innerHTML =
+        '<div class="person-info">' +
+          '<div class="person-name">' + escHtml(p.name) + '</div>' +
+          (meta ? '<div class="person-meta">' + meta + '</div>' : '') +
+          (p.notes ? '<div class="person-notes">' + escHtml(p.notes) + '</div>' : '') +
+        '</div>' +
+        '<div class="person-actions">' +
+          linkedinLink +
+          '<button class="delete-btn" data-id="' + p.id + '">✕</button>' +
+        '</div>';
+
+      row.querySelector('.delete-btn').addEventListener('click', function() {
+        deletePerson(p.id);
+      });
+
+      list.appendChild(row);
+    });
+  }
+
+  async function loadPeople() {
+    try {
+      var data = await sbFetch('/rest/v1/network?order=created_at.asc');
+      people = data;
+      renderList();
+    } catch(e) {
+      console.error('Load error:', e);
+      showStatus('Could not load contacts.', 'error');
+    }
+  }
+
+  async function addPerson() {
+    var name = document.getElementById('input-name').value.trim();
+    var role = document.getElementById('input-role').value.trim();
+    var company = document.getElementById('input-company').value.trim();
+    var linkedin = document.getElementById('input-linkedin').value.trim();
+    var notes = document.getElementById('input-notes').value.trim();
+
+    if (!name) { showStatus('Name is required.', 'error'); return; }
+
+    var btn = document.getElementById('add-btn');
+    btn.disabled = true;
+
+    // clean up linkedin URL — add https:// if missing
+    if (linkedin && !linkedin.startsWith('http')) {
+      linkedin = 'https://' + linkedin;
+    }
+
+    try {
+      var result = await sbFetch('/rest/v1/network', 'POST', {
+        name: name,
+        role: role || null,
+        company: company || null,
+        linkedin_url: linkedin || null,
+        notes: notes || null
+      });
+      people.push(result[0]);
+      renderList();
+      document.getElementById('input-name').value = '';
+      document.getElementById('input-role').value = '';
+      document.getElementById('input-company').value = '';
+      document.getElementById('input-linkedin').value = '';
+      document.getElementById('input-notes').value = '';
+      showStatus('Contact added.', 'success');
+    } catch(e) {
+      console.error('Add error:', e);
+      showStatus('Error adding contact.', 'error');
+    }
+
+    btn.disabled = false;
+  }
+
+  async function deletePerson(id) {
+    try {
+      await sbFetch('/rest/v1/network?id=eq.' + id, 'DELETE');
+      people = people.filter(function(p) { return p.id !== id; });
+      renderList();
+    } catch(e) {
+      console.error('Delete error:', e);
+      showStatus('Error deleting contact.', 'error');
+    }
+  }
+
+  document.getElementById('add-btn').addEventListener('click', addPerson);
+
+  // allow pressing Enter in name field to submit
+  document.getElementById('input-name').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') addPerson();
+  });
+
+  loadPeople();
+</script>
+</body>
+</html>
