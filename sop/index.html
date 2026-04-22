@@ -8,12 +8,10 @@
 </head>
 <body>
 
-<div id="pgos-wrap">
+<div id="site-header"></div>
+<script src="/header.js"></script>
 
-  <!-- PROFILE PIC linking back to home -->
-  <div class="site-image">
-    <a href="/"><img src="/sketch.png" alt="home"></a>
-  </div>
+<div id="pgos-wrap">
 
   <div id="pgos-title-block">
     <h1 id="pgos-title">SOP</h1>
@@ -63,36 +61,14 @@ body {
   min-height: 100vh;
 }
 
-/* ── PROFILE PIC ── */
-.site-image {
-  padding: 60px 0 40px;
-}
-
-.site-image img {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  object-fit: cover;
-  display: block;
-  filter: invert(1);
-  border: 1px solid #333333;
-  transition: opacity 0.2s;
-}
-
-.site-image img:hover {
-  opacity: 0.7;
-}
-
-/* ── PAGE WRAP ── */
 #pgos-wrap {
   max-width: 680px;
   margin: 0 auto;
   padding: 0 32px 64px;
 }
 
-/* ── PAGE TITLE ── */
 #pgos-title-block {
-  margin: 0 0 48px;
+  margin: 40px 0 48px;
   padding-bottom: 28px;
   border-bottom: 1px solid #2a2a2a;
 }
@@ -114,10 +90,7 @@ body {
   font-style: italic;
 }
 
-/* ── GRID ── */
-#pgos-grid-wrap {
-  margin-bottom: 40px;
-}
+#pgos-grid-wrap { margin-bottom: 40px; }
 
 #pgos-grid-label {
   font-family: 'Lato', sans-serif;
@@ -129,10 +102,7 @@ body {
   margin-bottom: 14px;
 }
 
-#pgos-grid-scroll {
-  overflow-x: auto;
-  padding-bottom: 4px;
-}
+#pgos-grid-scroll { overflow-x: auto; padding-bottom: 4px; }
 
 #pgos-grid {
   display: flex;
@@ -141,11 +111,7 @@ body {
   min-width: max-content;
 }
 
-.pgos-grid-col {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
+.pgos-grid-col { display: flex; flex-direction: column; gap: 3px; }
 
 .pgos-grid-cell {
   width: 13px;
@@ -199,7 +165,6 @@ body {
   margin: 0 2px;
 }
 
-/* ── DAY BUTTONS ── */
 #pgos-days {
   display: flex;
   gap: 8px;
@@ -220,17 +185,9 @@ body {
   letter-spacing: 0.08em;
 }
 
-.pgos-day-btn:hover {
-  color: #e0e0e0;
-  border-color: #555555;
-}
+.pgos-day-btn:hover { color: #e0e0e0; border-color: #555555; }
+.pgos-day-btn.pgos-active { color: #e0e0e0; border-color: #e0e0e0; }
 
-.pgos-day-btn.pgos-active {
-  color: #e0e0e0;
-  border-color: #e0e0e0;
-}
-
-/* ── SECTION LABEL ── */
 .pgos-section-label {
   font-family: 'Lato', sans-serif;
   font-weight: 300;
@@ -243,7 +200,6 @@ body {
   border-bottom: 1px solid #2a2a2a;
 }
 
-/* ── TASKS ── */
 .pgos-task {
   display: flex;
   align-items: flex-start;
@@ -270,10 +226,7 @@ body {
   flex-shrink: 0;
 }
 
-.pgos-check.pgos-done {
-  background: #e0e0e0;
-  border-color: #e0e0e0;
-}
+.pgos-check.pgos-done { background: #e0e0e0; border-color: #e0e0e0; }
 
 .pgos-check.pgos-done::after {
   content: '';
@@ -309,7 +262,6 @@ body {
   margin-top: 5px;
 }
 
-/* ── SUBMIT ── */
 #pgos-submit-wrap {
   margin-top: 48px;
   padding-top: 28px;
@@ -336,17 +288,8 @@ body {
   max-width: 320px;
 }
 
-#pgos-submit-btn:hover {
-  background: #e0e0e0;
-  color: #111111;
-}
-
-#pgos-submit-btn:disabled {
-  border-color: #2a2a2a;
-  color: #333333;
-  cursor: not-allowed;
-  background: transparent;
-}
+#pgos-submit-btn:hover { background: #e0e0e0; color: #111111; }
+#pgos-submit-btn:disabled { border-color: #2a2a2a; color: #333333; cursor: not-allowed; background: transparent; }
 
 #pgos-submit-status {
   font-family: 'Lato', sans-serif;
@@ -360,7 +303,6 @@ body {
 
 @media (max-width: 600px) {
   #pgos-wrap { padding: 0 20px 48px; }
-  .site-image { padding: 40px 0 28px; }
   #pgos-title { font-size: 26px; }
   .pgos-day-btn { padding: 7px 13px; font-size: 13px; }
 }
@@ -375,10 +317,7 @@ var db = {
     return {
       select: async function(cols) {
         var res = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?select=' + (cols||'*'), {
-          headers: {
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-          }
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY }
         });
         var data = await res.json();
         return { data: data, error: res.ok ? null : data };
