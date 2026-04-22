@@ -17,31 +17,6 @@
       flex-direction: column;
     }
 
-    /* ── PROFILE PIC ── */
-    .site-image {
-      padding: 60px 0 40px;
-      max-width: 680px;
-      margin: 0 auto;
-      width: 100%;
-      padding-left: 32px;
-      padding-right: 32px;
-    }
-
-    .site-image a { display: inline-block; }
-
-    .site-image img {
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      object-fit: cover;
-      display: block;
-      filter: invert(1);
-      border: 1px solid #333333;
-      transition: opacity 0.2s;
-    }
-
-    .site-image img:hover { opacity: 0.7; }
-
     /* ── STREAK ── */
     #streak-display {
       text-align: center;
@@ -215,241 +190,225 @@
     }
 
     @media (max-width: 480px) {
-      .site-image { padding: 40px 20px 28px; }
       #main { padding: 32px 20px; justify-content: flex-start; padding-top: 48px; }
     }
   </style>
 </head>
 <body>
 
-  <div class="site-image">
-    <a href="/"><img src="/sketch.png" alt="home"></a>
+<div id="site-header"></div>
+<script src="/header.js"></script>
+
+<div id="streak-display">
+  Streak <span id="streak-count">0</span>
+</div>
+
+<div id="main">
+
+  <div id="active-view">
+    <div id="dots"></div>
+    <div id="progress-indicator"></div>
+    <div id="category-label"></div>
+    <div id="prompt-text"></div>
+    <input
+      id="type-input"
+      type="text"
+      autocomplete="off"
+      autocorrect="off"
+      autocapitalize="off"
+      spellcheck="false"
+      placeholder="type it here and press Enter"
+    />
+    <div id="hint-text"></div>
   </div>
 
-  <div id="streak-display">
-    Streak <span id="streak-count">0</span>
+  <div id="locked-view">
+    <div id="locked-heading">Today's Five</div>
+    <div id="locked-items-list"></div>
+    <div id="time-remaining"></div>
   </div>
 
-  <div id="main">
+</div>
 
-    <div id="active-view">
-      <div id="dots"></div>
-      <div id="progress-indicator"></div>
-      <div id="category-label"></div>
-      <div id="prompt-text"></div>
-      <input
-        id="type-input"
-        type="text"
-        autocomplete="off"
-        autocorrect="off"
-        autocapitalize="off"
-        spellcheck="false"
-        placeholder="type it here and press Enter"
-      />
-      <div id="hint-text"></div>
-    </div>
+<script src="/affirmations/data.js"></script>
+<script>
+  const KEY_SESSION  = 'dp_session';
+  const KEY_STREAK   = 'dp_streak';
+  const KEY_LAST_DAY = 'dp_last_day';
 
-    <div id="locked-view">
-      <div id="locked-heading">Today's Five</div>
-      <div id="locked-items-list"></div>
-      <div id="time-remaining"></div>
-    </div>
+  function todayStr() {
+    const d = new Date();
+    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+  }
 
-  </div>
-
-  <script src="/affirmations/data.js"></script>
-  <script>
-    const KEY_SESSION  = 'dp_session';
-    const KEY_STREAK   = 'dp_streak';
-    const KEY_LAST_DAY = 'dp_last_day';
-
-    function todayStr() {
-      const d = new Date();
-      return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
     }
+    return a;
+  }
 
-    function shuffle(arr) {
-      const a = [...arr];
-      for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
+  function pickFive() {
+    const affPick  = shuffle(AFFIRMATIONS)[0];
+    const goalPick = shuffle(GOALS)[0];
+    const used = [
+      { text: affPick,  category: 'Affirmation' },
+      { text: goalPick, category: 'Goal' },
+    ];
+    const remaining = [
+      ...AFFIRMATIONS.filter(x => x !== affPick).map(x => ({ text: x, category: 'Affirmation' })),
+      ...GOALS.filter(x => x !== goalPick).map(x => ({ text: x, category: 'Goal' })),
+    ];
+    const extra = shuffle(remaining).slice(0, 3);
+    return shuffle([...used, ...extra]);
+  }
+
+  function saveSession(s) { localStorage.setItem(KEY_SESSION, JSON.stringify(s)); }
+
+  function loadSession() {
+    try { return JSON.parse(localStorage.getItem(KEY_SESSION)); }
+    catch { return null; }
+  }
+
+  function loadStreak() {
+    return parseInt(localStorage.getItem(KEY_STREAK) || '0', 10);
+  }
+
+  function getLastDay() { return localStorage.getItem(KEY_LAST_DAY) || ''; }
+
+  function updateStreakDisplay(n) {
+    document.getElementById('streak-count').textContent = n;
+  }
+
+  let timerInterval = null;
+
+  function startCountdown() {
+    function tick() {
+      const midnight = new Date();
+      midnight.setHours(24, 0, 0, 0);
+      const diff = midnight.getTime() - Date.now();
+      if (diff <= 0) {
+        clearInterval(timerInterval);
+        setTimeout(() => location.reload(), 1000);
+        return;
       }
-      return a;
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      document.getElementById('time-remaining').textContent =
+        `Resets in ${h}h ${m}m ${s}s`;
     }
+    tick();
+    timerInterval = setInterval(tick, 1000);
+  }
 
-    function pickFive() {
-      const affPick  = shuffle(AFFIRMATIONS)[0];
-      const goalPick = shuffle(GOALS)[0];
-      const used = [
-        { text: affPick,  category: 'Affirmation' },
-        { text: goalPick, category: 'Goal' },
-      ];
-      const remaining = [
-        ...AFFIRMATIONS.filter(x => x !== affPick).map(x => ({ text: x, category: 'Affirmation' })),
-        ...GOALS.filter(x => x !== goalPick).map(x => ({ text: x, category: 'Goal' })),
-      ];
-      const extra = shuffle(remaining).slice(0, 3);
-      return shuffle([...used, ...extra]);
-    }
-
-    function saveSession(s) {
-      localStorage.setItem(KEY_SESSION, JSON.stringify(s));
-    }
-
-    function loadSession() {
-      try { return JSON.parse(localStorage.getItem(KEY_SESSION)); }
-      catch { return null; }
-    }
-
-    function loadStreak() {
-      return parseInt(localStorage.getItem(KEY_STREAK) || '0', 10);
-    }
-
-    function getLastDay() {
-      return localStorage.getItem(KEY_LAST_DAY) || '';
-    }
-
-    function updateStreakDisplay(n) {
-      document.getElementById('streak-count').textContent = n;
-    }
-
-    let timerInterval = null;
-
-    function startCountdown() {
-      function tick() {
-        const midnight = new Date();
-        midnight.setHours(24, 0, 0, 0);
-        const diff = midnight.getTime() - Date.now();
-        if (diff <= 0) {
-          clearInterval(timerInterval);
-          setTimeout(() => location.reload(), 1000);
-          return;
-        }
-        const h = Math.floor(diff / 3600000);
-        const m = Math.floor((diff % 3600000) / 60000);
-        const s = Math.floor((diff % 60000) / 1000);
-        document.getElementById('time-remaining').textContent =
-          `Resets in ${h}h ${m}m ${s}s`;
-      }
-      tick();
-      timerInterval = setInterval(tick, 1000);
-    }
-
-    function showLocked(sess) {
-      document.getElementById('active-view').style.display = 'none';
-      document.getElementById('locked-view').style.display = 'block';
-      const list = document.getElementById('locked-items-list');
-      list.innerHTML = '';
-      sess.items.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'locked-item';
-        div.innerHTML = `
-          <div class="locked-category">${item.category}</div>
-          <div class="locked-text">${item.text}</div>
-        `;
-        list.appendChild(div);
-      });
-      startCountdown();
-    }
-
-    let currentIndex = 0;
-    let session = null;
-
-    function buildDots(items, idx) {
-      const dotsEl = document.getElementById('dots');
-      dotsEl.innerHTML = '';
-      items.forEach((_, i) => {
-        const dot = document.createElement('div');
-        dot.className = 'dot' + (i < idx ? ' done' : i === idx ? ' current' : '');
-        dotsEl.appendChild(dot);
-      });
-    }
-
-    function showItem(idx) {
-      const item = session.items[idx];
-      document.getElementById('progress-indicator').textContent = `${idx + 1} of 5`;
-      document.getElementById('category-label').textContent = item.category;
-      document.getElementById('prompt-text').textContent = item.text;
-      document.getElementById('type-input').value = '';
-      document.getElementById('type-input').className = '';
-      document.getElementById('hint-text').textContent = '';
-      document.getElementById('hint-text').className = 'hint-text';
-      buildDots(session.items, idx);
-      setTimeout(() => document.getElementById('type-input').focus(), 50);
-    }
-
-    function showActiveView() {
-      document.getElementById('active-view').style.display = 'block';
-      document.getElementById('locked-view').style.display = 'none';
-      currentIndex = session.completedCount;
-      showItem(currentIndex);
-    }
-
-    document.getElementById('type-input').addEventListener('keydown', function(e) {
-      if (e.key !== 'Enter') return;
-      const typed   = this.value.trim();
-      const correct = session.items[currentIndex].text.trim();
-      if (typed === correct) {
-        this.className = 'success';
-        session.completedCount++;
-        saveSession(session);
-        if (session.completedCount === 5) {
-          const today   = todayStr();
-          const lastDay = getLastDay();
-          let streak    = loadStreak();
-          if (lastDay !== today) {
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
-            const yStr = `${yesterday.getFullYear()}-${yesterday.getMonth()}-${yesterday.getDate()}`;
-            if (lastDay === yStr) {
-              streak++;
-            } else {
-              streak = 1;
-            }
-            localStorage.setItem(KEY_STREAK, streak);
-            localStorage.setItem(KEY_LAST_DAY, today);
-          }
-          updateStreakDisplay(streak);
-          setTimeout(() => showLocked(session), 700);
-        } else {
-          setTimeout(() => {
-            currentIndex = session.completedCount;
-            showItem(currentIndex);
-          }, 700);
-        }
-      } else {
-        this.className = 'error';
-        const hint = document.getElementById('hint-text');
-        hint.textContent = 'Not quite — type it exactly as shown above.';
-        hint.className = 'hint-text visible';
-        setTimeout(() => {
-          this.value = '';
-          this.className = '';
-          hint.textContent = '';
-          hint.className = 'hint-text';
-        }, 1400);
-      }
+  function showLocked(sess) {
+    document.getElementById('active-view').style.display = 'none';
+    document.getElementById('locked-view').style.display = 'block';
+    const list = document.getElementById('locked-items-list');
+    list.innerHTML = '';
+    sess.items.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'locked-item';
+      div.innerHTML = `
+        <div class="locked-category">${item.category}</div>
+        <div class="locked-text">${item.text}</div>
+      `;
+      list.appendChild(div);
     });
+    startCountdown();
+  }
 
-    function init() {
-      const stored = loadSession();
-      const today  = todayStr();
-      updateStreakDisplay(loadStreak());
-      if (stored && stored.day === today) {
-        session = stored;
-        if (session.completedCount >= 5) {
-          showLocked(session);
-        } else {
-          showActiveView();
+  let currentIndex = 0;
+  let session = null;
+
+  function buildDots(items, idx) {
+    const dotsEl = document.getElementById('dots');
+    dotsEl.innerHTML = '';
+    items.forEach((_, i) => {
+      const dot = document.createElement('div');
+      dot.className = 'dot' + (i < idx ? ' done' : i === idx ? ' current' : '');
+      dotsEl.appendChild(dot);
+    });
+  }
+
+  function showItem(idx) {
+    const item = session.items[idx];
+    document.getElementById('progress-indicator').textContent = `${idx + 1} of 5`;
+    document.getElementById('category-label').textContent = item.category;
+    document.getElementById('prompt-text').textContent = item.text;
+    document.getElementById('type-input').value = '';
+    document.getElementById('type-input').className = '';
+    document.getElementById('hint-text').textContent = '';
+    document.getElementById('hint-text').className = 'hint-text';
+    buildDots(session.items, idx);
+    setTimeout(() => document.getElementById('type-input').focus(), 50);
+  }
+
+  function showActiveView() {
+    document.getElementById('active-view').style.display = 'block';
+    document.getElementById('locked-view').style.display = 'none';
+    currentIndex = session.completedCount;
+    showItem(currentIndex);
+  }
+
+  document.getElementById('type-input').addEventListener('keydown', function(e) {
+    if (e.key !== 'Enter') return;
+    const typed   = this.value.trim();
+    const correct = session.items[currentIndex].text.trim();
+    if (typed === correct) {
+      this.className = 'success';
+      session.completedCount++;
+      saveSession(session);
+      if (session.completedCount === 5) {
+        const today   = todayStr();
+        const lastDay = getLastDay();
+        let streak    = loadStreak();
+        if (lastDay !== today) {
+          const yesterday = new Date();
+          yesterday.setDate(yesterday.getDate() - 1);
+          const yStr = `${yesterday.getFullYear()}-${yesterday.getMonth()}-${yesterday.getDate()}`;
+          if (lastDay === yStr) { streak++; } else { streak = 1; }
+          localStorage.setItem(KEY_STREAK, streak);
+          localStorage.setItem(KEY_LAST_DAY, today);
         }
+        updateStreakDisplay(streak);
+        setTimeout(() => showLocked(session), 700);
       } else {
-        session = { day: today, items: pickFive(), completedCount: 0 };
-        saveSession(session);
-        showActiveView();
+        setTimeout(() => { currentIndex = session.completedCount; showItem(currentIndex); }, 700);
       }
+    } else {
+      this.className = 'error';
+      const hint = document.getElementById('hint-text');
+      hint.textContent = 'Not quite — type it exactly as shown above.';
+      hint.className = 'hint-text visible';
+      setTimeout(() => {
+        this.value = '';
+        this.className = '';
+        hint.textContent = '';
+        hint.className = 'hint-text';
+      }, 1400);
     }
+  });
 
-    init();
-  </script>
+  function init() {
+    const stored = loadSession();
+    const today  = todayStr();
+    updateStreakDisplay(loadStreak());
+    if (stored && stored.day === today) {
+      session = stored;
+      if (session.completedCount >= 5) { showLocked(session); }
+      else { showActiveView(); }
+    } else {
+      session = { day: today, items: pickFive(), completedCount: 0 };
+      saveSession(session);
+      showActiveView();
+    }
+  }
+
+  init();
+</script>
 </body>
 </html>
