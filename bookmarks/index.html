@@ -18,10 +18,16 @@ body {
   overflow-x: hidden;
 }
 
-.wrap {
-  width: 100%;
+/* ── INNER WIDTH for title/search ── */
+.wrap-inner {
   max-width: 680px;
   margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* ── FULL WIDTH for card grid ── */
+.wrap-full {
+  width: 100%;
   padding: 0 32px 64px;
 }
 
@@ -268,23 +274,22 @@ body {
   color: #555555;
 }
 
-.results-list { display: grid; grid-template-columns: 1fr; align-items: start; }
-@media (min-width: 600px) { .results-list { grid-template-columns: repeat(2, 1fr); } }
-@media (min-width: 900px) { .results-list { grid-template-columns: repeat(3, 1fr); } }
+.results-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  align-items: start;
+  width: 100%;
+}
 
 /* ── CARDS ── */
 .card {
   padding: 20px;
   border-bottom: 1px solid #1e1e1e;
+  border-right: 1px solid #1e1e1e;
   display: flex;
   flex-direction: column;
   gap: 10px;
   animation: fadeUp 0.2s ease both;
-}
-
-@media (min-width: 700px) {
-  .card { border-right: 1px solid #1e1e1e; }
-  .card:nth-child(3n) { border-right: none; }
 }
 
 .card-link-only { background: #151515; }
@@ -296,6 +301,7 @@ body {
 
 .card-author { display: flex; align-items: center; gap: 10px; }
 .avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; background: #222222; flex-shrink: 0; }
+.author-info { flex: 1; min-width: 0; }
 .author-name { font-family: 'Lustria', serif; font-size: 13px; color: #e0e0e0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .author-handle { font-family: 'Lato', sans-serif; font-weight: 300; font-size: 11px; color: #555555; font-style: italic; }
 .card-date { font-family: 'Lato', sans-serif; font-weight: 300; font-size: 11px; color: #555555; white-space: nowrap; flex-shrink: 0; font-style: italic; }
@@ -346,7 +352,9 @@ body {
 .lightbox-close:hover { color: #e0e0e0; }
 
 @media (max-width: 600px) {
-  .wrap { padding-left: 20px; padding-right: 20px; }
+  .wrap-inner { padding: 0 20px; }
+  .wrap-full { padding: 0 20px 48px; }
+  .results-list { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -355,7 +363,7 @@ body {
 <div id="site-header"></div>
 <script src="/header.js"></script>
 
-<div class="wrap">
+<div class="wrap-inner">
 
   <div class="page-title-block">
     <div class="page-title-row">
@@ -389,7 +397,7 @@ body {
     </p>
   </div>
 
-  <!-- APP -->
+  <!-- APP SEARCH AREA -->
   <div id="app-screen">
     <div class="search-bar">
       <div class="mode-tabs">
@@ -408,11 +416,15 @@ body {
     </div>
 
     <div class="results-header" id="results-header"></div>
-    <div class="results-list" id="results-list">
-      <div class="empty-state" id="empty-state">No bookmarks matched that search.</div>
-    </div>
   </div>
 
+</div>
+
+<!-- CARD GRID goes full width -->
+<div class="wrap-full">
+  <div class="results-list" id="results-list">
+    <div class="empty-state" id="empty-state">No bookmarks matched that search.</div>
+  </div>
 </div>
 
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
