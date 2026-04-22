@@ -21,7 +21,6 @@
       padding: 0 32px 64px;
     }
 
-    /* ── PAGE TITLE ── */
     .page-title {
       margin: 40px 0 48px;
       padding-bottom: 28px;
@@ -44,7 +43,6 @@
       font-style: italic;
     }
 
-    /* ── SECTION ── */
     .section { margin-bottom: 56px; }
 
     .section-title {
@@ -59,7 +57,6 @@
       border-bottom: 1px solid #2a2a2a;
     }
 
-    /* ── MOTIVATION CARD ── */
     .card-loading {
       color: #333333;
       font-size: 13px;
@@ -69,9 +66,7 @@
       padding: 8px 0;
     }
 
-    .motivation-card {
-      display: none;
-    }
+    .motivation-card { display: none; }
 
     .card-quote {
       font-family: 'Lustria', serif;
@@ -107,9 +102,7 @@
       gap: 16px;
     }
 
-    .card-image-wrap {
-      position: relative;
-    }
+    .card-image-wrap { position: relative; }
 
     .card-image-label {
       font-family: 'Lato', sans-serif;
@@ -127,7 +120,6 @@
       border: 1px solid #2a2a2a;
     }
 
-    /* ── DIVIDER ── */
     .settings-divider {
       border: none;
       border-top: 1px solid #1a1a1a;
@@ -144,7 +136,6 @@
       margin-bottom: 48px;
     }
 
-    /* ── TEXTAREA ── */
     textarea {
       width: 100%;
       background: transparent;
@@ -188,7 +179,6 @@
 
     .fire-btn:hover { background: #e0e0e0; color: #111111; }
 
-    /* ── LISTS ── */
     .items-list { margin-top: 24px; display: flex; flex-direction: column; }
 
     .list-item {
@@ -225,7 +215,6 @@
 
     .delete-btn:hover { color: #e0e0e0; }
 
-    /* ── UPLOAD ── */
     .upload-area {
       border: 1px dashed #2a2a2a;
       padding: 36px;
@@ -251,7 +240,6 @@
       color: #333333;
     }
 
-    /* ── IMAGE GRID ── */
     .image-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -268,7 +256,6 @@
     }
 
     .image-card.pinned { border: 2px solid #e0e0e0; }
-
     .image-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
     .image-card .img-delete {
@@ -310,7 +297,6 @@
       font-style: italic; padding: 8px 0;
     }
 
-    /* ── STATUS BAR ── */
     .status-bar {
       position: fixed; bottom: 0; left: 0; right: 0;
       background: #1a1a1a; border-top: 1px solid #2a2a2a;
@@ -343,26 +329,21 @@
     <p>Your daily motivation</p>
   </div>
 
-  <!-- ── DAILY CARD ── -->
+  <!-- DAILY CARD -->
   <div class="section">
     <div class="section-title">Today</div>
     <p class="card-loading" id="cardLoading">Loading…</p>
-
     <div class="motivation-card" id="motivationCard">
-
       <div class="card-quote" id="cardQuote"></div>
-
       <div id="cardGoalWrap">
         <div class="card-goal-label">What you're fighting for</div>
         <div class="card-goal-text" id="cardGoal"></div>
       </div>
-
       <div class="card-images" id="cardImages"></div>
-
     </div>
   </div>
 
-  <!-- ── SETTINGS ── -->
+  <!-- SETTINGS -->
   <hr class="settings-divider" />
   <p class="settings-heading">Settings</p>
 
@@ -375,18 +356,6 @@
     </div>
     <div class="items-list" id="goalsList">
       <p class="empty-state">No goals yet.</p>
-    </div>
-  </div>
-
-  <!-- Quotes -->
-  <div class="section">
-    <div class="section-title">Quotes</div>
-    <textarea id="quoteInput" placeholder="Add a motivational quote."></textarea>
-    <div class="btn-row">
-      <button class="fire-btn" id="addQuoteBtn">Add Quote</button>
-    </div>
-    <div class="items-list" id="quotesList">
-      <p class="empty-state">No quotes yet.</p>
     </div>
   </div>
 
@@ -414,14 +383,42 @@
   var CLOUDINARY_CLOUD_NAME = 'dasjoaf0h';
   var CLOUDINARY_UPLOAD_PRESET = 'motivation_uploads';
 
-  // ── STORAGE KEYS ──
-  // localStorage is like a tiny notebook your browser keeps for this site.
-  // We use it to remember which quote/goal/image was shown last, and when.
-  var KEY_CARD     = 'ne_card';      // the saved card content
-  var KEY_SAVED_AT = 'ne_saved_at';  // timestamp of when card was last picked
+  var QUOTES = [
+    'You said this mattered. Prove it.',
+    'Everyone who doubted you is watching. What are you doing right now?',
+    'The version of you that achieves this doesn\'t make excuses. Be that person TODAY.',
+    'Stop waiting to feel ready. You will never feel ready. Move anyway.',
+    'Your competition isn\'t resting. What\'s your excuse?',
+    'This is the work. Not the glamour. Not the results. THIS moment, right now. Do the work.',
+    'You\'ve been comfortable long enough. Comfortable doesn\'t build anything.',
+    'Future you is either grateful or disappointed. You\'re deciding which one right now.',
+    'No one is coming to save you. No one is going to do this for you. Get up.',
+    'The goal doesn\'t care how you feel today. Show up anyway.',
+    'Discipline is doing it when you don\'t want to. You don\'t want to right now. Do it anyway.',
+    'Every day you delay is a day you hand to someone else who wants it more.',
+    'You already know what you need to do. Stop pretending you don\'t.',
+    'Mediocrity is comfortable. Is that what you came here for?',
+    'The people living the life you want didn\'t get there by being soft.',
+    'What would the hardest version of you do right now? Go do that.',
+    'You\'re not tired. You\'re avoiding. There\'s a difference.',
+    'This is your reminder that time is running out and excuses don\'t age well.',
+    'The gap between who you are and who you want to be is closed by action. Not intentions.',
+    'You set these goals for a reason. Remember that reason. NOW MOVE.',
+    'You are not special enough to skip the work. Nobody is.',
+    'The life you want is on the other side of the effort you keep avoiding.',
+    'Stop treating rest like you\'ve earned it. You haven\'t yet.',
+    'Every excuse you make is a brick in the wall between you and everything you want.',
+    'You talk about it more than you do it. That ends today.',
+    'Comfort is a trap and you keep walking into it with a smile.',
+    'You don\'t get to be proud of goals you haven\'t hit yet. Earn it first.',
+    'Other people are outworking you right now. While you read this. Think about that.',
+    'Stop waiting for motivation. Motivation is for amateurs. You move because you decided to.'
+  ];
+
+  var KEY_CARD     = 'ne_card';
+  var KEY_SAVED_AT = 'ne_saved_at';
   var HOURS_18     = 18 * 60 * 60 * 1000;
 
-  // ── HELPERS ──
   function sbFetch(path, method, body) {
     method = method || 'GET';
     var opts = {
@@ -457,17 +454,12 @@
     return arr[Math.floor(Math.random() * arr.length)];
   }
 
-  // ── CARD LOGIC ──
-  // "18 hours OR a new calendar day" — whichever comes first.
-  // A calendar day means if you viewed it at 11pm and it's now past midnight, it refreshes.
   function cardIsStale() {
     var savedAt = localStorage.getItem(KEY_SAVED_AT);
     if (!savedAt) return true;
     var savedTime = parseInt(savedAt, 10);
     var now = Date.now();
-    // Check 18 hours
     if (now - savedTime >= HOURS_18) return true;
-    // Check calendar day boundary
     var savedDate = new Date(savedTime).toDateString();
     var todayDate = new Date(now).toDateString();
     if (savedDate !== todayDate) return true;
@@ -511,7 +503,6 @@
   }
 
   function loadCard() {
-    // If card is not stale, show the saved one immediately — no network needed
     if (!cardIsStale()) {
       try {
         var saved = JSON.parse(localStorage.getItem(KEY_CARD));
@@ -519,25 +510,22 @@
       } catch(e) {}
     }
 
-    // Otherwise fetch fresh data from Supabase and pick new content
     Promise.all([
-      sbFetch('/rest/v1/quotes?order=created_at.asc'),
       sbFetch('/rest/v1/goals?order=created_at.asc'),
       sbFetch('/rest/v1/images?order=created_at.asc')
     ]).then(function(results) {
-      var quotes = results[0];
-      var goals  = results[1];
-      var images = results[2];
+      var goals  = results[0];
+      var images = results[1];
 
-      var pinnedImage   = images.find(function(i) { return i.pinned; }) || null;
-      var unpinned      = images.filter(function(i) { return !i.pinned; });
-      var randomImage   = unpinned.length > 0 ? pickRandom(unpinned) : null;
+      var pinnedImage  = images.find(function(i) { return i.pinned; }) || null;
+      var unpinned     = images.filter(function(i) { return !i.pinned; });
+      var randomImage  = unpinned.length > 0 ? pickRandom(unpinned) : null;
 
       var card = {
-        quote:          quotes.length > 0 ? pickRandom(quotes).text : 'No excuses.',
-        goal:           goals.length  > 0 ? pickRandom(goals).text  : null,
-        pinnedImageUrl: pinnedImage  ? pinnedImage.url  : null,
-        randomImageUrl: randomImage  ? randomImage.url  : null
+        quote:          pickRandom(QUOTES),
+        goal:           goals.length > 0 ? pickRandom(goals).text : null,
+        pinnedImageUrl: pinnedImage ? pinnedImage.url : null,
+        randomImageUrl: randomImage ? randomImage.url : null
       };
 
       localStorage.setItem(KEY_CARD, JSON.stringify(card));
@@ -595,54 +583,6 @@
         renderGoals();
       })
       .catch(function() { showStatus('Error deleting goal.', 'error'); });
-  }
-
-  // ── QUOTES ──
-  var quotes = [];
-
-  function loadQuotes() {
-    sbFetch('/rest/v1/quotes?order=created_at.asc')
-      .then(function(data) { quotes = data; renderQuotes(); })
-      .catch(function(e) { console.error(e); });
-  }
-
-  function renderQuotes() {
-    var list = document.getElementById('quotesList');
-    list.innerHTML = '';
-    if (quotes.length === 0) {
-      list.innerHTML = '<p class="empty-state">No quotes yet. Add one above.</p>';
-      return;
-    }
-    quotes.forEach(function(q) {
-      var div = document.createElement('div');
-      div.className = 'list-item';
-      div.innerHTML = '<p>' + escapeHtml(q.text) + '</p><button class="delete-btn" data-id="' + q.id + '">✕</button>';
-      div.querySelector('.delete-btn').addEventListener('click', function() { deleteQuote(q.id); });
-      list.appendChild(div);
-    });
-  }
-
-  function addQuote() {
-    var input = document.getElementById('quoteInput');
-    var text = input.value.trim();
-    if (!text) { showStatus('Type a quote first.', 'error'); return; }
-    sbFetch('/rest/v1/quotes', 'POST', { text: text })
-      .then(function(result) {
-        quotes.push(result[0]);
-        renderQuotes();
-        input.value = '';
-        showStatus('Quote saved.', 'success');
-      })
-      .catch(function() { showStatus('Error saving quote.', 'error'); });
-  }
-
-  function deleteQuote(id) {
-    sbFetch('/rest/v1/quotes?id=eq.' + id, 'DELETE')
-      .then(function() {
-        quotes = quotes.filter(function(q) { return q.id !== id; });
-        renderQuotes();
-      })
-      .catch(function() { showStatus('Error deleting quote.', 'error'); });
   }
 
   // ── IMAGES ──
@@ -729,18 +669,14 @@
       .catch(function() { showStatus('Error deleting image.', 'error'); });
   }
 
-  // ── EVENT LISTENERS ──
   document.getElementById('addGoalBtn').addEventListener('click', addGoal);
-  document.getElementById('addQuoteBtn').addEventListener('click', addQuote);
   document.getElementById('uploadArea').addEventListener('click', function() {
     document.getElementById('imageInput').click();
   });
   document.getElementById('imageInput').addEventListener('change', handleImageUpload);
 
-  // ── INIT ──
   loadCard();
   loadGoals();
-  loadQuotes();
   loadImages();
 </script>
 </body>
