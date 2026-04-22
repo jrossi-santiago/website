@@ -1,98 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Home</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
-    background: #ffffff;
-    color: #1a1a1a;
-    font-family: Georgia, serif;
-    font-size: 15px;
-    line-height: 1.7;
-    min-height: 100vh;
-  }
+    body {
+      background: #111111;
+      color: #e8e8e8;
+      font-family: Georgia, serif;
+      font-size: 16px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
 
-  .wrap {
-    max-width: 680px;
-    margin: 0 auto;
-    padding: 0 24px;
-  }
+    .wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
 
-  /* ── HEADER ── */
-  header {
-    padding: 24px 0 20px;
-    border-bottom: 1px solid #e0e0e0;
-  }
+    /* ── SKETCH IMAGE ── */
+    .site-image {
+      padding: 60px 0 40px;
+    }
 
-  .header-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 16px;
-  }
+    .site-image img {
+      width: 220px;
+      max-width: 100%;
+      opacity: 0.85;
+      display: block;
+    }
 
-  .header-home {
-    font-size: 13px;
-    font-style: italic;
-    color: #1a1a1a;
-    text-decoration: none;
-    transition: color 0.2s;
-  }
+    /* ── NAV GROUPS ── */
+    .nav-groups {
+      padding-bottom: 80px;
+    }
 
-  .header-home:hover { color: #aaaaaa; }
+    .nav-group {
+      margin-bottom: 28px;
+    }
 
-  .header-handle {
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: #aaaaaa;
-  }
+    .nav-group-label {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #555555;
+      margin-bottom: 8px;
+    }
 
-  .header-nav {
-    display: flex;
-    gap: 0;
-    border-top: 1px solid #f0f0f0;
-    padding-top: 14px;
-    flex-wrap: wrap;
-  }
+    .nav-group a {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      text-decoration: none;
+      padding: 3px 0;
+    }
 
-  .header-nav a {
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: #aaaaaa;
-    text-decoration: none;
-    margin-right: 24px;
-    padding-bottom: 2px;
-    transition: color 0.2s;
-  }
+    .nav-link-title {
+      font-size: 22px;
+      font-family: Georgia, serif;
+      color: #e0e0e0;
+      font-weight: normal;
+      transition: color 0.2s;
+    }
 
-  .header-nav a:hover { color: #1a1a1a; }
-  .header-nav a.active {
-    color: #1a1a1a;
-    border-bottom: 1px solid #1a1a1a;
-  }
+    .nav-link-desc {
+      font-size: 13px;
+      font-family: Georgia, serif;
+      font-style: italic;
+      color: #555555;
+      transition: color 0.2s;
+    }
 
-  /* ── PAGE CONTENT ── */
-  .page-content {
-    padding: 48px 0;
-  }
+    .nav-group a:hover .nav-link-title {
+      color: #ffffff;
+    }
 
-</style>
+    .nav-group a:hover .nav-link-desc {
+      color: #888888;
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 480px) {
+      .site-image {
+        padding: 40px 0 28px;
+      }
+      .site-image img {
+        width: 160px;
+      }
+      .nav-link-title {
+        font-size: 19px;
+      }
+      .nav-group a {
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="wrap">
+  <div class="wrap">
 
-<div id="site-header"></div>
-<script src="/header.js"></script>
+    <!-- SKETCH IMAGE — replace the src with your own image path if you have one -->
+    <div class="site-image">
+      <img src="/sketch.png" alt="site illustration">
+    </div>
 
-  <div class="page-content">
+    <!-- NAV GROUPS -->
+    <nav class="nav-groups">
+
+      <div class="nav-group">
+        <div class="nav-group-label">Practice</div>
+        <a href="/case-studies">
+          <span class="nav-link-title">Case Studies</span>
+          <span class="nav-link-desc">Selected client work</span>
+        </a>
+        <a href="/playground">
+          <span class="nav-link-title">Playground</span>
+          <span class="nav-link-desc">Personal experiments</span>
+        </a>
+        <a href="/notes">
+          <span class="nav-link-title">Notes</span>
+          <span class="nav-link-desc">Short mind extracts</span>
+        </a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-label">Career</div>
+        <a href="/past">
+          <span class="nav-link-title">Past</span>
+          <span class="nav-link-desc">Where I've been</span>
+        </a>
+        <a href="/now">
+          <span class="nav-link-title">Now</span>
+          <span class="nav-link-desc">What I'm doing</span>
+        </a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-label">Info</div>
+        <a href="/contact">
+          <span class="nav-link-title">Contact</span>
+          <span class="nav-link-desc">Get in touch</span>
+        </a>
+        <a href="/socials">
+          <span class="nav-link-title">Socials</span>
+        </a>
+      </div>
+
+    </nav>
+
   </div>
-
-</div>
 </body>
 </html>
