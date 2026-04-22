@@ -4,13 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SOP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lustria&family=Lato:wght@300;400&display=swap" rel="stylesheet">
 </head>
 <body>
 
 <div id="pgos-wrap">
 
-<div id="site-header"></div>
-<script src="/header.js"></script>
+  <!-- PROFILE PIC linking back to home -->
+  <div class="site-image">
+    <a href="/"><img src="/sketch.jpg" alt="home"></a>
+  </div>
 
   <div id="pgos-title-block">
     <h1 id="pgos-title">SOP</h1>
@@ -24,11 +27,11 @@
     </div>
     <div id="pgos-grid-legend">
       <span class="pgos-legend-text">Less</span>
+      <span class="pgos-legend-cell" style="background:#2a2a2a;"></span>
+      <span class="pgos-legend-cell" style="background:#3d3d3d;"></span>
+      <span class="pgos-legend-cell" style="background:#666666;"></span>
+      <span class="pgos-legend-cell" style="background:#999999;"></span>
       <span class="pgos-legend-cell" style="background:#e0e0e0;"></span>
-      <span class="pgos-legend-cell" style="background:#bbbbbb;"></span>
-      <span class="pgos-legend-cell" style="background:#888888;"></span>
-      <span class="pgos-legend-cell" style="background:#444444;"></span>
-      <span class="pgos-legend-cell" style="background:#1a1a1a;"></span>
       <span class="pgos-legend-text">More</span>
     </div>
   </div>
@@ -54,96 +57,60 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  background: #ffffff;
-  color: #1a1a1a;
-  font-family: Georgia, serif;
+  background: #111111;
+  color: #e8e8e8;
+  font-family: 'Lato', sans-serif;
   min-height: 100vh;
 }
 
-/* ── HEADER ── */
-header {
-  max-width: 680px;
-  margin: 0 auto;
-  padding: 24px 24px 20px;
-  border-bottom: 1px solid #e0e0e0;
+/* ── PROFILE PIC ── */
+.site-image {
+  padding: 60px 0 40px;
 }
 
-.header-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 16px;
+.site-image img {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  filter: invert(1);
+  border: 1px solid #333333;
+  transition: opacity 0.2s;
 }
 
-.header-home {
-  font-size: 13px;
-  font-style: italic;
-  color: #1a1a1a;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.header-home:hover { color: #aaaaaa; }
-
-.header-handle {
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: #aaaaaa;
-}
-
-.header-nav {
-  display: flex;
-  border-top: 1px solid #f0f0f0;
-  padding-top: 14px;
-  flex-wrap: wrap;
-}
-
-.header-nav a {
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #aaaaaa;
-  text-decoration: none;
-  margin-right: 24px;
-  padding-bottom: 2px;
-  transition: color 0.2s;
-}
-
-.header-nav a:hover { color: #1a1a1a; }
-
-.header-nav a.active {
-  color: #1a1a1a;
-  border-bottom: 1px solid #1a1a1a;
+.site-image img:hover {
+  opacity: 0.7;
 }
 
 /* ── PAGE WRAP ── */
 #pgos-wrap {
   max-width: 680px;
   margin: 0 auto;
-  padding: 0 24px 64px;
+  padding: 0 32px 64px;
 }
 
 /* ── PAGE TITLE ── */
 #pgos-title-block {
-  margin: 40px 0 48px;
+  margin: 0 0 48px;
   padding-bottom: 28px;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid #2a2a2a;
 }
 
 #pgos-title {
-  font-family: Georgia, serif;
-  font-style: italic;
+  font-family: 'Lustria', serif;
   font-size: clamp(24px, 4vw, 36px);
   font-weight: normal;
-  color: #1a1a1a;
+  color: #e0e0e0;
   line-height: 1.2;
   margin: 0 0 10px;
 }
 
 #pgos-slogan {
   font-size: 13px;
-  color: #aaaaaa;
+  color: #555555;
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
   font-style: italic;
 }
 
@@ -153,10 +120,12 @@ header {
 }
 
 #pgos-grid-label {
-  font-size: 11px;
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  font-size: 10px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #aaaaaa;
+  color: #555555;
   margin-bottom: 14px;
 }
 
@@ -182,7 +151,7 @@ header {
   width: 13px;
   height: 13px;
   border-radius: 2px;
-  background: #f0f0f0;
+  background: #222222;
   flex-shrink: 0;
   position: relative;
   cursor: default;
@@ -194,10 +163,10 @@ header {
   bottom: 18px;
   left: 50%;
   transform: translateX(-50%);
-  background: #ffffff;
-  border: 1px solid #e0e0e0;
-  color: #1a1a1a;
-  font-family: Georgia, serif;
+  background: #1a1a1a;
+  border: 1px solid #333333;
+  color: #e0e0e0;
+  font-family: 'Lato', sans-serif;
   font-size: 11px;
   padding: 4px 8px;
   border-radius: 2px;
@@ -223,9 +192,11 @@ header {
 
 .pgos-legend-text {
   font-size: 11px;
-  color: #aaaaaa;
-  margin: 0 2px;
+  color: #555555;
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
   font-style: italic;
+  margin: 0 2px;
 }
 
 /* ── DAY BUTTONS ── */
@@ -237,38 +208,39 @@ header {
 }
 
 .pgos-day-btn {
-  font-family: Georgia, serif;
-  font-style: italic;
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
   padding: 7px 18px;
   font-size: 14px;
   background: transparent;
-  color: #aaaaaa;
-  border: 1px solid #e0e0e0;
-  border-radius: 0;
+  color: #555555;
+  border: 1px solid #2a2a2a;
   cursor: pointer;
   transition: color 0.15s, border-color 0.15s;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
 }
 
 .pgos-day-btn:hover {
-  color: #1a1a1a;
-  border-color: #aaaaaa;
+  color: #e0e0e0;
+  border-color: #555555;
 }
 
 .pgos-day-btn.pgos-active {
-  color: #1a1a1a;
-  border-color: #1a1a1a;
+  color: #e0e0e0;
+  border-color: #e0e0e0;
 }
 
 /* ── SECTION LABEL ── */
 .pgos-section-label {
-  font-size: 11px;
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  font-size: 10px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #aaaaaa;
+  color: #555555;
   margin: 32px 0 16px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid #2a2a2a;
 }
 
 /* ── TASKS ── */
@@ -277,7 +249,7 @@ header {
   align-items: flex-start;
   gap: 16px;
   padding: 16px 0;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid #1e1e1e;
   cursor: pointer;
 }
 
@@ -287,8 +259,7 @@ header {
   width: 16px;
   height: 16px;
   min-width: 16px;
-  border: 1px solid #cccccc;
-  border-radius: 0;
+  border: 1px solid #333333;
   background: transparent;
   margin-top: 3px;
   display: flex;
@@ -300,8 +271,8 @@ header {
 }
 
 .pgos-check.pgos-done {
-  background: #1a1a1a;
-  border-color: #1a1a1a;
+  background: #e0e0e0;
+  border-color: #e0e0e0;
 }
 
 .pgos-check.pgos-done::after {
@@ -309,30 +280,31 @@ header {
   display: block;
   width: 8px;
   height: 4px;
-  border-left: 1.5px solid #ffffff;
-  border-bottom: 1.5px solid #ffffff;
+  border-left: 1.5px solid #111111;
+  border-bottom: 1.5px solid #111111;
   transform: rotate(-45deg) translateY(-1px);
 }
 
 .pgos-task-text {
-  font-family: Georgia, serif;
+  font-family: 'Lustria', serif;
   font-size: 16px;
-  color: #1a1a1a;
+  color: #e0e0e0;
   line-height: 1.5;
   transition: color 0.15s;
 }
 
 .pgos-task-text.pgos-done-text {
-  color: #cccccc;
+  color: #333333;
   text-decoration: line-through;
-  text-decoration-color: #e0e0e0;
+  text-decoration-color: #2a2a2a;
 }
 
 .pgos-task-sub {
-  font-family: Georgia, serif;
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
   font-size: 13px;
   font-style: italic;
-  color: #aaaaaa;
+  color: #555555;
   line-height: 1.7;
   margin-top: 5px;
 }
@@ -341,7 +313,7 @@ header {
 #pgos-submit-wrap {
   margin-top: 48px;
   padding-top: 28px;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid #2a2a2a;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -349,13 +321,14 @@ header {
 }
 
 #pgos-submit-btn {
-  font-family: Georgia, serif;
-  font-style: italic;
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
   font-size: 14px;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   background: transparent;
-  color: #1a1a1a;
-  border: 1px solid #1a1a1a;
+  color: #e0e0e0;
+  border: 1px solid #e0e0e0;
   padding: 12px 40px;
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
@@ -364,29 +337,30 @@ header {
 }
 
 #pgos-submit-btn:hover {
-  background: #1a1a1a;
-  color: #ffffff;
+  background: #e0e0e0;
+  color: #111111;
 }
 
 #pgos-submit-btn:disabled {
-  border-color: #e0e0e0;
-  color: #cccccc;
+  border-color: #2a2a2a;
+  color: #333333;
   cursor: not-allowed;
   background: transparent;
 }
 
 #pgos-submit-status {
-  font-family: Georgia, serif;
-  font-style: italic;
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
   font-size: 13px;
-  color: #aaaaaa;
+  font-style: italic;
+  color: #555555;
   text-align: center;
   min-height: 18px;
 }
 
 @media (max-width: 600px) {
-  header { padding: 20px 20px 16px; }
   #pgos-wrap { padding: 0 20px 48px; }
+  .site-image { padding: 40px 0 28px; }
   #pgos-title { font-size: 26px; }
   .pgos-day-btn { padding: 7px 13px; font-size: 13px; }
 }
@@ -566,13 +540,13 @@ function countChecked() {
 }
 
 function scoreToColor(score, total) {
-  if (!total || score === 0) return '#f0f0f0';
+  if (!total || score === 0) return '#222222';
   var ratio = score / total;
-  if (ratio <= 0.25) return '#e0e0e0';
-  if (ratio <= 0.50) return '#bbbbbb';
-  if (ratio <= 0.75) return '#888888';
-  if (ratio < 1.00)  return '#444444';
-  return '#1a1a1a';
+  if (ratio <= 0.25) return '#2a2a2a';
+  if (ratio <= 0.50) return '#3d3d3d';
+  if (ratio <= 0.75) return '#666666';
+  if (ratio < 1.00)  return '#999999';
+  return '#e0e0e0';
 }
 
 function pgosRenderGrid(savedScores) {
