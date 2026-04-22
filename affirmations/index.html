@@ -4,100 +4,62 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Affirmations</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lustria&family=Lato:wght@300;400&display=swap" rel="stylesheet">
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background: #ffffff;
-      color: #1a1a1a;
-      font-family: Georgia, serif;
+      background: #111111;
+      color: #e8e8e8;
+      font-family: 'Lato', sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    /* ── HEADER ── */
-    header {
-      border-bottom: 1px solid #e0e0e0;
-      flex-shrink: 0;
-    }
-
-    .header-inner {
+    /* ── PROFILE PIC ── */
+    .site-image {
+      padding: 60px 0 40px;
       max-width: 680px;
       margin: 0 auto;
-      padding: 24px 24px 20px;
+      width: 100%;
+      padding-left: 32px;
+      padding-right: 32px;
     }
 
-    .header-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 16px;
+    .site-image a { display: inline-block; }
+
+    .site-image img {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      filter: invert(1);
+      border: 1px solid #333333;
+      transition: opacity 0.2s;
     }
 
-    .header-home {
-      font-size: 13px;
-      font-style: italic;
-      color: #1a1a1a;
-      text-decoration: none;
-      transition: color 0.2s;
-    }
+    .site-image img:hover { opacity: 0.7; }
 
-    .header-home:hover { color: #aaaaaa; }
-
-    .header-right {
-      display: flex;
-      align-items: baseline;
-      gap: 20px;
-    }
-
-    .header-handle {
-      font-size: 11px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: #aaaaaa;
-    }
-
+    /* ── STREAK ── */
     #streak-display {
+      text-align: center;
+      padding: 12px 24px;
       font-size: 11px;
-      color: #aaaaaa;
-      letter-spacing: 0.06em;
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      color: #555555;
+      border-bottom: 1px solid #2a2a2a;
+      text-transform: uppercase;
     }
 
     #streak-display span {
-      color: #1a1a1a;
+      font-family: 'Lustria', serif;
+      color: #e0e0e0;
       font-size: 14px;
-      font-weight: bold;
-      margin-left: 4px;
-    }
-
-    .header-nav {
-      display: flex;
-      border-top: 1px solid #f0f0f0;
-      padding-top: 14px;
-      flex-wrap: wrap;
-    }
-
-    .header-nav a {
-      font-size: 11px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: #aaaaaa;
-      text-decoration: none;
-      margin-right: 24px;
-      padding-bottom: 2px;
-      transition: color 0.2s;
-    }
-
-    .header-nav a:hover { color: #1a1a1a; }
-
-    .header-nav a.active {
-      color: #1a1a1a;
-      border-bottom: 1px solid #1a1a1a;
+      margin-left: 6px;
     }
 
     /* ── MAIN ── */
@@ -107,9 +69,10 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 40px 24px;
+      padding: 40px 32px;
     }
 
+    /* ── ACTIVE VIEW ── */
     #active-view {
       display: none;
       text-align: center;
@@ -128,73 +91,81 @@
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: #e0e0e0;
+      background: #2a2a2a;
       transition: background 0.3s;
     }
 
-    .dot.done { background: #888888; }
-    .dot.current { background: #1a1a1a; }
+    .dot.done { background: #555555; }
+    .dot.current { background: #e0e0e0; }
 
     #progress-indicator {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
       font-size: 11px;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: #cccccc;
+      color: #333333;
       margin-bottom: 10px;
     }
 
     #category-label {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
       font-size: 11px;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: #aaaaaa;
+      color: #555555;
       margin-bottom: 32px;
     }
 
     #prompt-text {
+      font-family: 'Lustria', serif;
       font-size: clamp(18px, 3vw, 24px);
       line-height: 1.8;
-      color: #1a1a1a;
+      color: #e0e0e0;
       margin-bottom: 52px;
-      font-style: italic;
     }
 
     #type-input {
       width: 100%;
       background: transparent;
       border: none;
-      border-bottom: 1px solid #e0e0e0;
-      color: #1a1a1a;
-      font-family: Georgia, serif;
+      border-bottom: 1px solid #2a2a2a;
+      color: #e0e0e0;
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
       font-size: 16px;
       padding: 10px 0;
       outline: none;
       text-align: center;
-      caret-color: #1a1a1a;
+      caret-color: #e0e0e0;
       transition: border-color 0.2s;
     }
 
     #type-input::placeholder {
-      color: #cccccc;
+      color: #333333;
       font-style: italic;
       font-size: 13px;
     }
 
-    #type-input:focus { border-bottom-color: #aaaaaa; }
-    #type-input.error { border-bottom-color: #cccccc; color: #aaaaaa; }
-    #type-input.success { border-bottom-color: #1a1a1a; color: #1a1a1a; }
+    #type-input:focus { border-bottom-color: #555555; }
+    #type-input.error { border-bottom-color: #333333; color: #444444; }
+    #type-input.success { border-bottom-color: #e0e0e0; color: #e0e0e0; }
 
     #hint-text {
       margin-top: 14px;
       font-size: 12px;
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
       color: transparent;
       font-style: italic;
       min-height: 18px;
       transition: color 0.2s;
     }
 
-    #hint-text.visible { color: #aaaaaa; }
+    #hint-text.visible { color: #555555; }
 
+    /* ── LOCKED VIEW ── */
     #locked-view {
       display: none;
       text-align: center;
@@ -203,10 +174,12 @@
     }
 
     #locked-heading {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
       font-size: 11px;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: #cccccc;
+      color: #555555;
       margin-bottom: 48px;
     }
 
@@ -216,42 +189,46 @@
     }
 
     .locked-category {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
       font-size: 10px;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: #cccccc;
+      color: #555555;
       margin-bottom: 8px;
     }
 
     .locked-text {
+      font-family: 'Lustria', serif;
       font-size: 16px;
       line-height: 1.8;
-      color: #1a1a1a;
-      font-style: italic;
+      color: #e0e0e0;
     }
 
     #time-remaining {
       margin-top: 52px;
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
       font-size: 11px;
-      color: #cccccc;
+      color: #333333;
       letter-spacing: 0.1em;
     }
 
     @media (max-width: 480px) {
-      .header-inner { padding: 20px 20px 16px; }
-      .header-handle { display: none; }
+      .site-image { padding: 40px 20px 28px; }
       #main { padding: 32px 20px; justify-content: flex-start; padding-top: 48px; }
     }
   </style>
 </head>
 <body>
 
-<div id="site-header"></div>
-<script src="/header.js"></script>
+  <div class="site-image">
+    <a href="/"><img src="/sketch.png" alt="home"></a>
+  </div>
 
-<div id="streak-display" style="text-align:center; padding: 12px 24px; font-size:11px; color:#aaaaaa; letter-spacing:0.06em; border-bottom: 1px solid #f0f0f0;">
-  Streak <span id="streak-count">0</span>
-</div>
+  <div id="streak-display">
+    Streak <span id="streak-count">0</span>
+  </div>
 
   <div id="main">
 
