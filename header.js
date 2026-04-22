@@ -91,7 +91,7 @@
   }\
 </style>\
 <div class="sh-wrap">\
-  <a class="sh-home" href="/"><img src="/sketch.jpg" alt="home"></a>\
+  <a class="sh-home" href="/"><img src="/sketch.png" alt="home"></a>\
   <div class="sh-divider"></div>\
   <nav class="sh-nav">' + navHTML + '</nav>\
 </div>';
