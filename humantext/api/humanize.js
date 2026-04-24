@@ -1,9 +1,9 @@
+// Check API key first
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Check API key first
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return res.status(500).json({ 
@@ -11,14 +11,7 @@ export default async function handler(req, res) {
     });
   }
 
-  let body;
-  try {
-    body = req.body;
-  } catch (e) {
-    return res.status(400).json({ error: 'Could not read request body: ' + e.message });
-  }
-
-  const { text, mode } = body || {};
+  const { text, mode } = req.body || {};
 
   if (!text || text.trim().length === 0) {
     return res.status(400).json({ error: 'No text provided' });
@@ -49,7 +42,7 @@ Rules:
 - Lowercase where a real person wouldn't capitalize
 - Abbreviations: lmk, fyi, tbh, asap, pls, thx, ngl
 - Incomplete sentences are fine. Fragments. Just the vibe.
-- 1-2 typos or autocorrect errors (e.g. "teh", "fo", "adn", "yuo", missing apostrophes like "dont" "cant" "wont")
+- 1-2 typos or autocorrect errors like missing apostrophes e.g. "dont" "cant" "wont"
 - Do NOT include "Sent from my iPhone" in your rewritten text — the app adds that separately
 - Maximum 3-4 lines total. Cut everything non-essential.
 - Sound like someone who has 400 unread emails and typed this with one thumb`
@@ -58,7 +51,6 @@ Rules:
   const instruction = modeInstructions[mode] || modeInstructions.human;
 
   let claudeResponse;
-  let rawText;
 
   try {
     claudeResponse = await fetch('https://api.anthropic.com/v1/messages', {
@@ -101,47 +93,43 @@ ${text}`
     });
   }
 
-  // If Claude returned a non-200, tell us exactly what it said
   if (!claudeResponse.ok) {
     let errorBody;
     try {
       errorBody = await claudeResponse.json();
+      return res.status(500).json({ 
+        error: 'Anthropic API error (' + claudeResponse.status + '): ' + (errorBody?.error?.message || JSON.stringify(errorBody))
+      });
     } catch (e) {
       const rawError = await claudeResponse.text();
       return res.status(500).json({ 
-        error: `Anthropic API returned status ${claudeResponse.status}. Raw response: ${rawError.slice(0, 300)}` 
+        error: 'Anthropic API returned status ' + claudeResponse.status + '. Response: ' + rawError.slice(0, 300)
       });
     }
-    return res.status(500).json({ 
-      error: `Anthropic API error (${claudeResponse.status}): ${errorBody?.error?.message || JSON.stringify(errorBody)}` 
-    });
   }
 
-  // Parse the successful response
   let data;
   try {
     data = await claudeResponse.json();
   } catch (parseError) {
-    rawText = await claudeResponse.text().catch(() => 'could not read body');
     return res.status(500).json({ 
-      error: `Claude responded but it wasn't valid JSON. First 300 chars: ${rawText.slice(0, 300)}` 
+      error: 'Claude responded but could not parse it. Parse error: ' + parseError.message
     });
   }
 
   if (!data.content || !data.content[0] || !data.content[0].text) {
     return res.status(500).json({ 
-      error: 'Claude response was missing expected content. Got: ' + JSON.stringify(data).slice(0, 300)
+      error: 'Claude response missing content. Got: ' + JSON.stringify(data).slice(0, 300)
     });
   }
 
   const fullResponse = data.content[0].text;
 
-  // Parse REWRITTEN and CHANGES sections
   let rewritten = '';
   let changes = '';
 
   const rewrittenMatch = fullResponse.match(/REWRITTEN:\s*\n([\s\S]*?)(?:\n\nCHANGES:|\nCHANGES:)/);
-  const changesMatch   = fullResponse.match(/CHANGES:\s*\n([\s\S]*)$/);
+  const changesMatch = fullResponse.match(/CHANGES:\s*\n([\s\S]*)$/);
 
   if (rewrittenMatch) {
     rewritten = rewrittenMatch[1].trim();
@@ -158,7 +146,7 @@ ${text}`
 
   if (!rewritten) {
     return res.status(500).json({ 
-      error: 'Could not parse Claude\'s response. Raw response was: ' + fullResponse.slice(0, 400)
+      error: 'Could not parse Claude response. Raw: ' + fullResponse.slice(0, 400)
     });
   }
 
