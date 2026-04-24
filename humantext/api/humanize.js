@@ -40,7 +40,7 @@ Rules:
 - Abbreviations: lmk, fyi, tbh, asap, pls, thx, ngl
 - Incomplete sentences are fine. Fragments. Just the vibe.
 - 1-2 typos or autocorrect errors (e.g. "teh", "fo", "adn", "yuo", missing apostrophes like "dont" "cant" "wont")
-- End with "Sent from my iPhone" as the sign-off — always, every time, no exceptions
+- Do NOT include "Sent from my iPhone" in your rewritten text — the app adds that separately
 - Maximum 3-4 lines total. Cut everything non-essential.
 - Sound like someone who has 400 unread emails and typed this with one thumb`
   };
@@ -63,17 +63,19 @@ Rules:
             role: 'user',
             content: `${instruction}
 
-After rewriting, list the key changes you made (short bullet points, plain language).
+After rewriting, list the key changes you made as short bullet points.
 
-Respond in this EXACT format with nothing before or after:
+You MUST respond in this EXACT format. Do not add any text before REWRITTEN: or after the last bullet point:
 
 REWRITTEN:
-[rewritten email]
+[rewritten email here]
 
 CHANGES:
-[bullet points of what changed]
+- [change 1]
+- [change 2]
+- [change 3]
 
-Original email to rewrite:
+Original email:
 
 ${text}`
           }
@@ -82,22 +84,44 @@ ${text}`
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      return res.status(500).json({ error: errorData.error?.message || 'Claude API error' });
+      const errorText = await response.text();
+      console.error('Claude API error:', errorText);
+      return res.status(500).json({ error: 'Claude API error: ' + response.status });
     }
 
     const data = await response.json();
+
+    if (!data.content || !data.content[0] || !data.content[0].text) {
+      return res.status(500).json({ error: 'Unexpected response from Claude' });
+    }
+
     const fullResponse = data.content[0].text;
 
-    const rewrittenMatch = fullResponse.match(/REWRITTEN:\n([\s\S]*?)\n\nCHANGES:/);
-    const changesMatch = fullResponse.match(/CHANGES:\n([\s\S]*?)$/);
+    // Robust parsing — handles variations in Claude's formatting
+    let rewritten = '';
+    let changes = '';
 
-    const rewritten = rewrittenMatch ? rewrittenMatch[1].trim() : fullResponse;
-    const changes = changesMatch ? changesMatch[1].trim() : '';
+    const rewrittenMatch = fullResponse.match(/REWRITTEN:\s*\n([\s\S]*?)(?:\n\nCHANGES:|\nCHANGES:)/);
+    const changesMatch   = fullResponse.match(/CHANGES:\s*\n([\s\S]*)$/);
+
+    if (rewrittenMatch) {
+      rewritten = rewrittenMatch[1].trim();
+    } else {
+      // Fallback: everything before CHANGES:
+      const parts = fullResponse.split(/\nCHANGES:/);
+      rewritten = parts[0].replace(/^REWRITTEN:\s*\n?/, '').trim();
+    }
+
+    if (changesMatch) {
+      changes = changesMatch[1].trim();
+    } else {
+      changes = 'Changes made based on selected mode.';
+    }
 
     return res.status(200).json({ rewritten, changes });
 
   } catch (error) {
+    console.error('Handler error:', error);
     return res.status(500).json({ error: 'Something went wrong: ' + error.message });
   }
 }
