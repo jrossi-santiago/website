@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WB SOP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lustria&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div id="site-header"></div>
+<script src="/header.js"></script>
+
+<div id="pgos-wrap">
+
+  <div id="pgos-title-block">
+    <h1 id="pgos-title">Why Buildings — SOP</h1>
+    <span id="pgos-slogan">Compound invisibly. The audience finds you at Month 14.</span>
+  </div>
+
+  <div id="pgos-grid-wrap">
+    <div id="pgos-grid-label">26-Week Execution Score</div>
+    <div id="pgos-grid-scroll">
+      <div id="pgos-grid"></div>
+    </div>
+    <div id="pgos-grid-legend">
+      <span class="pgos-legend-text">Less</span>
+      <span class="pgos-legend-cell" style="background:#2a2a2a;"></span>
+      <span class="pgos-legend-cell" style="background:#3d3d3d;"></span>
+      <span class="pgos-legend-cell" style="background:#666666;"></span>
+      <span class="pgos-legend-cell" style="background:#999999;"></span>
+      <span class="pgos-legend-cell" style="background:#e0e0e0;"></span>
+      <span class="pgos-legend-text">More</span>
+    </div>
+  </div>
+
+  <div id="pgos-days">
+    <button class="pgos-day-btn" onclick="pgosShowDay('mon',this)">Mon</button>
+    <button class="pgos-day-btn" onclick="pgosShowDay('tue',this)">Tue</button>
+    <button class="pgos-day-btn" onclick="pgosShowDay('wed',this)">Wed</button>
+    <button class="pgos-day-btn" onclick="pgosShowDay('thu',this)">Thu</button>
+    <button class="pgos-day-btn" onclick="pgosShowDay('fri',this)">Fri</button>
+  </div>
+
+  <div id="pgos-tasks"></div>
+
+  <div id="pgos-submit-wrap">
+    <div id="pgos-submit-status"></div>
+    <button id="pgos-submit-btn" onclick="pgosSubmitDay()">Submit Today's Score</button>
+  </div>
+
+</div>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #111111;
+  color: #e8e8e8;
+  font-family: 'Lato', sans-serif;
+  min-height: 100vh;
+}
+
+#pgos-wrap {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 32px 64px;
+}
+
+#pgos-title-block {
+  margin: 40px 0 48px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+#pgos-title {
+  font-family: 'Lustria', serif;
+  font-size: clamp(24px, 4vw, 36px);
+  font-weight: normal;
+  color: #e0e0e0;
+  line-height: 1.2;
+  margin: 0 0 10px;
+}
+
+#pgos-slogan {
+  font-size: 13px;
+  color: #555555;
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  font-style: italic;
+}
+
+#pgos-grid-wrap { margin-bottom: 40px; }
+
+#pgos-grid-label {
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #555555;
+  margin-bottom: 14px;
+}
+
+#pgos-grid-scroll { overflow-x: auto; padding-bottom: 4px; }
+
+#pgos-grid {
+  display: flex;
+  flex-direction: row;
+  gap: 3px;
+  min-width: max-content;
+}
+
+.pgos-grid-col { display: flex; flex-direction: column; gap: 3px; }
+
+.pgos-grid-cell {
+  width: 13px;
+  height: 13px;
+  border-radius: 2px;
+  background: #222222;
+  flex-shrink: 0;
+  position: relative;
+  cursor: default;
+}
+
+.pgos-grid-cell[data-tip]:hover::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a1a1a;
+  border: 1px solid #333333;
+  color: #e0e0e0;
+  font-family: 'Lato', sans-serif;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 2px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 10;
+}
+
+#pgos-grid-legend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.pgos-legend-cell {
+  width: 13px;
+  height: 13px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.pgos-legend-text {
+  font-size: 11px;
+  color: #555555;
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  font-style: italic;
+  margin: 0 2px;
+}
+
+#pgos-days {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 36px;
+  flex-wrap: wrap;
+}
+
+.pgos-day-btn {
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  padding: 7px 18px;
+  font-size: 14px;
+  background: transparent;
+  color: #555555;
+  border: 1px solid #2a2a2a;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  letter-spacing: 0.08em;
+}
+
+.pgos-day-btn:hover { color: #e0e0e0; border-color: #555555; }
+.pgos-day-btn.pgos-active { color: #e0e0e0; border-color: #e0e0e0; }
+
+.pgos-section-label {
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #555555;
+  margin: 32px 0 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.pgos-task {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid #1e1e1e;
+  cursor: pointer;
+}
+
+.pgos-task:last-child { border-bottom: none; }
+
+.pgos-check {
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  border: 1px solid #333333;
+  background: transparent;
+  margin-top: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, border-color 0.15s;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.pgos-check.pgos-done { background: #e0e0e0; border-color: #e0e0e0; }
+
+.pgos-check.pgos-done::after {
+  content: '';
+  display: block;
+  width: 8px;
+  height: 4px;
+  border-left: 1.5px solid #111111;
+  border-bottom: 1.5px solid #111111;
+  transform: rotate(-45deg) translateY(-1px);
+}
+
+.pgos-task-text {
+  font-family: 'Lustria', serif;
+  font-size: 16px;
+  color: #e0e0e0;
+  line-height: 1.5;
+  transition: color 0.15s;
+}
+
+.pgos-task-text.pgos-done-text {
+  color: #333333;
+  text-decoration: line-through;
+  text-decoration-color: #2a2a2a;
+}
+
+.pgos-task-sub {
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  font-size: 13px;
+  font-style: italic;
+  color: #555555;
+  line-height: 1.7;
+  margin-top: 5px;
+}
+
+#pgos-submit-wrap {
+  margin-top: 48px;
+  padding-top: 28px;
+  border-top: 1px solid #2a2a2a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+#pgos-submit-btn {
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: transparent;
+  color: #e0e0e0;
+  border: 1px solid #e0e0e0;
+  padding: 12px 40px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  width: 100%;
+  max-width: 320px;
+}
+
+#pgos-submit-btn:hover { background: #e0e0e0; color: #111111; }
+#pgos-submit-btn:disabled { border-color: #2a2a2a; color: #333333; cursor: not-allowed; background: transparent; }
+
+#pgos-submit-status {
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  font-size: 13px;
+  font-style: italic;
+  color: #555555;
+  text-align: center;
+  min-height: 18px;
+}
+
+@media (max-width: 600px) {
+  #pgos-wrap { padding: 0 20px 48px; }
+  #pgos-title { font-size: 26px; }
+  .pgos-day-btn { padding: 7px 13px; font-size: 13px; }
+}
+</style>
+
+<script>
+var SUPABASE_URL = 'https://rvwyjipseusvqjqbwken.supabase.co';
+var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ3d3lqaXBzZXVzdnFqcWJ3a2VuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NDA4MDAsImV4cCI6MjA5MjAxNjgwMH0.UFYPZndWuY3uDOWovjxa7qreidWM9sacUlIS9iteMXc';
+
+var db = {
+  from: function(table) {
+    return {
+      select: async function(cols) {
+        var res = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?select=' + (cols||'*'), {
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY }
+        });
+        var data = await res.json();
+        return { data: data, error: res.ok ? null : data };
+      },
+      upsert: async function(row) {
+        var res = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?on_conflict=date', {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates,return=minimal'
+          },
+          body: JSON.stringify(row)
+        });
+        if (res.status === 204 || res.ok) return { error: null };
+        var data = await res.json();
+        return { error: data };
+      }
+    };
+  }
+};
+
+(function(){
+
+var pgosChecked = {};
+var pgosCurrentDay = null;
+
+var pgosData = {
+  mon: {
+    sections: [
+      {
+        label: "Every Day",
+        tasks: [
+          { id:"wm1", text:"Engage 10 architecture accounts on Twitter", sub:"15 minutes of deliberate replies. Not scrolling — engaging. Architecture, design, and history accounts. This is what drives the algorithm in the early months." },
+          { id:"wm2", text:"Post today's Twitter content", sub:"One visual thread + one short observation. Use content from the bank so you're never producing same-day. Thread ends with newsletter CTA. Observation stands alone — no CTA." },
+          { id:"wm3", text:"Reply to comments on your own posts", sub:"Do this personally within the first hour of posting. Early engagement is the biggest factor in how far a post travels." }
+        ]
+      },
+      {
+        label: "Monday — Content Build Day",
+        tasks: [
+          { id:"wm4", text:"Produce this week's Twitter threads", sub:"3 threads needed for Mon/Wed/Fri. Write 5 bullet points per topic → skill-twitter.md produces the draft → you edit and approve. Build all 3 today so the week runs on autopilot." },
+          { id:"wm5", text:"Reddit adaptation from last week's best thread", sub:"Open skill-reddit.md. Paste last week's top-performing thread. Get 3 subreddit-native posts for r/architecture, r/HistoryPorn, r/UrbanPlanning, r/InteriorDesign. Schedule them across the week. Never feels like a cross-post." },
+          { id:"wm6", text:"Review last week's Twitter stats", sub:"Which thread got the most engagement? Which observation landed? Note what to repeat. Double down on the formats that worked — never change what's working." },
+          { id:"wm7", text:"Check Twitter follower and newsletter growth", sub:"Track weekly: follower count, new newsletter subscribers, open rate. One number per week in Notion. These compound. The compound doesn't show for months." }
+        ]
+      }
+    ]
+  },
+  tue: {
+    sections: [
+      {
+        label: "Every Day",
+        tasks: [
+          { id:"wt1", text:"Engage 10 architecture accounts on Twitter", sub:"15 minutes of deliberate replies. Architecture, design, and history accounts. Reply thoughtfully — not scrolling." },
+          { id:"wt2", text:"Post today's Twitter content", sub:"One visual thread + one short observation. Pull from content bank. Thread ends with newsletter CTA." },
+          { id:"wt3", text:"Reply to comments on your own posts", sub:"Do this personally within the first hour of posting. First-hour engagement matters most for reach." }
+        ]
+      },
+      {
+        label: "Tuesday — Newsletter Day",
+        tasks: [
+          { id:"wt4", text:"Write this week's newsletter outline", sub:"Pick this week's topic — a building, period, technique, or comparison. Write your angle in one sentence. Write 5 bullet points for the free section and 5 for the paid section. You supply the knowledge, the skill supplies the structure." },
+          { id:"wt5", text:"Draft and edit the newsletter with skill-newsletter.md", sub:"Paste your outline into skill-newsletter.md. Review the draft for 45 minutes. The free intro should cut at genuine curiosity — reader should feel the answer is within reach. Edit for your voice throughout." },
+          { id:"wt6", text:"Schedule or send the newsletter in Beehiiv", sub:"If it's good, send it today. If it needs one more pass, schedule for Thursday morning. Never hold a newsletter more than one extra day — perfection is a delay tactic." }
+        ]
+      }
+    ]
+  },
+  wed: {
+    sections: [
+      {
+        label: "Every Day",
+        tasks: [
+          { id:"ww1", text:"Engage 10 architecture accounts on Twitter", sub:"15 minutes of deliberate replies. Architecture, design, and history accounts. Reply thoughtfully — not scrolling." },
+          { id:"ww2", text:"Post today's Twitter content", sub:"One visual thread + one short observation. Pull from content bank. Thread ends with newsletter CTA." },
+          { id:"ww3", text:"Reply to comments on your own posts", sub:"Do this personally within the first hour of posting. First-hour engagement matters most for reach." }
+        ]
+      },
+      {
+        label: "Wednesday — Product Work Day",
+        tasks: [
+          { id:"ww4", text:"City guide or membership work session", sub:"Dedicate 60–90 minutes to the current open product: writing a city guide module, building a membership lesson, or outlining the next guide. This is the work that creates the assets — not optional." },
+          { id:"ww5", text:"Update the content bank if running low", sub:"Content bank should always have at least 5 threads and 10 short observations ready. If it drops below that, refill today. You should never produce content the same day you post it." },
+          { id:"ww6", text:"One system or tool improvement", sub:"Use for: refining a Claude skill · updating your Twitter bio · improving the newsletter CTA · improving Beehiiv referral setup · anything that makes the machine run better next week." }
+        ]
+      }
+    ]
+  },
+  thu: {
+    sections: [
+      {
+        label: "Every Day",
+        tasks: [
+          { id:"wth1", text:"Engage 10 architecture accounts on Twitter", sub:"15 minutes of deliberate replies. Architecture, design, and history accounts. Reply thoughtfully — not scrolling." },
+          { id:"wth2", text:"Post today's Twitter content", sub:"One visual thread + one short observation. Pull from content bank. Thread ends with newsletter CTA." },
+          { id:"wth3", text:"Reply to comments on your own posts", sub:"Do this personally within the first hour of posting. First-hour engagement matters most for reach." }
+        ]
+      },
+      {
+        label: "Thursday — Deep Work Day",
+        tasks: [
+          { id:"wth4", text:"City guide or product deep work session", sub:"This is your longest uninterrupted block of the week. 90 minutes minimum on the current product. Put the phone down. No Twitter. No email. The city guide gets written in these blocks." },
+          { id:"wth5", text:"Send newsletter if held from Tuesday", sub:"If the newsletter was held for another pass, it goes today. No exceptions — readers expect a consistent send day. Holding past Thursday breaks the trust." },
+          { id:"wth6", text:"Outline next week's newsletter topic", sub:"Write the one-sentence angle for next week's issue while this week's topic is still fresh. Takes 5 minutes. Means Tuesday's session starts with direction instead of a blank page." }
+        ]
+      }
+    ]
+  },
+  fri: {
+    sections: [
+      {
+        label: "Every Day",
+        tasks: [
+          { id:"wf1", text:"Engage 10 architecture accounts on Twitter", sub:"15 minutes of deliberate replies. Architecture, design, and history accounts. Reply thoughtfully — not scrolling." },
+          { id:"wf2", text:"Post today's Twitter content", sub:"One visual thread + one short observation. Pull from content bank. Thread ends with newsletter CTA." },
+          { id:"wf3", text:"Reply to comments on your own posts", sub:"Do this personally within the first hour of posting. First-hour engagement matters most for reach." }
+        ]
+      },
+      {
+        label: "Friday — Weekly Reset + Transparency Post",
+        tasks: [
+          { id:"wf4", text:"Write the data center transparency post", sub:"Raw notes from Preempt Global this week → skill-datacenters.md → one transparent update post. Real numbers. What happened, what didn't, what's next. Different voice from architecture content: direct, unpolished, real. This is the most trusted content type on Twitter." },
+          { id:"wf5", text:"Review this week's best-performing thread", sub:"Check impressions, replies, and newsletter clicks. Note the topic and format. This is next Monday's Reddit adaptation source. Screenshot it so it's easy to find." },
+          { id:"wf6", text:"Confirm content bank for next week", sub:"3 threads drafted and ready? 10+ short observations queued? Next week's newsletter topic noted? If the answer to any of these is no — fix it now, not Monday morning." },
+          { id:"wf7", text:"One sentence in Notion", sub:"What moved the needle this week? What would you change? 26 weeks of this compounds into a real feedback loop. Skip it and you're flying blind." }
+        ]
+      }
+    ]
+  }
+};
+
+function todayStr() {
+  var d = new Date();
+  var mm = String(d.getMonth()+1).padStart(2,'0');
+  var dd = String(d.getDate()).padStart(2,'0');
+  return d.getFullYear() + '-' + mm + '-' + dd;
+}
+
+function countTotalTasks() {
+  if (!pgosCurrentDay) return 0;
+  var total = 0;
+  pgosData[pgosCurrentDay].sections.forEach(function(s){ total += s.tasks.length; });
+  return total;
+}
+
+function countChecked() {
+  if (!pgosCurrentDay) return 0;
+  var count = 0;
+  pgosData[pgosCurrentDay].sections.forEach(function(s){
+    s.tasks.forEach(function(t){ if(pgosChecked[t.id]) count++; });
+  });
+  return count;
+}
+
+function scoreToColor(score, total) {
+  if (!total || score === 0) return '#222222';
+  var ratio = score / total;
+  if (ratio <= 0.25) return '#2a2a2a';
+  if (ratio <= 0.50) return '#3d3d3d';
+  if (ratio <= 0.75) return '#666666';
+  if (ratio < 1.00)  return '#999999';
+  return '#e0e0e0';
+}
+
+function pgosRenderGrid(savedScores) {
+  var grid = document.getElementById('pgos-grid');
+  grid.innerHTML = '';
+  var today = new Date();
+  today.setHours(0,0,0,0);
+  var start = new Date(today);
+  start.setDate(start.getDate() - (26 * 7));
+  var dow = start.getDay();
+  var rewind = dow === 0 ? -6 : 1 - dow;
+  start.setDate(start.getDate() + rewind);
+  var cursor = new Date(start);
+  while (cursor <= today) {
+    var col = document.createElement('div');
+    col.className = 'pgos-grid-col';
+    for (var r = 0; r < 7; r++) {
+      var cellDate = new Date(cursor);
+      cellDate.setDate(cellDate.getDate() + r);
+      var cell = document.createElement('div');
+      cell.className = 'pgos-grid-cell';
+      var cellDow = cellDate.getDay();
+      if (cellDow === 0 || cellDow === 6) {
+        cell.style.background = 'transparent';
+        cell.style.border = 'none';
+      } else if (cellDate > today) {
+        cell.style.background = 'transparent';
+      } else {
+        var mm = String(cellDate.getMonth()+1).padStart(2,'0');
+        var dd2 = String(cellDate.getDate()).padStart(2,'0');
+        var dateStr = cellDate.getFullYear() + '-' + mm + '-' + dd2;
+        if (savedScores[dateStr]) {
+          var s = savedScores[dateStr];
+          cell.style.background = scoreToColor(s.score, s.total);
+          cell.setAttribute('data-tip', dateStr + ' — ' + s.score + '/' + s.total + ' tasks');
+        } else {
+          cell.setAttribute('data-tip', dateStr);
+        }
+      }
+      col.appendChild(cell);
+    }
+    grid.appendChild(col);
+    cursor.setDate(cursor.getDate() + 7);
+  }
+  setTimeout(function(){
+    var scroll = document.getElementById('pgos-grid-scroll');
+    scroll.scrollLeft = scroll.scrollWidth;
+  }, 50);
+}
+
+async function pgosLoadGrid() {
+  try {
+    var result = await db.from('wb_daily_scores').select('date,score,total');
+    var map = {};
+    if (result.data && Array.isArray(result.data)) {
+      result.data.forEach(function(row){ map[row.date] = { score: row.score, total: row.total }; });
+    }
+    pgosRenderGrid(map);
+  } catch(e) {
+    console.error('Grid load error:', e);
+    pgosRenderGrid({});
+  }
+}
+
+window.pgosSubmitDay = async function() {
+  var btn = document.getElementById('pgos-submit-btn');
+  var status = document.getElementById('pgos-submit-status');
+  var checked = countChecked();
+  var total = countTotalTasks();
+  var date = todayStr();
+  if (total === 0) { status.textContent = 'Select a day tab first.'; return; }
+  btn.disabled = true;
+  status.textContent = 'Saving…';
+  try {
+    var result = await db.from('wb_daily_scores').upsert({ date: date, score: checked, total: total });
+    if (result.error) throw result.error;
+    status.textContent = '✓ Saved — ' + checked + '/' + total + ' tasks for ' + date;
+    await pgosLoadGrid();
+  } catch(e) {
+    console.error('Submit error:', e);
+    status.textContent = 'Error saving. Check your Supabase URL and key above.';
+  }
+  btn.disabled = false;
+};
+
+window.pgosShowDay = function(day, btn) {
+  pgosCurrentDay = day;
+  document.querySelectorAll('.pgos-day-btn').forEach(function(b){ b.classList.remove('pgos-active'); });
+  if (btn) btn.classList.add('pgos-active');
+  var d = pgosData[day];
+  var html = '';
+  d.sections.forEach(function(section){
+    html += '<div class="pgos-section-label">' + section.label + '</div>';
+    section.tasks.forEach(function(task){
+      var done = !!pgosChecked[task.id];
+      html += '<div class="pgos-task" onclick="pgosToggle(\'' + task.id + '\')">';
+      html += '<div class="pgos-check' + (done ? ' pgos-done' : '') + '"></div>';
+      html += '<div>';
+      html += '<div class="pgos-task-text' + (done ? ' pgos-done-text' : '') + '">' + task.text + '</div>';
+      html += '<div class="pgos-task-sub">' + task.sub + '</div>';
+      html += '</div></div>';
+    });
+  });
+  document.getElementById('pgos-tasks').innerHTML = html;
+  document.getElementById('pgos-submit-status').textContent = '';
+  document.getElementById('pgos-submit-btn').disabled = false;
+};
+
+window.pgosToggle = function(id) {
+  pgosChecked[id] = !pgosChecked[id];
+  pgosShowDay(pgosCurrentDay, null);
+  var dayOrder = ['mon','tue','wed','thu','fri'];
+  var idx = dayOrder.indexOf(pgosCurrentDay);
+  var btns = document.querySelectorAll('.pgos-day-btn');
+  if (btns[idx]) btns[idx].classList.add('pgos-active');
+};
+
+var todayMap = [null,'mon','tue','wed','thu','fri',null];
+var todayDay = todayMap[new Date().getDay()] || 'mon';
+var dayOrder = ['mon','tue','wed','thu','fri'];
+var idx = dayOrder.indexOf(todayDay);
+var initBtns = document.querySelectorAll('.pgos-day-btn');
+if (initBtns[idx]) pgosShowDay(todayDay, initBtns[idx]);
+
+pgosLoadGrid();
+
+})();
+</script>
+
+</body>
+</html>
