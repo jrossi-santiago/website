@@ -3,15 +3,25 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { text, mode } = req.body;
+  // Check API key first
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) {
+    return res.status(500).json({ 
+      error: 'ANTHROPIC_API_KEY is not set in Vercel environment variables. Go to Vercel → Settings → Environment Variables and add it.' 
+    });
+  }
+
+  let body;
+  try {
+    body = req.body;
+  } catch (e) {
+    return res.status(400).json({ error: 'Could not read request body: ' + e.message });
+  }
+
+  const { text, mode } = body || {};
 
   if (!text || text.trim().length === 0) {
     return res.status(400).json({ error: 'No text provided' });
-  }
-
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
-    return res.status(500).json({ error: 'API key not configured' });
   }
 
   const modeInstructions = {
@@ -47,8 +57,11 @@ Rules:
 
   const instruction = modeInstructions[mode] || modeInstructions.human;
 
+  let claudeResponse;
+  let rawText;
+
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    claudeResponse = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -82,46 +95,72 @@ ${text}`
         ]
       })
     });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Claude API error:', errorText);
-      return res.status(500).json({ error: 'Claude API error: ' + response.status });
-    }
-
-    const data = await response.json();
-
-    if (!data.content || !data.content[0] || !data.content[0].text) {
-      return res.status(500).json({ error: 'Unexpected response from Claude' });
-    }
-
-    const fullResponse = data.content[0].text;
-
-    // Robust parsing — handles variations in Claude's formatting
-    let rewritten = '';
-    let changes = '';
-
-    const rewrittenMatch = fullResponse.match(/REWRITTEN:\s*\n([\s\S]*?)(?:\n\nCHANGES:|\nCHANGES:)/);
-    const changesMatch   = fullResponse.match(/CHANGES:\s*\n([\s\S]*)$/);
-
-    if (rewrittenMatch) {
-      rewritten = rewrittenMatch[1].trim();
-    } else {
-      // Fallback: everything before CHANGES:
-      const parts = fullResponse.split(/\nCHANGES:/);
-      rewritten = parts[0].replace(/^REWRITTEN:\s*\n?/, '').trim();
-    }
-
-    if (changesMatch) {
-      changes = changesMatch[1].trim();
-    } else {
-      changes = 'Changes made based on selected mode.';
-    }
-
-    return res.status(200).json({ rewritten, changes });
-
-  } catch (error) {
-    console.error('Handler error:', error);
-    return res.status(500).json({ error: 'Something went wrong: ' + error.message });
+  } catch (fetchError) {
+    return res.status(500).json({ 
+      error: 'Could not reach the Anthropic API. Network error: ' + fetchError.message 
+    });
   }
+
+  // If Claude returned a non-200, tell us exactly what it said
+  if (!claudeResponse.ok) {
+    let errorBody;
+    try {
+      errorBody = await claudeResponse.json();
+    } catch (e) {
+      const rawError = await claudeResponse.text();
+      return res.status(500).json({ 
+        error: `Anthropic API returned status ${claudeResponse.status}. Raw response: ${rawError.slice(0, 300)}` 
+      });
+    }
+    return res.status(500).json({ 
+      error: `Anthropic API error (${claudeResponse.status}): ${errorBody?.error?.message || JSON.stringify(errorBody)}` 
+    });
+  }
+
+  // Parse the successful response
+  let data;
+  try {
+    data = await claudeResponse.json();
+  } catch (parseError) {
+    rawText = await claudeResponse.text().catch(() => 'could not read body');
+    return res.status(500).json({ 
+      error: `Claude responded but it wasn't valid JSON. First 300 chars: ${rawText.slice(0, 300)}` 
+    });
+  }
+
+  if (!data.content || !data.content[0] || !data.content[0].text) {
+    return res.status(500).json({ 
+      error: 'Claude response was missing expected content. Got: ' + JSON.stringify(data).slice(0, 300)
+    });
+  }
+
+  const fullResponse = data.content[0].text;
+
+  // Parse REWRITTEN and CHANGES sections
+  let rewritten = '';
+  let changes = '';
+
+  const rewrittenMatch = fullResponse.match(/REWRITTEN:\s*\n([\s\S]*?)(?:\n\nCHANGES:|\nCHANGES:)/);
+  const changesMatch   = fullResponse.match(/CHANGES:\s*\n([\s\S]*)$/);
+
+  if (rewrittenMatch) {
+    rewritten = rewrittenMatch[1].trim();
+  } else {
+    const parts = fullResponse.split(/\nCHANGES:/);
+    rewritten = parts[0].replace(/^REWRITTEN:\s*\n?/, '').trim();
+  }
+
+  if (changesMatch) {
+    changes = changesMatch[1].trim();
+  } else {
+    changes = 'Changes made based on selected mode.';
+  }
+
+  if (!rewritten) {
+    return res.status(500).json({ 
+      error: 'Could not parse Claude\'s response. Raw response was: ' + fullResponse.slice(0, 400)
+    });
+  }
+
+  return res.status(200).json({ rewritten, changes });
 }
