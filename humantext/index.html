@@ -545,7 +545,7 @@
     document.getElementById('results').style.display = 'none';
 
     try {
-      const response = await fetch('/api/humanize', {
+      const response = await fetch('/humantext/api/humanize', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text, mode })
