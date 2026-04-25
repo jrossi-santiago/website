@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notebook</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lustria&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #111111;
+      color: #e8e8e8;
+      font-family: 'Lato', sans-serif;
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 32px 64px;
+    }
+
+    .page-title-block {
+      margin: 40px 0 40px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid #2a2a2a;
+    }
+
+    .page-title {
+      font-family: 'Lustria', serif;
+      font-size: clamp(24px, 4vw, 36px);
+      font-weight: normal;
+      color: #e0e0e0;
+      margin-bottom: 8px;
+    }
+
+    .page-slogan {
+      font-size: 13px;
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      color: #555555;
+      font-style: italic;
+    }
+
+    .write-form {
+      margin-bottom: 48px;
+    }
+
+    .form-section-label {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #555555;
+      margin-bottom: 20px;
+    }
+
+    .field-label {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #555555;
+      margin-bottom: 6px;
+    }
+
+    .field-input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #2a2a2a;
+      color: #e0e0e0;
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 14px;
+      padding: 8px 0;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+      margin-bottom: 28px;
+    }
+
+    .field-input:focus { border-bottom-color: #555555; }
+    .field-input::placeholder { color: #333333; font-style: italic; }
+
+    .toolbar {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+
+    .toolbar-btn {
+      background: transparent;
+      border: 1px solid #2a2a2a;
+      color: #555555;
+      font-size: 13px;
+      width: 32px;
+      height: 30px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+
+    .toolbar-btn:hover {
+      border-color: #555555;
+      color: #e0e0e0;
+    }
+
+    .editor {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #2a2a2a;
+      color: #e0e0e0;
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 14px;
+      line-height: 1.9;
+      padding: 8px 0 20px;
+      outline: none;
+      min-height: 260px;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+
+    .editor:focus { border-bottom-color: #555555; }
+
+    .editor:empty:before {
+      content: attr(data-placeholder);
+      color: #333333;
+      font-style: italic;
+      pointer-events: none;
+    }
+
+    .editor b, .editor strong { font-weight: 700; }
+    .editor i, .editor em { font-style: italic; }
+    .editor u { text-decoration: underline; }
+
+    .form-actions {
+      margin-top: 28px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .submit-btn {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-size: 13px;
+      background: transparent;
+      color: #e0e0e0;
+      border: 1px solid #e0e0e0;
+      padding: 10px 32px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .submit-btn:hover { background: #e0e0e0; color: #111111; }
+    .submit-btn:disabled { border-color: #2a2a2a; color: #333333; cursor: not-allowed; background: transparent; }
+
+    .status-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: #1a1a1a;
+      border-top: 1px solid #2a2a2a;
+      padding: 14px 24px;
+      font-size: 13px;
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-style: italic;
+      color: #555555;
+      text-align: center;
+      transform: translateY(100%);
+      transition: transform 0.3s;
+      z-index: 100;
+    }
+
+    .status-bar.show { transform: translateY(0); }
+    .status-bar.success { color: #e0e0e0; }
+    .status-bar.error { color: #888888; }
+
+    @media (max-width: 480px) {
+      .wrap { padding: 0 20px 48px; }
+      .page-title { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="site-header"></div>
+<script src="/header.js"></script>
+
+<div class="wrap">
+
+  <div class="page-title-block">
+    <div class="page-title">Notebook</div>
+    <div class="page-slogan">Write it down. Let it go.</div>
+  </div>
+
+  <div class="write-form">
+    <div class="form-section-label">New entry</div>
+
+    <div class="field-label">Title</div>
+    <input
+      class="field-input"
+      type="text"
+      id="entry-title"
+      placeholder="What's this about?"
+      autocomplete="off"
+    />
+
+    <div class="field-label">Body</div>
+
+    <div class="toolbar">
+      <button class="toolbar-btn" title="Bold" onclick="fmt('bold')"><b>B</b></button>
+      <button class="toolbar-btn" title="Italic" onclick="fmt('italic')"><i>I</i></button>
+      <button class="toolbar-btn" title="Underline" onclick="fmt('underline')"><u>U</u></button>
+    </div>
+
+    <div
+      class="editor"
+      id="entry-body"
+      contenteditable="true"
+      data-placeholder="Start writing..."
+    ></div>
+
+    <div class="form-actions">
+      <button class="submit-btn" id="submit-btn" onclick="handleSubmit()">Save Entry</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="status-bar" id="status-bar"></div>
+
+<!-- Google APIs — these load Google's sign-in and Drive tools -->
+<script src="https://apis.google.com/js/api.js"></script>
+<script src="https://accounts.google.com/gsi/client"></script>
+
+<script>
+  // ── REPLACE THIS WITH YOUR CLIENT ID FROM GOOGLE CLOUD CONSOLE ──
+  var CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID';
+
+  var SCOPE = 'https://www.googleapis.com/auth/drive.file';
+  var tokenClient;
+  var gapiReady = false;
+
+  // Load the Google Drive API client
+  gapi.load('client', function() {
+    gapi.client.init({}).then(function() {
+      return gapi.client.load('https://www.googleapis.com/discovery/v1/apis/drive/v3/rest');
+    }).then(function() {
+      gapiReady = true;
+    });
+  });
+
+  // Set up the sign-in token flow
+  window.addEventListener('load', function() {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: CLIENT_ID,
+      scope: SCOPE,
+      callback: function(response) {
+        if (response.error) {
+          showStatus('Sign-in cancelled or failed.', 'error');
+          document.getElementById('submit-btn').disabled = false;
+          return;
+        }
+        // Signed in — now save
+        saveEntry();
+      }
+    });
+  });
+
+  function fmt(command) {
+    document.execCommand(command, false, null);
+    document.getElementById('entry-body').focus();
+  }
+
+  function handleSubmit() {
+    var title = document.getElementById('entry-title').value.trim();
+    var body = document.getElementById('entry-body').innerHTML.trim();
+    var bodyText = document.getElementById('entry-body').innerText.trim();
+
+    if (!title && !bodyText) {
+      showStatus('Nothing to save — write something first.', 'error');
+      return;
+    }
+
+    if (!gapiReady) {
+      showStatus('Still loading — try again in a moment.', 'error');
+      return;
+    }
+
+    document.getElementById('submit-btn').disabled = true;
+    showStatus('Opening Google sign-in...', '');
+
+    // This asks Google for permission — a sign-in pop-up will appear
+    tokenClient.requestAccessToken({ prompt: '' });
+  }
+
+  async function saveEntry() {
+    var title = document.getElementById('entry-title').value.trim();
+    var bodyHtml = document.getElementById('entry-body').innerHTML.trim();
+    var displayTitle = title || 'Untitled';
+    var now = new Date();
+    var dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    var timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    var fileDate = now.toISOString().slice(0, 10);
+
+    // Build a clean HTML file that looks nice when opened in Drive
+    var fileContent =
+      '<!DOCTYPE html>' +
+      '<html><head><meta charset="UTF-8">' +
+      '<title>' + escapeHtml(displayTitle) + '</title>' +
+      '<style>' +
+        'body { font-family: Georgia, serif; max-width: 620px; margin: 60px auto; padding: 0 24px; color: #222; line-height: 1.8; }' +
+        'h1 { font-size: 26px; font-weight: normal; margin-bottom: 6px; }' +
+        '.meta { color: #999; font-size: 13px; margin-bottom: 40px; }' +
+        '.body { font-size: 16px; }' +
+      '</style>' +
+      '</head><body>' +
+      '<h1>' + escapeHtml(displayTitle) + '</h1>' +
+      '<div class="meta">' + dateStr + ' at ' + timeStr + '</div>' +
+      '<div class="body">' + bodyHtml + '</div>' +
+      '</body></html>';
+
+    var fileName = fileDate + ' — ' + displayTitle + '.html';
+
+    // Build the multipart upload body (this is how you send both the filename and the content together)
+    var boundary = 'nb_boundary_' + Date.now();
+    var metadata = JSON.stringify({ name: fileName, mimeType: 'text/html' });
+
+    var multipart =
+      '--' + boundary + '\r\n' +
+      'Content-Type: application/json\r\n\r\n' +
+      metadata + '\r\n' +
+      '--' + boundary + '\r\n' +
+      'Content-Type: text/html\r\n\r\n' +
+      fileContent + '\r\n' +
+      '--' + boundary + '--';
+
+    try {
+      await gapi.client.request({
+        path: '/upload/drive/v3/files',
+        method: 'POST',
+        params: { uploadType: 'multipart' },
+        headers: { 'Content-Type': 'multipart/related; boundary=' + boundary },
+        body: multipart
+      });
+
+      // Reset the form
+      document.getElementById('entry-title').value = '';
+      document.getElementById('entry-body').innerHTML = '';
+      showStatus('Saved to Google Drive.', 'success');
+
+    } catch(e) {
+      console.error('Drive save error:', e);
+      showStatus('Something went wrong. Try again.', 'error');
+    }
+
+    document.getElementById('submit-btn').disabled = false;
+  }
+
+  function escapeHtml(str) {
+    var d = document.createElement('div');
+    d.appendChild(document.createTextNode(str || ''));
+    return d.innerHTML;
+  }
+
+  function showStatus(msg, type) {
+    var bar = document.getElementById('status-bar');
+    bar.textContent = msg;
+    bar.className = 'status-bar show ' + (type || '');
+    if (type === 'success' || type === 'error') {
+      setTimeout(function() { bar.className = 'status-bar'; }, 3500);
+    }
+  }
+</script>
+</body>
+</html>
