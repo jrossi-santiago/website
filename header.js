@@ -1,5 +1,6 @@
 (function () {
   var links = [
+    { label: 'Home',         href: '/' },
     { label: 'SOP',          href: '/sop' },
     { label: 'Affirmations', href: '/affirmations' },
     { label: 'Motivation',   href: '/motivation' },
@@ -160,7 +161,6 @@
     document.write(html);
   }
 
-  // Wire up hamburger AFTER the HTML has been inserted
   setTimeout(function () {
     var btn = document.getElementById('sh-hamburger-btn');
     var menu = document.getElementById('sh-mobile-menu');
