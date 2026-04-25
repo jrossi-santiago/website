@@ -13,6 +13,11 @@
 
 <div id="pgos-wrap">
 
+  <div id="biz-tabs">
+    <button class="biz-tab biz-active" onclick="switchBiz('pg',this)">Preempt Global</button>
+    <button class="biz-tab" onclick="switchBiz('wb',this)">Why Buildings</button>
+  </div>
+
   <div id="pgos-title-block">
     <h1 id="pgos-title">SOP</h1>
     <span id="pgos-slogan">Paper mistakes are free.</span>
@@ -43,6 +48,7 @@
   </div>
 
   <div id="pgos-tasks"></div>
+  <div id="pgos-locked"></div>
 
   <div id="pgos-submit-wrap">
     <div id="pgos-submit-status"></div>
@@ -67,8 +73,36 @@ body {
   padding: 0 32px 64px;
 }
 
+/* ── Business tab switcher ── */
+#biz-tabs {
+  display: flex;
+  margin: 40px 0 0;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.biz-tab {
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 10px 22px 10px 0;
+  margin-right: 28px;
+  background: transparent;
+  color: #444444;
+  border: none;
+  border-bottom: 1px solid transparent;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  margin-bottom: -1px;
+}
+
+.biz-tab:hover { color: #999999; }
+.biz-tab.biz-active { color: #e0e0e0; border-bottom-color: #e0e0e0; }
+
+/* ── Title block ── */
 #pgos-title-block {
-  margin: 40px 0 48px;
+  margin: 36px 0 48px;
   padding-bottom: 28px;
   border-bottom: 1px solid #2a2a2a;
 }
@@ -80,6 +114,7 @@ body {
   color: #e0e0e0;
   line-height: 1.2;
   margin: 0 0 10px;
+  transition: opacity 0.2s;
 }
 
 #pgos-slogan {
@@ -90,6 +125,7 @@ body {
   font-style: italic;
 }
 
+/* ── Grid ── */
 #pgos-grid-wrap { margin-bottom: 40px; }
 
 #pgos-grid-label {
@@ -165,6 +201,7 @@ body {
   margin: 0 2px;
 }
 
+/* ── Day buttons ── */
 #pgos-days {
   display: flex;
   gap: 8px;
@@ -188,6 +225,7 @@ body {
 .pgos-day-btn:hover { color: #e0e0e0; border-color: #555555; }
 .pgos-day-btn.pgos-active { color: #e0e0e0; border-color: #e0e0e0; }
 
+/* ── Section labels ── */
 .pgos-section-label {
   font-family: 'Lato', sans-serif;
   font-weight: 300;
@@ -200,6 +238,7 @@ body {
   border-bottom: 1px solid #2a2a2a;
 }
 
+/* ── Active tasks ── */
 .pgos-task {
   display: flex;
   align-items: flex-start;
@@ -262,6 +301,76 @@ body {
   margin-top: 5px;
 }
 
+/* ── Locked phases ── */
+#pgos-locked {
+  margin-top: 56px;
+}
+
+.pgos-locked-divider {
+  border: none;
+  border-top: 1px solid #1c1c1c;
+  margin-bottom: 44px;
+}
+
+.pgos-locked-phase {
+  margin-bottom: 40px;
+  opacity: 0.28;
+  pointer-events: none;
+  user-select: none;
+}
+
+.pgos-locked-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #1e1e1e;
+  margin-bottom: 12px;
+}
+
+.pgos-locked-label {
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #555555;
+}
+
+.pgos-lock-badge {
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #333333;
+  border: 1px solid #2a2a2a;
+  padding: 2px 8px;
+}
+
+.pgos-locked-gate {
+  font-size: 11px;
+  font-style: italic;
+  color: #444444;
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  margin-bottom: 16px;
+  line-height: 1.7;
+  padding-left: 0;
+}
+
+.pgos-locked-task {
+  padding: 11px 0;
+  border-bottom: 1px solid #191919;
+  font-family: 'Lustria', serif;
+  font-size: 14px;
+  color: #3a3a3a;
+  line-height: 1.55;
+}
+
+.pgos-locked-task:last-child { border-bottom: none; }
+
+/* ── Submit ── */
 #pgos-submit-wrap {
   margin-top: 48px;
   padding-top: 28px;
@@ -301,10 +410,12 @@ body {
   min-height: 18px;
 }
 
+/* ── Mobile ── */
 @media (max-width: 600px) {
   #pgos-wrap { padding: 0 20px 48px; }
   #pgos-title { font-size: 26px; }
   .pgos-day-btn { padding: 7px 13px; font-size: 13px; }
+  .biz-tab { font-size: 10px; padding: 9px 18px 9px 0; margin-right: 20px; }
 }
 </style>
 
@@ -343,118 +454,287 @@ var db = {
 
 (function(){
 
+var currentBiz = 'pg';
+var currentDay = null;
 var pgosChecked = {};
-var pgosCurrentDay = null;
 
-var pgosData = {
-  mon: {
-    sections: [
+/* ─────────────────────────────────────────────
+   ALL TASK DATA
+   PG = Preempt Global, WB = Why Buildings
+───────────────────────────────────────────── */
+var bizConfig = {
+
+  /* ══════════════════════════════════════════
+     PREEMPT GLOBAL
+  ══════════════════════════════════════════ */
+  pg: {
+    title: 'SOP',
+    slogan: 'Paper mistakes are free.',
+    days: {
+      mon: {
+        sections: [
+          {
+            label: 'Every Day',
+            tasks: [
+              { id:'pg-m1', text:'Check Instantly replies', sub:'Positive reply → update HubSpot + send Calendly link within 1 hour. Nothing sits more than 24 hours. A reply that sits overnight is almost certainly lost.' },
+              { id:'pg-m2', text:'5+ LinkedIn comments via Employee 1', sub:'Open Employee 1 project. Upload post screenshots one at a time. Pick the better option. Post it yourself. Repeat × 5 minimum.' },
+              { id:'pg-m3', text:'Reply to comments on your own posts', sub:'Do this personally. First-hour engagement is what LinkedIn\'s algorithm amplifies. Even a one-line reply counts.' },
+              { id:'pg-m4', text:'Check Fillout for inbound', sub:'Move to HubSpot. Send Calendly link same day. Inbound is highest priority — they already raised their hand.' }
+            ]
+          },
+          {
+            label: 'Monday — Build Day',
+            tasks: [
+              { id:'pg-m5', text:'Build Apollo list — 100+ new contacts', sub:'Titles: VP Real Estate · Director Facilities · Director of Development · Director of Construction · VP Construction. US only. Company size 50–5,000. Import to Instantly. Never start a week with an empty queue.' },
+              { id:'pg-m6', text:'Run Employee 2 — 10 hand-crafted emails', sub:'Paste 10–15 high-priority profiles one at a time. Review score + angle assignment. Light edits. Send. These outperform automated sequences — never skip even when the week is busy.' },
+              { id:'pg-m7', text:'Review Instantly metrics from last week', sub:'Open rate target: 15%+. Reply rate target: 3%+. Below 15% = fix subject lines. Below 3% = fix angles or targeting. Never send more volume into a broken sequence — fix the sequence first.' },
+              { id:'pg-m8', text:'Write this week\'s LinkedIn posts', sub:'G/N/C rotation — Grip, Nurture, Convert. Never two of the same type back-to-back. Never starts with "I". Never hashtags. Ends on tension or a question — never a CTA.' },
+              { id:'pg-m9', text:'HubSpot pipeline review', sub:'Every open deal gets a next action. Stuck 7+ days: push it or close it.' }
+            ]
+          }
+        ]
+      },
+      tue: {
+        sections: [
+          {
+            label: 'Every Day',
+            tasks: [
+              { id:'pg-t1', text:'Check Instantly replies', sub:'Positive reply → update HubSpot + send Calendly link within 1 hour. Nothing sits more than 24 hours.' },
+              { id:'pg-t2', text:'5+ LinkedIn comments via Employee 1', sub:'Upload post screenshots one at a time. Pick the better option. Post it yourself. Repeat × 5 minimum.' },
+              { id:'pg-t3', text:'Reply to comments on your own posts', sub:'Do this personally. First-hour engagement is what LinkedIn\'s algorithm amplifies.' },
+              { id:'pg-t4', text:'Check Fillout for inbound', sub:'Move to HubSpot. Send Calendly link same day. Inbound is highest priority.' }
+            ]
+          },
+          {
+            label: 'Tuesday — Publish Day',
+            tasks: [
+              { id:'pg-t5', text:'Publish LinkedIn post at 8am', sub:'Grip, Nurture, or Convert — whichever is next in rotation. Never starts with "I". Never hashtags. Ends on tension or a question — never a CTA.' },
+              { id:'pg-t6', text:'Send 3-day proposal follow-ups', sub:'"Is there anything I can clarify?" — that is the entire email. Not a second pitch. Not a features list. Not urgency. One question. If they don\'t respond, the deal is cold.' },
+              { id:'pg-t7', text:'Send proposals from any discovery calls', sub:'Out within 24 hours of every call. ROI math first. Scope second. Price last. Attach 3-min Loom walkthrough — the Loom is the delivery, not supplementary.' }
+            ]
+          }
+        ]
+      },
+      wed: {
+        sections: [
+          {
+            label: 'Every Day',
+            tasks: [
+              { id:'pg-w1', text:'Check Instantly replies', sub:'Positive reply → update HubSpot + send Calendly link within 1 hour.' },
+              { id:'pg-w2', text:'5+ LinkedIn comments via Employee 1', sub:'Upload post screenshots one at a time. Pick the better option. Post it yourself. Repeat × 5 minimum.' },
+              { id:'pg-w3', text:'Reply to comments on your own posts', sub:'Do this personally. First-hour engagement matters for reach.' },
+              { id:'pg-w4', text:'Check Fillout for inbound', sub:'Move to HubSpot. Send Calendly link same day.' }
+            ]
+          },
+          {
+            label: 'Wednesday — Work On the Business',
+            tasks: [
+              { id:'pg-w5', text:'No build tasks scheduled today', sub:'Use for: blog/SEO articles · refining systems · new findings bank entries · website updates · improving AI employee output quality. The maintenance day — protect it.' }
+            ]
+          }
+        ]
+      },
+      thu: {
+        sections: [
+          {
+            label: 'Every Day',
+            tasks: [
+              { id:'pg-th1', text:'Check Instantly replies', sub:'Positive reply → update HubSpot + send Calendly link within 1 hour.' },
+              { id:'pg-th2', text:'5+ LinkedIn comments via Employee 1', sub:'Upload post screenshots one at a time. Pick the better option. Post it yourself. Repeat × 5 minimum.' },
+              { id:'pg-th3', text:'Reply to comments on your own posts', sub:'Do this personally. First-hour engagement matters for reach.' },
+              { id:'pg-th4', text:'Check Fillout for inbound', sub:'Move to HubSpot. Send Calendly link same day.' }
+            ]
+          },
+          {
+            label: 'Thursday — Publish Day',
+            tasks: [
+              { id:'pg-th5', text:'Publish LinkedIn post at 8am', sub:'Grip, Nurture, or Convert — whichever is next in rotation. Never starts with "I". Ends on tension or a question — never a CTA.' },
+              { id:'pg-th6', text:'Send 3-day proposal follow-ups', sub:'"Is there anything I can clarify?" — nothing else.' },
+              { id:'pg-th7', text:'Send proposals from any discovery calls', sub:'Out within 24 hours of every call. ROI math first. Scope second. Price last. Attach 3-min Loom.' }
+            ]
+          }
+        ]
+      },
+      fri: {
+        sections: [
+          {
+            label: 'Every Day',
+            tasks: [
+              { id:'pg-f1', text:'Check Instantly replies', sub:'Positive reply → update HubSpot + send Calendly link within 1 hour.' },
+              { id:'pg-f2', text:'5+ LinkedIn comments via Employee 1', sub:'Upload post screenshots one at a time. Pick the better option. Post it yourself. Repeat × 5 minimum.' },
+              { id:'pg-f3', text:'Reply to comments on your own posts', sub:'Do this personally. First-hour engagement matters for reach.' },
+              { id:'pg-f4', text:'Check Fillout for inbound', sub:'Move to HubSpot. Send Calendly link same day.' }
+            ]
+          },
+          {
+            label: 'Friday — Weekly Reset',
+            tasks: [
+              { id:'pg-f5', text:'Full HubSpot pipeline review', sub:'Every deal has a next action before you log off. Stuck 7+ days: push it or close it.' },
+              { id:'pg-f6', text:'Review this week\'s LinkedIn posts', sub:'Which performed better and why? Which type — Grip, Nurture, or Convert — got the most traction? Note what to repeat next week.' },
+              { id:'pg-f7', text:'Confirm Monday\'s Apollo queue', sub:'100+ contacts ready. Never start Monday with an empty queue.' }
+            ]
+          }
+        ]
+      }
+    },
+    lockedPhases: [
       {
-        label: "Every Day",
+        label: 'Phase 2 — The Proof · Days 61–120',
+        gate: 'Gate to unlock: First paid engagement closed at any tier. Open rate sustained at 15%+. Reply rate at 3%+. LinkedIn posting 3×/week without gaps. HubSpot pipeline has 3+ active deals with defined next actions.',
         tasks: [
-          { id:"m1", text:"Check Instantly replies", sub:"Nothing sits more than 24 hours. Positive reply → update HubSpot + send Calendly link within 1 hour." },
-          { id:"m2", text:"5+ LinkedIn comments via Employee 1", sub:"Open Employee 1 project. Upload post screenshots one at a time. Pick the better option. Post it yourself. Repeat × 5." },
-          { id:"m3", text:"Reply to comments on your own posts", sub:"Do this personally. First-hour engagement matters for reach." },
-          { id:"m4", text:"Check Fillout for inbound", sub:"Move to HubSpot. Send Calendly link same day. Inbound is highest priority — someone who filled in the form is already halfway sold." }
+          'Deliver every engagement with issue log + Loom walkthrough — document reference, grid location, dollar consequence. The Loom is the delivery, not documentation.',
+          'Request a testimonial after every completed engagement — published to website and LinkedIn within 48 hours of receiving it.',
+          'Write one anonymised case study per engagement — project type, finding, dollar consequence, client outcome. The case study does more selling than any pitch.',
+          'Open commercial RE parallel track — Apollo filter: commercial developers, medical office, retail rollout. Entry point always the $1,500 Red Flag Scan.',
+          'Identify 3 referral targets by Day 90 — architecture firms, owner\'s reps, construction managers, commercial RE attorneys. Start the relationship. The referral comes after trust, not before.'
         ]
       },
       {
-        label: "Monday — Build Day",
+        label: 'Phase 3 — The Retainer · Days 121–240',
+        gate: 'Gate to unlock: 3 completed engagements. 1 written testimonial published. 1 anonymised case study in use. Commercial RE Apollo sequence active with 200+ contacts imported. 1 referral relationship opened.',
         tasks: [
-          { id:"m5", text:"Build Apollo list — 100+ new contacts", sub:"Titles: VP Real Estate · Director Facilities · Director of Development · Director of Construction · VP Construction. Import to Instantly." },
-          { id:"m6", text:"Run Employee 2 — 10 hand-crafted emails", sub:"Paste 10–15 high-priority profiles one at a time. Review score + draft. Light edits. Send." },
-          { id:"m7", text:"Write this week's LinkedIn posts", sub:"One reframe post + one proof/finding post for Tue + Thu. Written today = no scramble on publish days." },
-          { id:"m8", text:"HubSpot pipeline review", sub:"Every open deal gets a next action. Stuck 7+ days: push it or close it." },
-          { id:"m9", text:"Review Instantly stats from last week", sub:"Open rate target: 15%+. Reply rate target: 3%+. Adjust subject lines if below." }
+          'Retainer pitch after second completed engagement with same client — $5K–$8K/mo for standing access. Say it once. If they don\'t take it, move on. Never pitch a retainer to a first-time client.',
+          'Referral follow-through every 2–3 weeks — a specific observation relevant to their work, not a check-in or newsletter. The referral comes when they trust your judgment enough to put their name behind it.',
+          'Expand LinkedIn posting to client outcome stories — "We flagged the coordination issue 6 weeks before bid. The RFI never happened." Proof, not promise.',
+          'Introduce Preempt Global on Why Buildings Twitter — once, naturally, as a genuine observation. Not an advertisement. Do it once, let it sit, do not repeat it.'
+        ]
+      },
+      {
+        label: 'Phase 4 — The Scale · Days 241–365',
+        gate: 'Gate to unlock: First retainer client signed at $5K/mo minimum. Commercial RE has 1+ closed engagement. LinkedIn follower count meaningfully above starting point with consistent inbound profile views from target titles.',
+        tasks: [
+          'Hire first 1099 contractor for delivery overflow — another architect or experienced CD reviewer, paid per engagement. Joseph reviews every deliverable before it goes to the client. This is delegation of production time, not quality.',
+          'Push for second retainer from Stage 3 pipeline — any client with 2+ completions not yet pitched gets the conversation in Stage 4. Two retainers at $6,500/mo = $156K/yr baseline before project work.',
+          'Open enterprise tier for large data center operators — $22K–$40K for hyperscale or multi-phase builds. Emerges from existing relationships, never pitched cold.',
+          'Formalise the referral program — define 10% of first engagement or reciprocal value, in writing, before the referrals start coming. Ambiguity kills referral relationships. Clarity compounds them.',
+          'Begin tracking inbound from Why Buildings audience — when a lead references Why Buildings as source, log it. First signal the two businesses are feeding each other.'
         ]
       }
     ]
   },
-  tue: {
-    sections: [
-      {
-        label: "Every Day",
-        tasks: [
-          { id:"t1", text:"Check Instantly replies", sub:"Nothing sits more than 24 hours. Positive reply → update HubSpot + send Calendly link within 1 hour." },
-          { id:"t2", text:"5+ LinkedIn comments via Employee 1", sub:"Open Employee 1 project. Upload post screenshots one at a time. Pick the better option. Post it yourself. Repeat × 5." },
-          { id:"t3", text:"Reply to comments on your own posts", sub:"Do this personally. First-hour engagement matters for reach." },
-          { id:"t4", text:"Check Fillout for inbound", sub:"Move to HubSpot. Send Calendly link same day. Inbound is highest priority." }
+
+  /* ══════════════════════════════════════════
+     WHY BUILDINGS
+  ══════════════════════════════════════════ */
+  wb: {
+    title: 'Why Buildings',
+    slogan: 'The ramp is not a content strategy. It is a character test.',
+    days: {
+      mon: {
+        sections: [
+          {
+            label: 'Every Day — Stage 1',
+            tasks: [
+              { id:'wb-m1', text:'Post one thing on Twitter', sub:'Short observation: 1–3 sentences. No CTA, no link, no question. The thought lands and stops. "A room built with natural materials ages well. A room built with synthetics just ages." Takes 3 minutes. These are the posts people screenshot.' },
+              { id:'wb-m2', text:'Engage 10 accounts for 15 minutes', sub:'Architecture · construction · design-curious accounts. Leave real comments — not one-word replies. This is how your name becomes visible before the newsletter exists.' },
+              { id:'wb-m3', text:'Reply to every comment on your own posts', sub:'Always. The habit matters more than the content of the reply. Even a one-line reply counts.' }
+            ]
+          },
+          {
+            label: 'Monday — Thread Prep',
+            tasks: [
+              { id:'wb-m4', text:'Write this week\'s visual thread', sub:'Give skill-twitter.md 5 bullet points and your angle. Review the 10-tweet output. Edit it. This is the longer-form content that earns the philosophical connection the short observation cannot hold. One thread per week minimum.' }
+            ]
+          }
         ]
       },
-      {
-        label: "Tuesday — Publish Day",
-        tasks: [
-          { id:"t5", text:"Publish LinkedIn post at 8am", sub:"Reframe or proof/finding — whichever is next in rotation. Never starts with 'I'. Ends on tension or a question — never a CTA." },
-          { id:"t6", text:"Send 3-day proposal follow-ups", sub:'"Is there anything I can clarify?" — nothing else.' },
-          { id:"t7", text:"Send proposals from any discovery calls", sub:"Out within 24 hours of call. ROI math first, scope second, price last. Attach 3-min Loom." }
+      tue: {
+        sections: [
+          {
+            label: 'Every Day — Stage 1',
+            tasks: [
+              { id:'wb-t1', text:'Post one thing on Twitter', sub:'Short observation: 1–3 sentences. No CTA, no link, no question. The thought lands and stops. Takes 3 minutes.' },
+              { id:'wb-t2', text:'Engage 10 accounts for 15 minutes', sub:'Architecture · construction · design-curious accounts. Real comments, not one-word replies.' },
+              { id:'wb-t3', text:'Reply to every comment on your own posts', sub:'Always. The habit matters more than the content of the reply.' }
+            ]
+          }
+        ]
+      },
+      wed: {
+        sections: [
+          {
+            label: 'Every Day — Stage 1',
+            tasks: [
+              { id:'wb-w1', text:'Post one thing on Twitter', sub:'Short observation: 1–3 sentences. No CTA, no link, no question. The thought lands and stops. Takes 3 minutes.' },
+              { id:'wb-w2', text:'Engage 10 accounts for 15 minutes', sub:'Architecture · construction · design-curious accounts. Real comments, not one-word replies.' },
+              { id:'wb-w3', text:'Reply to every comment on your own posts', sub:'Always. The habit matters more than the content of the reply.' }
+            ]
+          }
+        ]
+      },
+      thu: {
+        sections: [
+          {
+            label: 'Every Day — Stage 1',
+            tasks: [
+              { id:'wb-th1', text:'Post one thing on Twitter', sub:'Short observation: 1–3 sentences. No CTA, no link, no question. The thought lands and stops. Takes 3 minutes.' },
+              { id:'wb-th2', text:'Engage 10 accounts for 15 minutes', sub:'Architecture · construction · design-curious accounts. Real comments, not one-word replies.' },
+              { id:'wb-th3', text:'Reply to every comment on your own posts', sub:'Always. The habit matters more than the content of the reply.' }
+            ]
+          },
+          {
+            label: 'Thursday — Publish Thread',
+            tasks: [
+              { id:'wb-th4', text:'Publish the visual thread written Monday', sub:'Review it one final time. Post it. The thread is the weekly depth — the longer form that earns the philosophical connection the short observation cannot hold.' }
+            ]
+          }
+        ]
+      },
+      fri: {
+        sections: [
+          {
+            label: 'Every Day — Stage 1',
+            tasks: [
+              { id:'wb-f1', text:'Post one thing on Twitter', sub:'Short observation: 1–3 sentences. No CTA, no link, no question. Takes 3 minutes.' },
+              { id:'wb-f2', text:'Engage 10 accounts for 15 minutes', sub:'Architecture · construction · design-curious accounts. Real comments, not one-word replies.' },
+              { id:'wb-f3', text:'Reply to every comment on your own posts', sub:'Always. The habit matters more than the content of the reply.' }
+            ]
+          },
+          {
+            label: 'Friday — Transparency Post',
+            tasks: [
+              { id:'wb-f4', text:'Write the Preempt Global transparency post', sub:'Raw notes from the week on the data center business. What happened. What didn\'t. Specific numbers. No spin. Use skill-datacenters.md. This is the post that proves the philosophy isn\'t decorative.' }
+            ]
+          }
         ]
       }
-    ]
-  },
-  wed: {
-    sections: [
+    },
+    lockedPhases: [
       {
-        label: "Every Day",
+        label: 'Stage 2 — The Voice · Days 46–90',
+        gate: 'Gate to unlock: 45 consecutive days of posting without missing a single day. Not 44. Not "I missed one but made up for it." 45 in a row. The streak resets if you miss.',
         tasks: [
-          { id:"w1", text:"Check Instantly replies", sub:"Nothing sits more than 24 hours. Positive reply → update HubSpot + send Calendly link within 1 hour." },
-          { id:"w2", text:"5+ LinkedIn comments via Employee 1", sub:"Open Employee 1 project. Upload post screenshots one at a time. Pick the better option. Post it yourself. Repeat × 5." },
-          { id:"w3", text:"Reply to comments on your own posts", sub:"Do this personally. First-hour engagement matters for reach." },
-          { id:"w4", text:"Check Fillout for inbound", sub:"Move to HubSpot. Send Calendly link same day. Inbound is highest priority." }
+          'Launch Why Buildings on Beehiiv (free tier). Write the welcome email — one paragraph, your voice, why this newsletter exists. Add the link to your Twitter bio. Do this on Day 46, not Day 60.',
+          'Send one essay every Thursday — topic from your content bank, 8–10 bullets to skill-newsletter.md, 45 minutes of editing. Free intro (400w) cuts at genuine curiosity. Paid deep dive (800w) delivers the full depth. Same day, same time, every week.',
+          'Add newsletter CTA to every thread — a specific reason tied to that thread\'s topic. "I cover this in full in this week\'s Why Buildings essay. The paid section goes into [specific angle]. Free to start." That is the whole CTA.',
+          'Continue engaging 10 accounts daily — this habit does not drop when the newsletter is added. Total weekly time: 3–4 hours including the Thursday essay.'
         ]
       },
       {
-        label: "Wednesday — Work On the Business",
+        label: 'Stage 3 — The Amplifier · Days 91–180',
+        gate: 'Gate to unlock: 4 newsletters sent without missing a Thursday. Open rate above 30% on the last two. Twitter still posting every day. Both habits running simultaneously without either one dropping.',
         tasks: [
-          { id:"w5", text:"No scheduled build tasks today", sub:"Use for: blog/SEO articles · refining systems · new findings bank entries · website updates · improving AI employee output quality." }
-        ]
-      }
-    ]
-  },
-  thu: {
-    sections: [
-      {
-        label: "Every Day",
-        tasks: [
-          { id:"th1", text:"Check Instantly replies", sub:"Nothing sits more than 24 hours. Positive reply → update HubSpot + send Calendly link within 1 hour." },
-          { id:"th2", text:"5+ LinkedIn comments via Employee 1", sub:"Open Employee 1 project. Upload post screenshots one at a time. Pick the better option. Post it yourself. Repeat × 5." },
-          { id:"th3", text:"Reply to comments on your own posts", sub:"Do this personally. First-hour engagement matters for reach." },
-          { id:"th4", text:"Check Fillout for inbound", sub:"Move to HubSpot. Send Calendly link same day. Inbound is highest priority." }
+          'Weekly Reddit adaptation — best thread of the week → skill-reddit.md → 3 native posts: r/architecture (technical angle), r/HistoryPorn (story angle), r/UrbanPlanning (civic angle). Schedule Mon/Wed/Fri. Never feels like a cross-post — always native to the subreddit.',
+          'Watch Reddit comments for product signals — which posts get the most engagement? What do people ask? "Is there a guide for visiting Rome like this?" is someone telling you what to build next. Start a running note.',
+          'Start the Rome city guide outline in Month 4 or 5 of Stage 3, not before — open skill-product.md, pick 10 Rome buildings, write one sentence on each through the Rossi lens. This is the outline that makes Stage 4 possible.'
         ]
       },
       {
-        label: "Thursday — Publish Day",
+        label: 'Stage 4 — The First Product · Days 181–365',
+        gate: 'Gate to unlock: 12 consecutive weeks of Reddit posts. At least one Reddit post generated meaningful comments or questions about what to see in a specific city. Rome guide outline complete. Twitter and newsletter still running without gaps.',
         tasks: [
-          { id:"th5", text:"Publish LinkedIn post at 8am", sub:"Reframe or proof/finding — whichever is next in rotation. Never starts with 'I'. Ends on tension or a question — never a CTA." },
-          { id:"th6", text:"Send 3-day proposal follow-ups", sub:'"Is there anything I can clarify?" — nothing else.' },
-          { id:"th7", text:"Send proposals from any discovery calls", sub:"Out within 24 hours of call. ROI math first, scope second, price last. Attach 3-min Loom." }
-        ]
-      }
-    ]
-  },
-  fri: {
-    sections: [
-      {
-        label: "Every Day",
-        tasks: [
-          { id:"f1", text:"Check Instantly replies", sub:"Nothing sits more than 24 hours. Positive reply → update HubSpot + send Calendly link within 1 hour." },
-          { id:"f2", text:"5+ LinkedIn comments via Employee 1", sub:"Open Employee 1 project. Upload post screenshots one at a time. Pick the better option. Post it yourself. Repeat × 5." },
-          { id:"f3", text:"Reply to comments on your own posts", sub:"Do this personally. First-hour engagement matters for reach." },
-          { id:"f4", text:"Check Fillout for inbound", sub:"Move to HubSpot. Send Calendly link same day. Inbound is highest priority." }
-        ]
-      },
-      {
-        label: "Friday — Weekly Reset",
-        tasks: [
-          { id:"f5", text:"Full HubSpot pipeline review", sub:"Every deal has a next action before you log off." },
-          { id:"f6", text:"Review this week's LinkedIn posts", sub:"Which performed better and why? Note what to repeat next week." },
-          { id:"f7", text:"Confirm Monday's Apollo queue", sub:"100+ contacts ready. Never start Monday with an empty queue." },
-          { id:"f8", text:"One sentence in Notion", sub:"What moved the needle this week? What would you change? Compounds over 90 days." }
+          'Produce the Rome guide — one building entry per week, 20 minutes. 10 buildings = 10 weeks of production running alongside everything else. Not a sprint. A slow build that fits inside the existing routine.',
+          'Publish and announce with craftsman tone — "The Rome guide is done. 10 buildings, the history behind each one, what to look for that most visitors miss. $97." One post. One newsletter paragraph. No hype. No countdown. A craftsman mentioning something he made.',
+          'Begin Athens outline in the background once Rome is published — 10 buildings, one sentence each. No deadline. No launch date. Athens is ready when it is ready.'
         ]
       }
     ]
   }
 };
 
+/* ─────────────────────────────────────────────
+   UTILITY FUNCTIONS
+───────────────────────────────────────────── */
 function todayStr() {
   var d = new Date();
   var mm = String(d.getMonth()+1).padStart(2,'0');
@@ -462,17 +742,24 @@ function todayStr() {
   return d.getFullYear() + '-' + mm + '-' + dd;
 }
 
+// PG uses plain dates (preserves existing Supabase data).
+// WB uses wb- prefix so scores never collide.
+function bizDateKey() {
+  var raw = todayStr();
+  return currentBiz === 'pg' ? raw : ('wb-' + raw);
+}
+
 function countTotalTasks() {
-  if (!pgosCurrentDay) return 0;
+  if (!currentDay) return 0;
   var total = 0;
-  pgosData[pgosCurrentDay].sections.forEach(function(s){ total += s.tasks.length; });
+  bizConfig[currentBiz].days[currentDay].sections.forEach(function(s){ total += s.tasks.length; });
   return total;
 }
 
 function countChecked() {
-  if (!pgosCurrentDay) return 0;
+  if (!currentDay) return 0;
   var count = 0;
-  pgosData[pgosCurrentDay].sections.forEach(function(s){
+  bizConfig[currentBiz].days[currentDay].sections.forEach(function(s){
     s.tasks.forEach(function(t){ if(pgosChecked[t.id]) count++; });
   });
   return count;
@@ -488,6 +775,9 @@ function scoreToColor(score, total) {
   return '#e0e0e0';
 }
 
+/* ─────────────────────────────────────────────
+   GRID
+───────────────────────────────────────────── */
 function pgosRenderGrid(savedScores) {
   var grid = document.getElementById('pgos-grid');
   grid.innerHTML = '';
@@ -516,13 +806,15 @@ function pgosRenderGrid(savedScores) {
       } else {
         var mm = String(cellDate.getMonth()+1).padStart(2,'0');
         var dd2 = String(cellDate.getDate()).padStart(2,'0');
-        var dateStr = cellDate.getFullYear() + '-' + mm + '-' + dd2;
-        if (savedScores[dateStr]) {
-          var s = savedScores[dateStr];
+        var rawDate = cellDate.getFullYear() + '-' + mm + '-' + dd2;
+        // PG uses plain date, WB uses wb- prefix
+        var storeKey = currentBiz === 'pg' ? rawDate : ('wb-' + rawDate);
+        if (savedScores[storeKey]) {
+          var s = savedScores[storeKey];
           cell.style.background = scoreToColor(s.score, s.total);
-          cell.setAttribute('data-tip', dateStr + ' — ' + s.score + '/' + s.total + ' tasks');
+          cell.setAttribute('data-tip', rawDate + ' — ' + s.score + '/' + s.total + ' tasks');
         } else {
-          cell.setAttribute('data-tip', dateStr);
+          cell.setAttribute('data-tip', rawDate);
         }
       }
       col.appendChild(cell);
@@ -550,32 +842,94 @@ async function pgosLoadGrid() {
   }
 }
 
+/* ─────────────────────────────────────────────
+   LOCKED PHASES RENDER
+───────────────────────────────────────────── */
+function pgosRenderLocked() {
+  var phases = bizConfig[currentBiz].lockedPhases;
+  var html = '';
+  if (phases && phases.length > 0) {
+    html += '<hr class="pgos-locked-divider">';
+    phases.forEach(function(phase) {
+      html += '<div class="pgos-locked-phase">';
+      html += '<div class="pgos-locked-header">';
+      html += '<div class="pgos-locked-label">' + phase.label + '</div>';
+      html += '<div class="pgos-lock-badge">Locked</div>';
+      html += '</div>';
+      html += '<div class="pgos-locked-gate">' + phase.gate + '</div>';
+      phase.tasks.forEach(function(task) {
+        html += '<div class="pgos-locked-task">' + task + '</div>';
+      });
+      html += '</div>';
+    });
+  }
+  document.getElementById('pgos-locked').innerHTML = html;
+}
+
+/* ─────────────────────────────────────────────
+   BUSINESS TAB SWITCH
+───────────────────────────────────────────── */
+window.switchBiz = function(biz, btn) {
+  currentBiz = biz;
+  currentDay = null;
+
+  document.querySelectorAll('.biz-tab').forEach(function(b){ b.classList.remove('biz-active'); });
+  btn.classList.add('biz-active');
+
+  document.getElementById('pgos-title').textContent = bizConfig[biz].title;
+  document.getElementById('pgos-slogan').textContent = bizConfig[biz].slogan;
+
+  document.getElementById('pgos-tasks').innerHTML = '';
+  document.getElementById('pgos-locked').innerHTML = '';
+  document.getElementById('pgos-submit-status').textContent = '';
+  document.getElementById('pgos-submit-btn').disabled = false;
+
+  document.querySelectorAll('.pgos-day-btn').forEach(function(b){ b.classList.remove('pgos-active'); });
+
+  pgosLoadGrid();
+
+  // Auto-select today for the new tab
+  var todayMap = [null,'mon','tue','wed','thu','fri',null];
+  var todayDay = todayMap[new Date().getDay()] || 'mon';
+  var dayOrder = ['mon','tue','wed','thu','fri'];
+  var idx = dayOrder.indexOf(todayDay);
+  var btns = document.querySelectorAll('.pgos-day-btn');
+  if (btns[idx]) pgosShowDay(todayDay, btns[idx]);
+};
+
+/* ─────────────────────────────────────────────
+   SUBMIT
+───────────────────────────────────────────── */
 window.pgosSubmitDay = async function() {
   var btn = document.getElementById('pgos-submit-btn');
   var status = document.getElementById('pgos-submit-status');
   var checked = countChecked();
   var total = countTotalTasks();
-  var date = todayStr();
+  var dateKey = bizDateKey();
   if (total === 0) { status.textContent = 'Select a day tab first.'; return; }
   btn.disabled = true;
   status.textContent = 'Saving…';
   try {
-    var result = await db.from('daily_scores').upsert({ date: date, score: checked, total: total });
+    var result = await db.from('daily_scores').upsert({ date: dateKey, score: checked, total: total });
     if (result.error) throw result.error;
-    status.textContent = '✓ Saved — ' + checked + '/' + total + ' tasks for ' + date;
+    status.textContent = '✓ Saved — ' + checked + '/' + total + ' tasks for ' + todayStr();
     await pgosLoadGrid();
   } catch(e) {
     console.error('Submit error:', e);
-    status.textContent = 'Error saving. Check your Supabase URL and key above.';
+    status.textContent = 'Error saving. Check your Supabase connection.';
   }
   btn.disabled = false;
 };
 
+/* ─────────────────────────────────────────────
+   SHOW DAY
+───────────────────────────────────────────── */
 window.pgosShowDay = function(day, btn) {
-  pgosCurrentDay = day;
+  currentDay = day;
   document.querySelectorAll('.pgos-day-btn').forEach(function(b){ b.classList.remove('pgos-active'); });
   if (btn) btn.classList.add('pgos-active');
-  var d = pgosData[day];
+
+  var d = bizConfig[currentBiz].days[day];
   var html = '';
   d.sections.forEach(function(section){
     html += '<div class="pgos-section-label">' + section.label + '</div>';
@@ -592,17 +946,25 @@ window.pgosShowDay = function(day, btn) {
   document.getElementById('pgos-tasks').innerHTML = html;
   document.getElementById('pgos-submit-status').textContent = '';
   document.getElementById('pgos-submit-btn').disabled = false;
+
+  pgosRenderLocked();
 };
 
+/* ─────────────────────────────────────────────
+   TOGGLE CHECKBOX
+───────────────────────────────────────────── */
 window.pgosToggle = function(id) {
   pgosChecked[id] = !pgosChecked[id];
-  pgosShowDay(pgosCurrentDay, null);
+  pgosShowDay(currentDay, null);
   var dayOrder = ['mon','tue','wed','thu','fri'];
-  var idx = dayOrder.indexOf(pgosCurrentDay);
+  var idx = dayOrder.indexOf(currentDay);
   var btns = document.querySelectorAll('.pgos-day-btn');
   if (btns[idx]) btns[idx].classList.add('pgos-active');
 };
 
+/* ─────────────────────────────────────────────
+   INIT — open on today's day, PG tab
+───────────────────────────────────────────── */
 var todayMap = [null,'mon','tue','wed','thu','fri',null];
 var todayDay = todayMap[new Date().getDay()] || 'mon';
 var dayOrder = ['mon','tue','wed','thu','fri'];
