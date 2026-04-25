@@ -5,7 +5,6 @@
     { label: 'Motivation',   href: '/motivation' },
     { label: 'Bookmarks',    href: '/bookmarks' },
     { label: 'Network',      href: '/network' }
-    { label: 'Notebook'      href: '/notebook' }
   ];
 
   var currentPath = window.location.pathname.replace(/\/$/, '').toLowerCase();
