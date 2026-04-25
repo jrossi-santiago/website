@@ -151,22 +151,7 @@
     <span></span><span></span><span></span>\
   </button>\
   <div class="sh-mobile-menu" id="sh-mobile-menu">' + mobileNavHTML + '</div>\
-</div>\
-<script>\
-  (function() {\
-    var btn = document.getElementById("sh-hamburger-btn");\
-    var menu = document.getElementById("sh-mobile-menu");\
-    if (btn && menu) {\
-      btn.addEventListener("click", function(e) {\
-        e.stopPropagation();\
-        menu.classList.toggle("open");\
-      });\
-      document.addEventListener("click", function() {\
-        menu.classList.remove("open");\
-      });\
-    }\
-  })();\
-<\/script>';
+</div>';
 
   var target = document.getElementById('site-header');
   if (target) {
@@ -174,4 +159,20 @@
   } else {
     document.write(html);
   }
+
+  // Wire up hamburger AFTER the HTML has been inserted
+  setTimeout(function () {
+    var btn = document.getElementById('sh-hamburger-btn');
+    var menu = document.getElementById('sh-mobile-menu');
+    if (btn && menu) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        menu.classList.toggle('open');
+      });
+      document.addEventListener('click', function () {
+        menu.classList.remove('open');
+      });
+    }
+  }, 0);
+
 })();
