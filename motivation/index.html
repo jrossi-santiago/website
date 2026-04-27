@@ -415,10 +415,9 @@
     'Stop waiting for motivation. Motivation is for amateurs. You move because you decided to.'
   ];
 
-  var KEY_CARD     = 'ne_card';
-  var KEY_SAVED_AT = 'ne_saved_at';
-  var HOURS_18     = 18 * 60 * 60 * 1000;
+  var HOURS_18 = 18 * 60 * 60 * 1000;
 
+  // ── SUPABASE FETCH HELPER ──
   function sbFetch(path, method, body) {
     method = method || 'GET';
     var opts = {
@@ -454,10 +453,30 @@
     return arr[Math.floor(Math.random() * arr.length)];
   }
 
-  function cardIsStale() {
-    var savedAt = localStorage.getItem(KEY_SAVED_AT);
-    if (!savedAt) return true;
-    var savedTime = parseInt(savedAt, 10);
+  function todayDateString() {
+    var d = new Date();
+    return d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate();
+  }
+
+  // ── CARD CACHE — now stored in Supabase so all devices share it ──
+
+  function loadCardFromDB() {
+    return sbFetch('/rest/v1/daily_card?id=eq.today').then(function(rows) {
+      if (!rows || rows.length === 0) return null;
+      return rows[0];
+    });
+  }
+
+  function saveCardToDB(card) {
+    return sbFetch('/rest/v1/daily_card?id=eq.today', 'PATCH', {
+      card: card,
+      saved_at: Date.now()
+    });
+  }
+
+  function cardIsStale(record) {
+    if (!record || !record.saved_at || !record.card) return true;
+    var savedTime = record.saved_at;
     var now = Date.now();
     if (now - savedTime >= HOURS_18) return true;
     var savedDate = new Date(savedTime).toDateString();
@@ -503,34 +522,36 @@
   }
 
   function loadCard() {
-    if (!cardIsStale()) {
-      try {
-        var saved = JSON.parse(localStorage.getItem(KEY_CARD));
-        if (saved) { renderCard(saved); return; }
-      } catch(e) {}
-    }
+    loadCardFromDB().then(function(record) {
+      // If the saved card is still fresh for today, use it on all devices
+      if (!cardIsStale(record)) {
+        renderCard(record.card);
+        return;
+      }
 
-    Promise.all([
-      sbFetch('/rest/v1/goals?order=created_at.asc'),
-      sbFetch('/rest/v1/images?order=created_at.asc')
-    ]).then(function(results) {
-      var goals  = results[0];
-      var images = results[1];
+      // Card is stale or missing — pick a fresh one and save it
+      Promise.all([
+        sbFetch('/rest/v1/goals?order=created_at.asc'),
+        sbFetch('/rest/v1/images?order=created_at.asc')
+      ]).then(function(results) {
+        var goals  = results[0];
+        var images = results[1];
 
-      var pinnedImage  = images.find(function(i) { return i.pinned; }) || null;
-      var unpinned     = images.filter(function(i) { return !i.pinned; });
-      var randomImage  = unpinned.length > 0 ? pickRandom(unpinned) : null;
+        var pinnedImage = images.find(function(i) { return i.pinned; }) || null;
+        var unpinned    = images.filter(function(i) { return !i.pinned; });
+        var randomImage = unpinned.length > 0 ? pickRandom(unpinned) : null;
 
-      var card = {
-        quote:          pickRandom(QUOTES),
-        goal:           goals.length > 0 ? pickRandom(goals).text : null,
-        pinnedImageUrl: pinnedImage ? pinnedImage.url : null,
-        randomImageUrl: randomImage ? randomImage.url : null
-      };
+        var card = {
+          quote:          pickRandom(QUOTES),
+          goal:           goals.length > 0 ? pickRandom(goals).text : null,
+          pinnedImageUrl: pinnedImage ? pinnedImage.url : null,
+          randomImageUrl: randomImage ? randomImage.url : null
+        };
 
-      localStorage.setItem(KEY_CARD, JSON.stringify(card));
-      localStorage.setItem(KEY_SAVED_AT, Date.now().toString());
-      renderCard(card);
+        saveCardToDB(card);
+        renderCard(card);
+      });
+
     }).catch(function(e) {
       console.error(e);
       document.getElementById('cardLoading').textContent = 'Could not load — check your connection.';
