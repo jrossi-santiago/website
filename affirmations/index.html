@@ -47,6 +47,17 @@
       padding: 40px 32px;
     }
 
+    /* ── LOADING ── */
+    #loading-view {
+      text-align: center;
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #333333;
+    }
+
     /* ── ACTIVE VIEW ── */
     #active-view {
       display: none;
@@ -205,6 +216,8 @@
 
 <div id="main">
 
+  <div id="loading-view">Loading…</div>
+
   <div id="active-view">
     <div id="dots"></div>
     <div id="progress-indicator"></div>
@@ -230,11 +243,39 @@
 
 </div>
 
+<!-- Supabase library loaded from CDN (CDN = a public server that hosts the library for free) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/affirmations/data.js"></script>
 <script>
-  const KEY_SESSION  = 'dp_session';
-  const KEY_STREAK   = 'dp_streak';
-  const KEY_LAST_DAY = 'dp_last_day';
+
+  // ── SUPABASE SETUP ──
+  // Replace the two values below with your own from the Supabase dashboard
+  const SUPABASE_URL  = 'https://rvwyjipseusvqjqbwken.supabase.co';
+  const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ2d3lqaXBzZXVzdnFqcWJ3a2VuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NDA4MDAsImV4cCI6MjA5MjAxNjgwMH0.UFYPZndWuY3uDOWovjxa7qreidWM9sacUlIS9iteMXc';
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+  const ROW_ID = 'me';
+
+  // ── DATABASE HELPERS ──
+
+  async function loadFromDB() {
+    const { data, error } = await db
+      .from('affirmations_progress')
+      .select('*')
+      .eq('id', ROW_ID)
+      .single();
+    if (error) { console.error('Load error:', error); return null; }
+    return data;
+  }
+
+  async function saveToDB(streak, lastDay, sess) {
+    const { error } = await db
+      .from('affirmations_progress')
+      .upsert({ id: ROW_ID, streak: streak, last_day: lastDay, session: sess });
+    if (error) { console.error('Save error:', error); }
+  }
+
+  // ── HELPERS ──
 
   function todayStr() {
     const d = new Date();
@@ -265,24 +306,19 @@
     return shuffle([...used, ...extra]);
   }
 
-  function saveSession(s) { localStorage.setItem(KEY_SESSION, JSON.stringify(s)); }
-
-  function loadSession() {
-    try { return JSON.parse(localStorage.getItem(KEY_SESSION)); }
-    catch { return null; }
-  }
-
-  function loadStreak() {
-    return parseInt(localStorage.getItem(KEY_STREAK) || '0', 10);
-  }
-
-  function getLastDay() { return localStorage.getItem(KEY_LAST_DAY) || ''; }
-
   function updateStreakDisplay(n) {
     document.getElementById('streak-count').textContent = n;
   }
 
-  let timerInterval = null;
+  // ── STATE ──
+  // These variables hold the current state while the page is open
+  let currentStreak  = 0;
+  let currentLastDay = '';
+  let session        = null;
+  let currentIndex   = 0;
+  let timerInterval  = null;
+
+  // ── COUNTDOWN ──
 
   function startCountdown() {
     function tick() {
@@ -304,9 +340,12 @@
     timerInterval = setInterval(tick, 1000);
   }
 
+  // ── VIEWS ──
+
   function showLocked(sess) {
-    document.getElementById('active-view').style.display = 'none';
-    document.getElementById('locked-view').style.display = 'block';
+    document.getElementById('loading-view').style.display = 'none';
+    document.getElementById('active-view').style.display  = 'none';
+    document.getElementById('locked-view').style.display  = 'block';
     const list = document.getElementById('locked-items-list');
     list.innerHTML = '';
     sess.items.forEach(item => {
@@ -320,9 +359,6 @@
     });
     startCountdown();
   }
-
-  let currentIndex = 0;
-  let session = null;
 
   function buildDots(items, idx) {
     const dotsEl = document.getElementById('dots');
@@ -348,37 +384,48 @@
   }
 
   function showActiveView() {
-    document.getElementById('active-view').style.display = 'block';
-    document.getElementById('locked-view').style.display = 'none';
+    document.getElementById('loading-view').style.display = 'none';
+    document.getElementById('active-view').style.display  = 'block';
+    document.getElementById('locked-view').style.display  = 'none';
     currentIndex = session.completedCount;
     showItem(currentIndex);
   }
 
-  document.getElementById('type-input').addEventListener('keydown', function(e) {
+  // ── INPUT HANDLER ──
+
+  document.getElementById('type-input').addEventListener('keydown', async function(e) {
     if (e.key !== 'Enter') return;
     const typed   = this.value.trim();
     const correct = session.items[currentIndex].text.trim();
+
     if (typed === correct) {
       this.className = 'success';
       session.completedCount++;
-      saveSession(session);
+
       if (session.completedCount === 5) {
-        const today   = todayStr();
-        const lastDay = getLastDay();
-        let streak    = loadStreak();
-        if (lastDay !== today) {
+        // All five done — update streak
+        const today = todayStr();
+        if (currentLastDay !== today) {
           const yesterday = new Date();
           yesterday.setDate(yesterday.getDate() - 1);
           const yStr = `${yesterday.getFullYear()}-${yesterday.getMonth()}-${yesterday.getDate()}`;
-          if (lastDay === yStr) { streak++; } else { streak = 1; }
-          localStorage.setItem(KEY_STREAK, streak);
-          localStorage.setItem(KEY_LAST_DAY, today);
+          if (currentLastDay === yStr) {
+            currentStreak++;
+          } else {
+            currentStreak = 1;
+          }
+          currentLastDay = today;
         }
-        updateStreakDisplay(streak);
+        updateStreakDisplay(currentStreak);
+        // Save completed session + updated streak to database
+        await saveToDB(currentStreak, currentLastDay, session);
         setTimeout(() => showLocked(session), 700);
       } else {
+        // Save progress so far to database
+        await saveToDB(currentStreak, currentLastDay, session);
         setTimeout(() => { currentIndex = session.completedCount; showItem(currentIndex); }, 700);
       }
+
     } else {
       this.className = 'error';
       const hint = document.getElementById('hint-text');
@@ -393,17 +440,42 @@
     }
   });
 
-  function init() {
-    const stored = loadSession();
+  // ── INIT ──
+
+  async function init() {
+    // Show loading while we fetch from the database
+    document.getElementById('loading-view').style.display = 'block';
+    document.getElementById('active-view').style.display  = 'none';
+    document.getElementById('locked-view').style.display  = 'none';
+
+    const record = await loadFromDB();
     const today  = todayStr();
-    updateStreakDisplay(loadStreak());
-    if (stored && stored.day === today) {
-      session = stored;
-      if (session.completedCount >= 5) { showLocked(session); }
-      else { showActiveView(); }
+
+    if (record) {
+      currentStreak  = record.streak    || 0;
+      currentLastDay = record.last_day  || '';
+      const savedSession = record.session || null;
+
+      updateStreakDisplay(currentStreak);
+
+      if (savedSession && savedSession.day === today) {
+        session = savedSession;
+        if (session.completedCount >= 5) {
+          showLocked(session);
+        } else {
+          showActiveView();
+        }
+      } else {
+        // New day — pick fresh five
+        session = { day: today, items: pickFive(), completedCount: 0 };
+        await saveToDB(currentStreak, currentLastDay, session);
+        showActiveView();
+      }
     } else {
+      // No record found — start fresh
+      updateStreakDisplay(0);
       session = { day: today, items: pickFive(), completedCount: 0 };
-      saveSession(session);
+      await saveToDB(0, '', session);
       showActiveView();
     }
   }
