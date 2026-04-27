@@ -43,9 +43,7 @@
       font-style: italic;
     }
 
-    .write-form {
-      margin-bottom: 48px;
-    }
+    .write-form { margin-bottom: 48px; }
 
     .form-section-label {
       font-family: 'Lato', sans-serif;
@@ -107,10 +105,7 @@
       line-height: 1;
     }
 
-    .toolbar-btn:hover {
-      border-color: #555555;
-      color: #e0e0e0;
-    }
+    .toolbar-btn:hover { border-color: #555555; color: #e0e0e0; }
 
     .toolbar-divider {
       width: 1px;
@@ -134,10 +129,7 @@
       white-space: nowrap;
     }
 
-    .toolbar-img-btn:hover {
-      border-color: #555555;
-      color: #e0e0e0;
-    }
+    .toolbar-img-btn:hover { border-color: #555555; color: #e0e0e0; }
 
     .editor {
       background: transparent;
@@ -183,10 +175,7 @@
       gap: 10px;
     }
 
-    .preview-thumb-wrap {
-      position: relative;
-      display: inline-block;
-    }
+    .preview-thumb-wrap { position: relative; display: inline-block; }
 
     .preview-thumb {
       width: 72px;
@@ -300,29 +289,27 @@
     .load-btn:hover { border-color: #555555; color: #e0e0e0; }
     .load-btn:disabled { color: #333333; border-color: #1e1e1e; cursor: not-allowed; }
 
-    .entries-list {
-      display: none;
-    }
+    .entries-list { display: none; }
+    .entries-list.open { display: block; }
 
-    .entries-list.open {
-      display: block;
-    }
-
+    /* Each entry row */
     .entry-item {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      padding: 14px 0;
       border-bottom: 1px solid #1e1e1e;
-      gap: 12px;
     }
 
     .entry-item:last-child { border-bottom: none; }
 
-    .entry-info {
-      flex: 1;
-      min-width: 0;
+    /* The clickable top bar showing title + date + delete */
+    .entry-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 14px 0;
+      gap: 12px;
+      cursor: pointer;
     }
+
+    .entry-info { flex: 1; min-width: 0; }
 
     .entry-item-title {
       font-family: 'Lato', sans-serif;
@@ -332,7 +319,10 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      transition: color 0.15s;
     }
+
+    .entry-row:hover .entry-item-title { color: #e0e0e0; }
 
     .entry-item-date {
       font-size: 11px;
@@ -340,6 +330,17 @@
       margin-top: 3px;
       font-style: italic;
     }
+
+    .entry-expand-arrow {
+      font-size: 9px;
+      color: #444444;
+      margin-top: 4px;
+      flex-shrink: 0;
+      transition: transform 0.2s, color 0.15s;
+    }
+
+    .entry-row:hover .entry-expand-arrow { color: #777777; }
+    .entry-expand-arrow.open { transform: rotate(90deg); }
 
     .entry-delete-btn {
       background: transparent;
@@ -359,22 +360,47 @@
 
     .entry-delete-btn:hover { border-color: #888888; color: #e0e0e0; }
 
-    .entries-empty {
-      font-family: 'Lato', sans-serif;
-      font-weight: 300;
-      font-size: 13px;
-      font-style: italic;
-      color: #444444;
-      padding: 16px 0;
+    /* The expandable content area below each title row */
+    .entry-content {
+      display: none;
+      padding: 0 0 20px 0;
     }
 
-    .entries-loading {
+    .entry-content.open { display: block; }
+
+    /* Styles for the fetched content rendered inside the entry */
+    .entry-content-inner {
       font-family: 'Lato', sans-serif;
       font-weight: 300;
-      font-size: 13px;
+      font-size: 14px;
+      line-height: 1.9;
+      color: #aaaaaa;
+      border-left: 1px solid #2a2a2a;
+      padding-left: 16px;
+    }
+
+    .entry-content-inner b,
+    .entry-content-inner strong { font-weight: 700; color: #c0c0c0; }
+
+    .entry-content-inner i,
+    .entry-content-inner em { font-style: italic; }
+
+    .entry-content-inner u { text-decoration: underline; }
+
+    .entry-content-inner img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 12px 0;
+      opacity: 0.85;
+    }
+
+    .entry-content-loading {
+      font-size: 12px;
       font-style: italic;
       color: #444444;
-      padding: 16px 0;
+      padding: 8px 0 8px 16px;
+      border-left: 1px solid #2a2a2a;
     }
 
     /* ── STATUS BAR ── */
@@ -399,6 +425,24 @@
     .status-bar.show { transform: translateY(0); }
     .status-bar.success { color: #e0e0e0; }
     .status-bar.error { color: #888888; }
+
+    .entries-empty {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 13px;
+      font-style: italic;
+      color: #444444;
+      padding: 16px 0;
+    }
+
+    .entries-loading {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 13px;
+      font-style: italic;
+      color: #444444;
+      padding: 16px 0;
+    }
 
     @media (max-width: 480px) {
       .wrap { padding: 0 20px 48px; }
@@ -485,12 +529,7 @@
   var tokenClient;
   var gapiReady = false;
   var pendingImages = [];
-
-  // pendingAction tracks what we do AFTER the user signs in:
-  // 'save' means we're saving a new entry, 'load' means we're loading the list
   var pendingAction = 'save';
-
-  // entriesOpen tracks whether the past entries list is showing or hidden
   var entriesOpen = false;
 
   gapi.load('client', function() {
@@ -512,7 +551,6 @@
           document.getElementById('load-btn').disabled = false;
           return;
         }
-        // Once signed in, do whatever action was requested
         if (pendingAction === 'load') {
           loadEntries();
         } else {
@@ -558,7 +596,6 @@
     var removeBtn = document.createElement('button');
     removeBtn.className = 'preview-remove';
     removeBtn.textContent = '✕';
-    removeBtn.title = 'Remove image';
     removeBtn.onclick = function() { removeImage(imageId); };
     wrap.appendChild(img);
     wrap.appendChild(removeBtn);
@@ -576,7 +613,6 @@
   function handleSubmit() {
     var title = document.getElementById('entry-title').value.trim();
     var bodyText = document.getElementById('entry-body').innerText.trim();
-
     if (!title && !bodyText && pendingImages.length === 0) {
       showStatus('Nothing to save — write something first.', 'error');
       return;
@@ -585,7 +621,6 @@
       showStatus('Still loading — try again in a moment.', 'error');
       return;
     }
-
     pendingAction = 'save';
     document.getElementById('submit-btn').disabled = true;
     showStatus('Opening Google sign-in...', '');
@@ -656,10 +691,7 @@
       pendingImages = [];
       showStatus('Saved to Google Drive.', 'success');
 
-      // Automatically refresh the entries list if it's open
-      if (entriesOpen) {
-        loadEntries();
-      }
+      if (entriesOpen) { loadEntries(); }
 
     } catch(e) {
       console.error('Drive save error:', e);
@@ -669,7 +701,7 @@
     document.getElementById('submit-btn').disabled = false;
   }
 
-  // ── LOADING ENTRIES ──
+  // ── LOADING ENTRIES LIST ──
 
   function toggleEntriesList() {
     entriesOpen = !entriesOpen;
@@ -689,12 +721,7 @@
       showStatus('Still loading — try again in a moment.', 'error');
       return;
     }
-
-    // Open the list if it isn't already
-    if (!entriesOpen) {
-      toggleEntriesList();
-    }
-
+    if (!entriesOpen) { toggleEntriesList(); }
     pendingAction = 'load';
     document.getElementById('load-btn').disabled = true;
     tokenClient.requestAccessToken({ prompt: '' });
@@ -703,13 +730,10 @@
   async function loadEntries() {
     var loadingEl = document.getElementById('entries-loading');
     var itemsEl = document.getElementById('entries-items');
-
     loadingEl.style.display = 'block';
     itemsEl.innerHTML = '';
 
     try {
-      // Ask Google Drive for all HTML files this app created,
-      // sorted newest first. "trashed=false" means don't show deleted files.
       var response = await gapi.client.drive.files.list({
         q: "mimeType='text/html' and trashed=false",
         fields: 'files(id,name,createdTime)',
@@ -718,9 +742,6 @@
       });
 
       var files = response.result.files || [];
-
-      // Only show files that match our naming pattern (contain " — " and end in .html)
-      // The \u2014 character is the em-dash we use in file names
       files = files.filter(function(f) {
         return f.name && f.name.indexOf('\u2014') !== -1 && f.name.endsWith('.html');
       });
@@ -734,8 +755,6 @@
       }
 
       files.forEach(function(file) {
-        // Parse the file name back into a date and title
-        // File names look like: "2025-04-27 — My title.html"
         var name = file.name.replace('.html', '');
         var parts = name.split(' \u2014 ');
         var datepart = parts[0] ? parts[0].trim() : '';
@@ -745,13 +764,31 @@
         item.className = 'entry-item';
         item.id = 'entry_' + file.id;
 
-        item.innerHTML =
+        // The clickable row (title + arrow + delete button)
+        var row = document.createElement('div');
+        row.className = 'entry-row';
+
+        // Clicking the row area (but not the delete button) expands the entry
+        row.onclick = function(e) {
+          if (e.target.classList.contains('entry-delete-btn') || e.target.closest('.entry-delete-btn')) return;
+          toggleEntryContent(file.id);
+        };
+
+        row.innerHTML =
+          '<span class="entry-expand-arrow" id="arrow_' + file.id + '">▶</span>' +
           '<div class="entry-info">' +
             '<div class="entry-item-title">' + escapeHtml(titlepart) + '</div>' +
             '<div class="entry-item-date">' + escapeHtml(datepart) + '</div>' +
           '</div>' +
           '<button class="entry-delete-btn" title="Delete this entry" onclick="handleDeleteEntry(\'' + file.id + '\', \'' + escapeHtml(titlepart).replace(/'/g, "\\'") + '\')">✕</button>';
 
+        // The hidden content area that appears when expanded
+        var contentArea = document.createElement('div');
+        contentArea.className = 'entry-content';
+        contentArea.id = 'content_' + file.id;
+
+        item.appendChild(row);
+        item.appendChild(contentArea);
         itemsEl.appendChild(item);
       });
 
@@ -764,33 +801,100 @@
     document.getElementById('load-btn').disabled = false;
   }
 
+  // ── EXPANDING / READING AN ENTRY ──
+
+  // Keeps track of which entry is currently open so we can close it if you click another
+  var openEntryId = null;
+
+  async function toggleEntryContent(fileId) {
+    var contentArea = document.getElementById('content_' + fileId);
+    var arrow = document.getElementById('arrow_' + fileId);
+
+    // If this entry is already open, close it
+    if (openEntryId === fileId) {
+      contentArea.classList.remove('open');
+      arrow.classList.remove('open');
+      openEntryId = null;
+      return;
+    }
+
+    // Close whichever entry was previously open
+    if (openEntryId) {
+      var prevContent = document.getElementById('content_' + openEntryId);
+      var prevArrow = document.getElementById('arrow_' + openEntryId);
+      if (prevContent) prevContent.classList.remove('open');
+      if (prevArrow) prevArrow.classList.remove('open');
+    }
+
+    // Open this entry
+    openEntryId = fileId;
+    contentArea.classList.add('open');
+    arrow.classList.add('open');
+
+    // If we already loaded the content, don't fetch again
+    if (contentArea.dataset.loaded === 'true') return;
+
+    // Show a loading message while we fetch
+    contentArea.innerHTML = '<div class="entry-content-loading">Loading...</div>';
+
+    try {
+      // Fetch the raw HTML file content from Google Drive
+      // "alt=media" means "give me the actual file bytes, not just metadata"
+      var response = await gapi.client.request({
+        path: '/drive/v3/files/' + fileId,
+        method: 'GET',
+        params: { alt: 'media' }
+      });
+
+      var html = response.body;
+
+      // Parse the saved HTML file and pull out just the body text
+      // We don't want to render the full HTML page inside our page —
+      // just the content the user wrote (the div with class "body") and any images
+      var parser = new DOMParser();
+      // DOMParser: a built-in browser tool that reads an HTML string and turns it into a document we can search through
+      var doc = parser.parseFromString(html, 'text/html');
+
+      var bodyDiv = doc.querySelector('.body');
+      var imagesDiv = doc.querySelector('.images-section');
+
+      var extracted = '';
+      if (bodyDiv) extracted += bodyDiv.innerHTML;
+      if (imagesDiv) extracted += imagesDiv.innerHTML;
+      if (!extracted.trim()) extracted = '<em style="color:#444;">No content.</em>';
+
+      contentArea.innerHTML = '<div class="entry-content-inner">' + extracted + '</div>';
+      contentArea.dataset.loaded = 'true';
+      // dataset.loaded is a flag we set so we don't re-fetch next time you open the same entry
+
+    } catch(e) {
+      console.error('Drive read error:', e);
+      contentArea.innerHTML = '<div class="entry-content-loading">Could not load content.</div>';
+    }
+  }
+
   // ── DELETING ──
 
   function handleDeleteEntry(fileId, title) {
-    // Ask the user to confirm before deleting — this is permanent
     var confirmed = window.confirm('Delete "' + title + '"? This cannot be undone.');
     if (!confirmed) return;
     deleteEntry(fileId);
   }
 
   async function deleteEntry(fileId) {
-    // Gray out the row immediately so the user knows something is happening
     var row = document.getElementById('entry_' + fileId);
     if (row) row.style.opacity = '0.3';
 
     try {
-      // This tells Google Drive to permanently delete the file
       await gapi.client.drive.files.delete({ fileId: fileId });
-
-      // Remove the row from the page smoothly
       if (row) row.remove();
 
-      // If the list is now empty, show the empty message
       var itemsEl = document.getElementById('entries-items');
       if (itemsEl && itemsEl.children.length === 0) {
         itemsEl.innerHTML = '<div class="entries-empty">No entries yet.</div>';
       }
 
+      if (openEntryId === fileId) openEntryId = null;
       showStatus('Entry deleted.', 'success');
 
     } catch(e) {
