@@ -471,6 +471,8 @@ var bizConfig = {
     title: 'SOP',
     slogan: 'Paper mistakes are free.',
     days: {
+
+      /* ── MONDAY — Build + Write ── */
       mon: {
         sections: [
           {
@@ -479,21 +481,25 @@ var bizConfig = {
               { id:'pg-m1', text:'Check Instantly replies', sub:'Positive reply → update HubSpot + send Calendly link within 1 hour. Nothing sits more than 24 hours. A reply that sits overnight is almost certainly lost.' },
               { id:'pg-m2', text:'5+ LinkedIn comments via Employee 1', sub:'Open Employee 1 project. Upload post screenshots one at a time. Pick the better option. Post it yourself. Repeat × 5 minimum.' },
               { id:'pg-m3', text:'Reply to comments on your own posts', sub:'Do this personally. First-hour engagement is what LinkedIn\'s algorithm amplifies. Even a one-line reply counts.' },
-              { id:'pg-m4', text:'Check Fillout for inbound', sub:'Move to HubSpot. Send Calendly link same day. Inbound is highest priority — they already raised their hand.' }
+              { id:'pg-m4', text:'Check Fillout for inbound', sub:'Move to HubSpot. Send Calendly link same day. Inbound is highest priority — they already raised their hand.' },
+              { id:'pg-m5', text:'Send lead magnet DMs', sub:'Anyone who commented on a conversion post in the last 24 hours — DM them personally. Wait 2–4 hours from the comment before sending. Include the Pre-Bid Gap Brief link and one qualifying question: "What division is giving you the most concern on your current package?" Never send to everyone who commented — qualify first.' }
             ]
           },
           {
-            label: 'Monday — Build Day',
+            label: 'Monday — Build + Write',
             tasks: [
-              { id:'pg-m5', text:'Build Apollo list — 100+ new contacts', sub:'Titles: VP Real Estate · Director Facilities · Director of Development · Director of Construction · VP Construction. US only. Company size 50–5,000. Import to Instantly. Never start a week with an empty queue.' },
-              { id:'pg-m6', text:'Run Employee 2 — 10 hand-crafted emails', sub:'Paste 10–15 high-priority profiles one at a time. Review score + angle assignment. Light edits. Send. These outperform automated sequences — never skip even when the week is busy.' },
-              { id:'pg-m7', text:'Review Instantly metrics from last week', sub:'Open rate target: 15%+. Reply rate target: 3%+. Below 15% = fix subject lines. Below 3% = fix angles or targeting. Never send more volume into a broken sequence — fix the sequence first.' },
-              { id:'pg-m8', text:'Write this week\'s LinkedIn posts', sub:'G/N/C rotation — Grip, Nurture, Convert. Never two of the same type back-to-back. Never starts with "I". Never hashtags. Ends on tension or a question — never a CTA.' },
-              { id:'pg-m9', text:'HubSpot pipeline review', sub:'Every open deal gets a next action. Stuck 7+ days: push it or close it.' }
+              { id:'pg-m6', text:'Build Apollo list — 100+ new contacts', sub:'Run two pulls — one for Data Center (colocation operators, hyperscale developers, enterprise owner-operators) and one for Commercial RE (medical office, retail rollout, mixed-use developers). Titles both tracks: VP Real Estate · Director Facilities · Director of Development · Director of Construction · VP Construction · VP Development. US only. Company size 10–500. Import both to Instantly. Never start a week without a full queue across both verticals.' },
+              { id:'pg-m7', text:'Run Employee 2 — 10 hand-crafted emails', sub:'Paste 10–15 high-priority profiles one at a time. Review score + angle assignment. For Commercial RE prospects where data center findings don\'t fit, generate an original finding — same format: specific, anonymized, dollar consequence. Light edits. Send. These outperform automated sequences — never skip even when the week is busy.' },
+              { id:'pg-m8', text:'Review Instantly metrics from last week', sub:'Open rate target: 15%+. Reply rate target: 3%+. Below 15% = fix subject lines. Below 3% = fix angles or targeting. Never send more volume into a broken sequence — fix the sequence first.' },
+              { id:'pg-m9', text:'Write this week\'s LinkedIn posts', sub:'Write all three posts for Tue / Thu / Fri publish. G/N/C rotation — Grip, Nurture, Convert. Never two of the same type back-to-back. Never starts with "I". Never hashtags. Nurture and Growth posts end on tension or a question — never a CTA. Review last week\'s type balance before writing.' },
+              { id:'pg-m10', text:'HubSpot pipeline review', sub:'Every open deal gets a next action. Stuck 7+ days: push it or close it.' },
+              { id:'pg-m11', text:'Referral — identify or touch one target', sub:'LinkedIn DM — not a cold email. MEP engineers and architects at mid-size firms (10–50 people) working on data center, commercial, or healthcare projects. If no relationship exists yet: identify one name and firm this week. If a relationship is open: send one specific observation relevant to their current work. Never a check-in. Never a newsletter. The referral comes after trust.' }
             ]
           }
         ]
       },
+
+      /* ── TUESDAY — Publish + Proposals ── */
       tue: {
         sections: [
           {
@@ -502,19 +508,28 @@ var bizConfig = {
               { id:'pg-t1', text:'Check Instantly replies', sub:'Positive reply → update HubSpot + send Calendly link within 1 hour. Nothing sits more than 24 hours.' },
               { id:'pg-t2', text:'5+ LinkedIn comments via Employee 1', sub:'Upload post screenshots one at a time. Pick the better option. Post it yourself. Repeat × 5 minimum.' },
               { id:'pg-t3', text:'Reply to comments on your own posts', sub:'Do this personally. First-hour engagement is what LinkedIn\'s algorithm amplifies.' },
-              { id:'pg-t4', text:'Check Fillout for inbound', sub:'Move to HubSpot. Send Calendly link same day. Inbound is highest priority.' }
+              { id:'pg-t4', text:'Check Fillout for inbound', sub:'Move to HubSpot. Send Calendly link same day. Inbound is highest priority.' },
+              { id:'pg-t5', text:'Send lead magnet DMs', sub:'Anyone who commented on a conversion post in the last 24 hours — DM personally. 2–4 hour delay. Qualifying question first. Never mass-send.' }
             ]
           },
           {
-            label: 'Tuesday — Publish Day',
+            label: 'Tuesday — Publish + Proposals',
             tasks: [
-              { id:'pg-t5', text:'Publish LinkedIn post at 8am', sub:'Grip, Nurture, or Convert — whichever is next in rotation. Never starts with "I". Never hashtags. Ends on tension or a question — never a CTA.' },
-              { id:'pg-t6', text:'Send 3-day proposal follow-ups', sub:'"Is there anything I can clarify?" — that is the entire email. Not a second pitch. Not a features list. Not urgency. One question. If they don\'t respond, the deal is cold.' },
-              { id:'pg-t7', text:'Send proposals from any discovery calls', sub:'Out within 24 hours of every call. ROI math first. Scope second. Price last. Attach 3-min Loom walkthrough — the Loom is the delivery, not supplementary.' }
+              { id:'pg-t6', text:'Publish LinkedIn post at 8am — Post 1 of 3', sub:'Grip, Nurture, or Convert — whichever is next in rotation. Never starts with "I". Never hashtags. Nurture and Growth end on tension or a question — never a CTA. Respond to every comment within the first hour.' },
+              { id:'pg-t7', text:'Send 3-day proposal follow-ups', sub:'"Is there anything I can clarify?" — that is the entire email. Not a second pitch. Not a features list. Not urgency. One question. If they don\'t respond after this, the deal is cold.' },
+              { id:'pg-t8', text:'Send proposals from any discovery calls', sub:'Out within 24 hours of every call. ROI math first — specific to their project size. Scope second. Price last. Attach 3-min Loom walkthrough — the Loom is the delivery, not supplementary. Never send a proposal without it.' }
+            ]
+          },
+          {
+            label: 'Tuesday — Active Engagement Check',
+            tasks: [
+              { id:'pg-t9', text:'Active engagement: NDA + deposit + scoping call', sub:'Any engagement that moved to "yes" this week: NDA executed before any documents are shared — non-negotiable. 50% deposit invoice sent and confirmed. 30-minute scoping call scheduled to confirm divisions, bid date, interim deadlines, and client concerns. Nothing starts without all three.' }
             ]
           }
         ]
       },
+
+      /* ── WEDNESDAY — Blog + Referral + Systems ── */
       wed: {
         sections: [
           {
@@ -523,17 +538,23 @@ var bizConfig = {
               { id:'pg-w1', text:'Check Instantly replies', sub:'Positive reply → update HubSpot + send Calendly link within 1 hour.' },
               { id:'pg-w2', text:'5+ LinkedIn comments via Employee 1', sub:'Upload post screenshots one at a time. Pick the better option. Post it yourself. Repeat × 5 minimum.' },
               { id:'pg-w3', text:'Reply to comments on your own posts', sub:'Do this personally. First-hour engagement matters for reach.' },
-              { id:'pg-w4', text:'Check Fillout for inbound', sub:'Move to HubSpot. Send Calendly link same day.' }
+              { id:'pg-w4', text:'Check Fillout for inbound', sub:'Move to HubSpot. Send Calendly link same day.' },
+              { id:'pg-w5', text:'Send lead magnet DMs', sub:'Anyone who commented on a conversion post in the last 24 hours — DM personally. 2–4 hour delay. Qualifying question. Never mass-send.' }
             ]
           },
           {
-            label: 'Wednesday — Work On the Business',
+            label: 'Wednesday — Blog + Referral + Systems',
             tasks: [
-              { id:'pg-w5', text:'No build tasks scheduled today', sub:'Use for: blog/SEO articles · refining systems · new findings bank entries · website updates · improving AI employee output quality. The maintenance day — protect it.' }
+              { id:'pg-w6', text:'Write this week\'s blog article', sub:'One article per week on preemptglobal.com. Primary track: data center. Parallel track: commercial RE — same angles, same voice, findings in the same anonymized format. Target Stage 4 keywords first: "pre-bid document review," "construction document review service," "CD review before bid." Include specific division references, dollar figures, and named finding types — same specificity that makes LinkedIn posts save-worthy makes articles citable by AI models. All blog CTAs point to: https://forms.fillout.com/t/v74EURoDLjus. Google traction starts at 60–120 days — start now.' },
+              { id:'pg-w7', text:'Referral outreach — one touch', sub:'One LinkedIn DM. Not a cold email — never. Target: MEP engineer or architect at a 10–50 person firm working on data center, commercial, or healthcare projects. The pitch is specific: "We don\'t compete with you. We protect your client — and you — before bid day. If a contractor finds something in your documents and turns it into a $60K change order, that\'s an uncomfortable conversation for everyone. We find it first. We work for the owner. Your name stays out of it." Short, direct, specific to the dynamic.' },
+              { id:'pg-w8', text:'Findings bank — add or refine one entry', sub:'Add one new finding or sharpen an existing one. Format: Division · Code · Conflict (specific gap, drawing ref, spec section) · Consequence (cost, timeline, trade impact). Real findings must be fully anonymized — no project names, client names, locations, or identifying details. The bank is the raw material for every LinkedIn post, cold email PS, and proposal example.' },
+              { id:'pg-w9', text:'System improvement — one area better than last week', sub:'One specific thing: better Employee 1 output quality · tighter angle selection in Employee 2 · website update · refined proposal structure · issue log template · Loom delivery format. Protect this time. This is the work that compounds.' }
             ]
           }
         ]
       },
+
+      /* ── THURSDAY — Publish + Delivery ── */
       thu: {
         sections: [
           {
@@ -542,19 +563,30 @@ var bizConfig = {
               { id:'pg-th1', text:'Check Instantly replies', sub:'Positive reply → update HubSpot + send Calendly link within 1 hour.' },
               { id:'pg-th2', text:'5+ LinkedIn comments via Employee 1', sub:'Upload post screenshots one at a time. Pick the better option. Post it yourself. Repeat × 5 minimum.' },
               { id:'pg-th3', text:'Reply to comments on your own posts', sub:'Do this personally. First-hour engagement matters for reach.' },
-              { id:'pg-th4', text:'Check Fillout for inbound', sub:'Move to HubSpot. Send Calendly link same day.' }
+              { id:'pg-th4', text:'Check Fillout for inbound', sub:'Move to HubSpot. Send Calendly link same day.' },
+              { id:'pg-th5', text:'Send lead magnet DMs', sub:'Anyone who commented on a conversion post in the last 24 hours — DM personally. 2–4 hour delay. Qualifying question. Never mass-send.' }
             ]
           },
           {
-            label: 'Thursday — Publish Day',
+            label: 'Thursday — Publish + Proposals',
             tasks: [
-              { id:'pg-th5', text:'Publish LinkedIn post at 8am', sub:'Grip, Nurture, or Convert — whichever is next in rotation. Never starts with "I". Ends on tension or a question — never a CTA.' },
-              { id:'pg-th6', text:'Send 3-day proposal follow-ups', sub:'"Is there anything I can clarify?" — nothing else.' },
-              { id:'pg-th7', text:'Send proposals from any discovery calls', sub:'Out within 24 hours of every call. ROI math first. Scope second. Price last. Attach 3-min Loom.' }
+              { id:'pg-th6', text:'Publish LinkedIn post at 8am — Post 2 of 3', sub:'Grip, Nurture, or Convert — whichever is next in rotation. Never starts with "I". Never hashtags. Nurture and Growth end on tension or a question — never a CTA. Respond to every comment within the first hour.' },
+              { id:'pg-th7', text:'Send 3-day proposal follow-ups', sub:'"Is there anything I can clarify?" — nothing else.' },
+              { id:'pg-th8', text:'Send proposals from any discovery calls', sub:'Out within 24 hours of every call. ROI math first. Scope second. Price last. Attach 3-min Loom. Never send without it.' }
+            ]
+          },
+          {
+            label: 'Thursday — Active Engagement Delivery',
+            tasks: [
+              { id:'pg-th9', text:'Active engagement: issue log + Loom + debrief', sub:'Any engagement in progress: issue log delivered with division ref, drawing ref, grid ref, finding, consequence, severity. Loom walkthrough recorded — 10–15 min, top findings, warm but fast. Debrief call scheduled within 48 hours of delivery. Final 50% invoice sent on delivery of the issue log — not after the debrief, on delivery.' },
+              { id:'pg-th10', text:'Retainer ask — any completed engagement', sub:'After every completed engagement: "How many projects do you have heading to bid in the next 12 months?" That is the entire ask. Say it once. Do not pitch the structure, the price, or the value — let them respond. Never pitch a retainer to a first-time client on a first call. This is the sentence that converts a $12K engagement into $78K/year.' },
+              { id:'pg-th11', text:'Testimonial request — any debrief this week', sub:'Within 48 hours of every debrief call: "Would you be willing to share a few words? I\'m happy to draft something and you can edit it." Offer to write the first draft — always. If received, publish to website and LinkedIn within 48 hours.' }
             ]
           }
         ]
       },
+
+      /* ── FRIDAY — Publish + Weekly Reset ── */
       fri: {
         sections: [
           {
@@ -563,34 +595,40 @@ var bizConfig = {
               { id:'pg-f1', text:'Check Instantly replies', sub:'Positive reply → update HubSpot + send Calendly link within 1 hour.' },
               { id:'pg-f2', text:'5+ LinkedIn comments via Employee 1', sub:'Upload post screenshots one at a time. Pick the better option. Post it yourself. Repeat × 5 minimum.' },
               { id:'pg-f3', text:'Reply to comments on your own posts', sub:'Do this personally. First-hour engagement matters for reach.' },
-              { id:'pg-f4', text:'Check Fillout for inbound', sub:'Move to HubSpot. Send Calendly link same day.' }
+              { id:'pg-f4', text:'Check Fillout for inbound', sub:'Move to HubSpot. Send Calendly link same day.' },
+              { id:'pg-f5', text:'Send lead magnet DMs', sub:'Anyone who commented on a conversion post in the last 24 hours — DM personally. 2–4 hour delay. Qualifying question. Never mass-send.' }
             ]
           },
           {
-            label: 'Friday — Weekly Reset',
+            label: 'Friday — Publish + Weekly Reset',
             tasks: [
-              { id:'pg-f5', text:'Full HubSpot pipeline review', sub:'Every deal has a next action before you log off. Stuck 7+ days: push it or close it.' },
-              { id:'pg-f6', text:'Review this week\'s LinkedIn posts', sub:'Which performed better and why? Which type — Grip, Nurture, or Convert — got the most traction? Note what to repeat next week.' },
-              { id:'pg-f7', text:'Confirm Monday\'s Apollo queue', sub:'100+ contacts ready. Never start Monday with an empty queue.' }
+              { id:'pg-f6', text:'Publish LinkedIn post at 8am — Post 3 of 3', sub:'Grip, Nurture, or Convert — whichever is next in rotation. Never starts with "I". Never hashtags. Nurture and Growth end on tension or a question — never a CTA. Respond to every comment within the first hour. Three posts published this week is the floor — not the target.' },
+              { id:'pg-f7', text:'Full HubSpot pipeline review', sub:'Every open deal has a next action before you log off. Stuck 7+ days: push it or close it. No deal sits without a defined next move.' },
+              { id:'pg-f8', text:'Weekly metrics review', sub:'Check all four: Instantly emails sent 150–250/week. Open rate 15%+ — below this, fix subject lines. Reply rate 3%+ — below this, fix angles or targeting. LinkedIn posts published: 3. LinkedIn comments posted: 35+. New HubSpot deals: 1+. Flag anything below floor. Never send more volume into a broken system — fix the system first.' },
+              { id:'pg-f9', text:'Post performance review', sub:'Which of this week\'s three posts performed best and why? Which type — Grip, Nurture, or Convert — got the most saves, comments, or reach? One sentence note for next Monday\'s writing session. The pattern compounds.' },
+              { id:'pg-f10', text:'Weekly note — one sentence', sub:'Write one sentence in Notion: what moved the needle this week. Revenue, a reply, a referral conversation, a finding that sharpened the bank. One sentence. Specific. Dated. This is the record that shows what works.' },
+              { id:'pg-f11', text:'Confirm Monday Apollo queue', sub:'100+ contacts ready across both tracks — Data Center and Commercial RE. Never start Monday with an empty queue. Pipeline dies in 3–4 weeks without it.' }
             ]
           }
         ]
       }
     },
+
+    /* ── LOCKED PHASES — labels match Playbook v2.0 ── */
     lockedPhases: [
       {
-        label: 'Phase 2 — The Proof · Days 61–120',
+        label: 'The Proof · Days 61–120',
         gate: 'Gate to unlock: First paid engagement closed at any tier. Open rate sustained at 15%+. Reply rate at 3%+. LinkedIn posting 3×/week without gaps. HubSpot pipeline has 3+ active deals with defined next actions.',
         tasks: [
           'Deliver every engagement with issue log + Loom walkthrough — document reference, grid location, dollar consequence. The Loom is the delivery, not documentation.',
-          'Request a testimonial after every completed engagement — published to website and LinkedIn within 48 hours of receiving it.',
+          'Request a testimonial after every completed engagement — publish to website and LinkedIn within 48 hours of receiving it.',
           'Write one anonymised case study per engagement — project type, finding, dollar consequence, client outcome. The case study does more selling than any pitch.',
-          'Open commercial RE parallel track — Apollo filter: commercial developers, medical office, retail rollout. Entry point always the $1,500 Red Flag Scan.',
-          'Identify 3 referral targets by Day 90 — architecture firms, owner\'s reps, construction managers, commercial RE attorneys. Start the relationship. The referral comes after trust, not before.'
+          'Open commercial RE parallel track at full volume if not already running — Apollo filter: commercial developers, medical office, retail rollout. Entry point always the $1,500 Red Flag Scan.',
+          'Identify 3 referral targets by Day 90 if not yet done — architecture firms, owner\'s reps, construction managers, commercial RE attorneys. Start the relationship. The referral comes after trust, not before.'
         ]
       },
       {
-        label: 'Phase 3 — The Retainer · Days 121–240',
+        label: 'The Retainer · Days 121–240',
         gate: 'Gate to unlock: 3 completed engagements. 1 written testimonial published. 1 anonymised case study in use. Commercial RE Apollo sequence active with 200+ contacts imported. 1 referral relationship opened.',
         tasks: [
           'Retainer pitch after second completed engagement with same client — $5K–$8K/mo for standing access. Say it once. If they don\'t take it, move on. Never pitch a retainer to a first-time client.',
@@ -600,11 +638,11 @@ var bizConfig = {
         ]
       },
       {
-        label: 'Phase 4 — The Scale · Days 241–365',
+        label: 'The Scale · Days 241–365',
         gate: 'Gate to unlock: First retainer client signed at $5K/mo minimum. Commercial RE has 1+ closed engagement. LinkedIn follower count meaningfully above starting point with consistent inbound profile views from target titles.',
         tasks: [
           'Hire first 1099 contractor for delivery overflow — another architect or experienced CD reviewer, paid per engagement. Joseph reviews every deliverable before it goes to the client. This is delegation of production time, not quality.',
-          'Push for second retainer from Stage 3 pipeline — any client with 2+ completions not yet pitched gets the conversation in Stage 4. Two retainers at $6,500/mo = $156K/yr baseline before project work.',
+          'Push for second retainer from existing pipeline — any client with 2+ completions not yet pitched gets the conversation. Two retainers at $6,500/mo = $156K/yr baseline before project work.',
           'Open enterprise tier for large data center operators — $22K–$40K for hyperscale or multi-phase builds. Emerges from existing relationships, never pitched cold.',
           'Formalise the referral program — define 10% of first engagement or reciprocal value, in writing, before the referrals start coming. Ambiguity kills referral relationships. Clarity compounds them.',
           'Begin tracking inbound from Why Buildings audience — when a lead references Why Buildings as source, log it. First signal the two businesses are feeding each other.'
