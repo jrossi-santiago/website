@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Karla:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <div id="app">
+
+    <!-- Header -->
+    <header class="app-header">
+      <div class="streak-display" id="streak-display">
+        <svg class="streak-icon" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M10 1C10 1 4 8.5 4 13.5C4 16.99 6.69 19.8 10 19.8C13.31 19.8 16 16.99 16 13.5C16 8.5 10 1 10 1Z" fill="currentColor"/>
+          <path d="M10 13C10 13 7.5 11 8 8.5C6.5 10 6 11.5 6 13.5C6 15.71 7.79 17.5 10 17.5C12.21 17.5 14 15.71 14 13.5C14 12 13.5 10.8 12.5 10C12.5 12 10 13 10 13Z" fill="rgba(255,255,255,0.25)"/>
+        </svg>
+        <span id="streak-number">0</span>
+        <span class="streak-label">day streak</span>
+      </div>
+      <button class="archive-btn" id="archive-btn">Archive</button>
+    </header>
+
+    <!-- ===================== MAIN VIEW ===================== -->
+    <main id="main-view">
+
+      <!-- Today Card -->
+      <div class="card today-card" id="today-card">
+        <div class="card-top">
+          <span class="card-label">Today</span>
+          <div class="card-top-right">
+            <span class="card-date" id="today-date"></span>
+            <div class="card-dots">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot dot-filled"></span>
+            </div>
+          </div>
+        </div>
+        <div class="task-list" id="task-list">
+          <!-- Rendered by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Mini Cards Row -->
+      <div class="mini-cards-row">
+
+        <!-- Someday Card -->
+        <div class="card mini-card someday-card" id="someday-card">
+          <div class="card-top mini-card-header" id="someday-header">
+            <span class="card-label">Someday</span>
+            <div class="card-top-right">
+              <span class="item-count" id="someday-count">0 items</span>
+              <div class="card-dots card-dots-sm">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot dot-filled"></span>
+              </div>
+            </div>
+          </div>
+          <div class="backlog-content" id="someday-content">
+            <div class="backlog-list" id="someday-list"></div>
+            <div class="backlog-add">
+              <input
+                type="text"
+                class="backlog-input"
+                id="someday-input"
+                placeholder="Add to someday..."
+                maxlength="120"
+                aria-label="Add someday item"
+              >
+              <button class="add-btn" id="someday-add-btn" aria-label="Add someday item">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Future Card -->
+        <div class="card mini-card future-card" id="future-card">
+          <div class="card-top mini-card-header" id="future-header">
+            <span class="card-label">Future</span>
+            <div class="card-top-right">
+              <span class="item-count" id="future-count">0 items</span>
+              <div class="card-dots card-dots-sm">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot dot-filled"></span>
+              </div>
+            </div>
+          </div>
+          <div class="backlog-content" id="future-content">
+            <div class="backlog-list" id="future-list"></div>
+            <div class="backlog-add">
+              <input
+                type="text"
+                class="backlog-input"
+                id="future-input"
+                placeholder="Add to future..."
+                maxlength="120"
+                aria-label="Add future item"
+              >
+              <button class="add-btn" id="future-add-btn" aria-label="Add future item">+</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- ===================== ARCHIVE VIEW ===================== -->
+    <div id="archive-view" class="hidden">
+      <div class="archive-header">
+        <button class="back-btn" id="back-btn">← Back</button>
+        <h1 class="archive-title">Archive</h1>
+      </div>
+      <div class="archive-grid" id="archive-grid"></div>
+    </div>
+
+    <!-- ===================== MODALS ===================== -->
+
+    <!-- Archive card detail modal -->
+    <div id="card-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="Card detail">
+      <div class="modal-scroll-area">
+        <div class="modal-inner" id="modal-inner"></div>
+      </div>
+      <button class="modal-close" id="modal-close" aria-label="Close">×</button>
+    </div>
+
+    <!-- Rollover prompt modal -->
+    <div id="rollover-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="Rollover tasks">
+      <div class="rollover-card">
+        <p class="rollover-title">Yesterday's card</p>
+        <p class="rollover-body">
+          You have <strong id="rollover-count">0</strong> unfinished task<span id="rollover-plural">s</span> from yesterday.
+          Roll them over to today?
+        </p>
+        <div class="rollover-actions">
+          <button class="btn-secondary" id="rollover-no">Start fresh</button>
+          <button class="btn-primary" id="rollover-yes">Roll over</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading screen -->
+    <div id="loading" class="loading-overlay" aria-label="Loading">
+      <div class="loading-card">
+        <span class="loading-dot"></span>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
