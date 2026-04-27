@@ -168,7 +168,6 @@
     .editor i, .editor em { font-style: italic; }
     .editor u { text-decoration: underline; }
 
-    /* Images inside the editor */
     .editor img {
       max-width: 100%;
       height: auto;
@@ -177,7 +176,6 @@
       opacity: 0.9;
     }
 
-    /* Image preview strip below editor */
     .image-preview-area {
       margin-top: 16px;
       display: flex;
@@ -218,10 +216,7 @@
 
     .preview-remove:hover { color: #e0e0e0; }
 
-    /* Hidden file input */
-    #image-file-input {
-      display: none;
-    }
+    #image-file-input { display: none; }
 
     .form-actions {
       margin-top: 28px;
@@ -245,6 +240,144 @@
 
     .submit-btn:hover { background: #e0e0e0; color: #111111; }
     .submit-btn:disabled { border-color: #2a2a2a; color: #333333; cursor: not-allowed; background: transparent; }
+
+    /* ── ENTRIES SECTION ── */
+
+    .entries-section {
+      margin-top: 8px;
+      border-top: 1px solid #2a2a2a;
+      padding-top: 32px;
+    }
+
+    .entries-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .entries-toggle {
+      background: transparent;
+      border: none;
+      color: #555555;
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      padding: 0;
+      transition: color 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .entries-toggle:hover { color: #e0e0e0; }
+
+    .entries-toggle-arrow {
+      font-size: 9px;
+      transition: transform 0.2s;
+      display: inline-block;
+    }
+
+    .entries-toggle-arrow.open { transform: rotate(90deg); }
+
+    .load-btn {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-size: 10px;
+      background: transparent;
+      color: #555555;
+      border: 1px solid #2a2a2a;
+      padding: 6px 16px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .load-btn:hover { border-color: #555555; color: #e0e0e0; }
+    .load-btn:disabled { color: #333333; border-color: #1e1e1e; cursor: not-allowed; }
+
+    .entries-list {
+      display: none;
+    }
+
+    .entries-list.open {
+      display: block;
+    }
+
+    .entry-item {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid #1e1e1e;
+      gap: 12px;
+    }
+
+    .entry-item:last-child { border-bottom: none; }
+
+    .entry-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .entry-item-title {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 14px;
+      color: #c0c0c0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .entry-item-date {
+      font-size: 11px;
+      color: #444444;
+      margin-top: 3px;
+      font-style: italic;
+    }
+
+    .entry-delete-btn {
+      background: transparent;
+      border: 1px solid #2a2a2a;
+      color: #444444;
+      font-size: 11px;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: border-color 0.15s, color 0.15s;
+      margin-top: 2px;
+    }
+
+    .entry-delete-btn:hover { border-color: #888888; color: #e0e0e0; }
+
+    .entries-empty {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 13px;
+      font-style: italic;
+      color: #444444;
+      padding: 16px 0;
+    }
+
+    .entries-loading {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 13px;
+      font-style: italic;
+      color: #444444;
+      padding: 16px 0;
+    }
+
+    /* ── STATUS BAR ── */
 
     .status-bar {
       position: fixed;
@@ -322,6 +455,22 @@
     </div>
   </div>
 
+  <!-- ── PAST ENTRIES SECTION ── -->
+  <div class="entries-section">
+    <div class="entries-header">
+      <button class="entries-toggle" onclick="toggleEntriesList()">
+        <span class="entries-toggle-arrow" id="toggle-arrow">▶</span>
+        Past entries
+      </button>
+      <button class="load-btn" id="load-btn" onclick="handleLoadEntries()">Load</button>
+    </div>
+
+    <div class="entries-list" id="entries-list">
+      <div class="entries-loading" id="entries-loading" style="display:none;">Loading...</div>
+      <div id="entries-items"></div>
+    </div>
+  </div>
+
 </div>
 
 <div class="status-bar" id="status-bar"></div>
@@ -330,16 +479,19 @@
 <script src="https://accounts.google.com/gsi/client"></script>
 
 <script>
-  // ── REPLACE THIS WITH YOUR CLIENT ID FROM GOOGLE CLOUD CONSOLE ──
   var CLIENT_ID = '1014290983612-sg3a714jt49n6k8i77thbk3q065016dp.apps.googleusercontent.com';
-
   var SCOPE = 'https://www.googleapis.com/auth/drive.file';
+
   var tokenClient;
   var gapiReady = false;
-
-  // Store pending images as base64 strings
-  // base64 = a way of turning binary image data into plain text so it can be embedded in HTML
   var pendingImages = [];
+
+  // pendingAction tracks what we do AFTER the user signs in:
+  // 'save' means we're saving a new entry, 'load' means we're loading the list
+  var pendingAction = 'save';
+
+  // entriesOpen tracks whether the past entries list is showing or hidden
+  var entriesOpen = false;
 
   gapi.load('client', function() {
     gapi.client.init({}).then(function() {
@@ -357,36 +509,41 @@
         if (response.error) {
           showStatus('Sign-in cancelled or failed.', 'error');
           document.getElementById('submit-btn').disabled = false;
+          document.getElementById('load-btn').disabled = false;
           return;
         }
-        saveEntry();
+        // Once signed in, do whatever action was requested
+        if (pendingAction === 'load') {
+          loadEntries();
+        } else {
+          saveEntry();
+        }
       }
     });
   });
+
+  // ── FORMATTING ──
 
   function fmt(command) {
     document.execCommand(command, false, null);
     document.getElementById('entry-body').focus();
   }
 
-  // When the user picks images, read each one and show a thumbnail preview
+  // ── IMAGE HANDLING ──
+
   function handleImageUpload(event) {
     var files = Array.from(event.target.files);
     if (!files.length) return;
-
     files.forEach(function(file) {
       var reader = new FileReader();
       reader.onload = function(e) {
-        var base64Data = e.target.result; // this is the full base64 image string
+        var base64Data = e.target.result;
         var imageId = 'img_' + Date.now() + '_' + Math.random().toString(36).slice(2);
-
         pendingImages.push({ id: imageId, data: base64Data, name: file.name });
         addPreviewThumb(imageId, base64Data);
       };
       reader.readAsDataURL(file);
     });
-
-    // Clear the file input so the same image can be picked again if needed
     event.target.value = '';
   }
 
@@ -395,17 +552,14 @@
     var wrap = document.createElement('div');
     wrap.className = 'preview-thumb-wrap';
     wrap.id = 'thumb_' + imageId;
-
     var img = document.createElement('img');
     img.className = 'preview-thumb';
     img.src = base64Data;
-
     var removeBtn = document.createElement('button');
     removeBtn.className = 'preview-remove';
     removeBtn.textContent = '✕';
     removeBtn.title = 'Remove image';
     removeBtn.onclick = function() { removeImage(imageId); };
-
     wrap.appendChild(img);
     wrap.appendChild(removeBtn);
     area.appendChild(wrap);
@@ -417,6 +571,8 @@
     if (thumb) thumb.remove();
   }
 
+  // ── SAVING ──
+
   function handleSubmit() {
     var title = document.getElementById('entry-title').value.trim();
     var bodyText = document.getElementById('entry-body').innerText.trim();
@@ -425,12 +581,12 @@
       showStatus('Nothing to save — write something first.', 'error');
       return;
     }
-
     if (!gapiReady) {
       showStatus('Still loading — try again in a moment.', 'error');
       return;
     }
 
+    pendingAction = 'save';
     document.getElementById('submit-btn').disabled = true;
     showStatus('Opening Google sign-in...', '');
     tokenClient.requestAccessToken({ prompt: '' });
@@ -445,7 +601,6 @@
     var timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     var fileDate = now.toISOString().slice(0, 10);
 
-    // Build the images section — each image embedded directly as base64
     var imagesHtml = '';
     if (pendingImages.length > 0) {
       imagesHtml = '<div class="images-section">';
@@ -473,7 +628,7 @@
       imagesHtml +
       '</body></html>';
 
-    var fileName = fileDate + ' — ' + displayTitle + '.html';
+    var fileName = fileDate + ' \u2014 ' + displayTitle + '.html';
     var boundary = 'nb_boundary_' + Date.now();
     var metadata = JSON.stringify({ name: fileName, mimeType: 'text/html' });
 
@@ -495,12 +650,16 @@
         body: multipart
       });
 
-      // Reset everything
       document.getElementById('entry-title').value = '';
       document.getElementById('entry-body').innerHTML = '';
       document.getElementById('image-preview-area').innerHTML = '';
       pendingImages = [];
       showStatus('Saved to Google Drive.', 'success');
+
+      // Automatically refresh the entries list if it's open
+      if (entriesOpen) {
+        loadEntries();
+      }
 
     } catch(e) {
       console.error('Drive save error:', e);
@@ -509,6 +668,139 @@
 
     document.getElementById('submit-btn').disabled = false;
   }
+
+  // ── LOADING ENTRIES ──
+
+  function toggleEntriesList() {
+    entriesOpen = !entriesOpen;
+    var list = document.getElementById('entries-list');
+    var arrow = document.getElementById('toggle-arrow');
+    if (entriesOpen) {
+      list.classList.add('open');
+      arrow.classList.add('open');
+    } else {
+      list.classList.remove('open');
+      arrow.classList.remove('open');
+    }
+  }
+
+  function handleLoadEntries() {
+    if (!gapiReady) {
+      showStatus('Still loading — try again in a moment.', 'error');
+      return;
+    }
+
+    // Open the list if it isn't already
+    if (!entriesOpen) {
+      toggleEntriesList();
+    }
+
+    pendingAction = 'load';
+    document.getElementById('load-btn').disabled = true;
+    tokenClient.requestAccessToken({ prompt: '' });
+  }
+
+  async function loadEntries() {
+    var loadingEl = document.getElementById('entries-loading');
+    var itemsEl = document.getElementById('entries-items');
+
+    loadingEl.style.display = 'block';
+    itemsEl.innerHTML = '';
+
+    try {
+      // Ask Google Drive for all HTML files this app created,
+      // sorted newest first. "trashed=false" means don't show deleted files.
+      var response = await gapi.client.drive.files.list({
+        q: "mimeType='text/html' and trashed=false",
+        fields: 'files(id,name,createdTime)',
+        orderBy: 'createdTime desc',
+        pageSize: 100
+      });
+
+      var files = response.result.files || [];
+
+      // Only show files that match our naming pattern (contain " — " and end in .html)
+      // The \u2014 character is the em-dash we use in file names
+      files = files.filter(function(f) {
+        return f.name && f.name.indexOf('\u2014') !== -1 && f.name.endsWith('.html');
+      });
+
+      loadingEl.style.display = 'none';
+
+      if (files.length === 0) {
+        itemsEl.innerHTML = '<div class="entries-empty">No entries yet.</div>';
+        document.getElementById('load-btn').disabled = false;
+        return;
+      }
+
+      files.forEach(function(file) {
+        // Parse the file name back into a date and title
+        // File names look like: "2025-04-27 — My title.html"
+        var name = file.name.replace('.html', '');
+        var parts = name.split(' \u2014 ');
+        var datepart = parts[0] ? parts[0].trim() : '';
+        var titlepart = parts.slice(1).join(' \u2014 ').trim() || 'Untitled';
+
+        var item = document.createElement('div');
+        item.className = 'entry-item';
+        item.id = 'entry_' + file.id;
+
+        item.innerHTML =
+          '<div class="entry-info">' +
+            '<div class="entry-item-title">' + escapeHtml(titlepart) + '</div>' +
+            '<div class="entry-item-date">' + escapeHtml(datepart) + '</div>' +
+          '</div>' +
+          '<button class="entry-delete-btn" title="Delete this entry" onclick="handleDeleteEntry(\'' + file.id + '\', \'' + escapeHtml(titlepart).replace(/'/g, "\\'") + '\')">✕</button>';
+
+        itemsEl.appendChild(item);
+      });
+
+    } catch(e) {
+      console.error('Drive list error:', e);
+      loadingEl.style.display = 'none';
+      itemsEl.innerHTML = '<div class="entries-empty">Could not load entries. Try again.</div>';
+    }
+
+    document.getElementById('load-btn').disabled = false;
+  }
+
+  // ── DELETING ──
+
+  function handleDeleteEntry(fileId, title) {
+    // Ask the user to confirm before deleting — this is permanent
+    var confirmed = window.confirm('Delete "' + title + '"? This cannot be undone.');
+    if (!confirmed) return;
+    deleteEntry(fileId);
+  }
+
+  async function deleteEntry(fileId) {
+    // Gray out the row immediately so the user knows something is happening
+    var row = document.getElementById('entry_' + fileId);
+    if (row) row.style.opacity = '0.3';
+
+    try {
+      // This tells Google Drive to permanently delete the file
+      await gapi.client.drive.files.delete({ fileId: fileId });
+
+      // Remove the row from the page smoothly
+      if (row) row.remove();
+
+      // If the list is now empty, show the empty message
+      var itemsEl = document.getElementById('entries-items');
+      if (itemsEl && itemsEl.children.length === 0) {
+        itemsEl.innerHTML = '<div class="entries-empty">No entries yet.</div>';
+      }
+
+      showStatus('Entry deleted.', 'success');
+
+    } catch(e) {
+      console.error('Drive delete error:', e);
+      if (row) row.style.opacity = '1';
+      showStatus('Could not delete. Try again.', 'error');
+    }
+  }
+
+  // ── UTILITIES ──
 
   function escapeHtml(str) {
     var d = document.createElement('div');
