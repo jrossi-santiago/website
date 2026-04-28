@@ -37,7 +37,7 @@
       </div>
     </aside>
 
-    <!-- CENTER: Today card + mini cards + contribution grid -->
+    <!-- CENTER: Today card + mini cards -->
     <div id="center-column">
 
       <main id="main-view">
@@ -105,34 +105,6 @@
 
         </div>
 
-        <!-- Contribution Grid -->
-        <div class="contribution-section" id="contribution-section">
-          <div class="contrib-header">
-            <span class="contrib-title">12 weeks</span>
-            <div class="contrib-legend">
-              <span class="contrib-legend-label">Less</span>
-              <div class="contrib-dot contrib-s1"></div>
-              <div class="contrib-dot contrib-s2"></div>
-              <div class="contrib-dot contrib-s3"></div>
-              <div class="contrib-dot contrib-s4"></div>
-              <div class="contrib-dot contrib-s5"></div>
-              <span class="contrib-legend-label">More</span>
-            </div>
-          </div>
-          <div class="contrib-wrapper">
-            <div class="contrib-day-labels" aria-hidden="true">
-              <span>M</span>
-              <span>T</span>
-              <span>W</span>
-              <span>T</span>
-              <span>F</span>
-              <span>S</span>
-              <span>S</span>
-            </div>
-            <div class="contribution-grid" id="contribution-grid" role="img" aria-label="12-week contribution history"></div>
-          </div>
-        </div>
-
       </main>
 
       <!-- Archive View (replaces main-view) -->
@@ -146,11 +118,41 @@
 
     </div><!-- /center-column -->
 
-    <!-- RIGHT: Why Buildings Sidebar -->
+    <!-- RIGHT: Why Buildings Sidebar + Contribution Grid -->
     <aside class="sidebar sidebar-right" id="wb-sidebar">
+
       <div class="card sidebar-card-inner wb-card-bg" id="wb-card-inner">
         <!-- Rendered by JavaScript -->
       </div>
+
+      <!-- Contribution Grid lives here, below Why Buildings -->
+      <div class="contribution-section" id="contribution-section">
+        <div class="contrib-header">
+          <span class="contrib-title">12 weeks</span>
+          <div class="contrib-legend">
+            <span class="contrib-legend-label">Less</span>
+            <div class="contrib-dot contrib-s1"></div>
+            <div class="contrib-dot contrib-s2"></div>
+            <div class="contrib-dot contrib-s3"></div>
+            <div class="contrib-dot contrib-s4"></div>
+            <div class="contrib-dot contrib-s5"></div>
+            <span class="contrib-legend-label">More</span>
+          </div>
+        </div>
+        <div class="contrib-wrapper">
+          <div class="contrib-day-labels" aria-hidden="true">
+            <span>M</span>
+            <span>T</span>
+            <span>W</span>
+            <span>T</span>
+            <span>F</span>
+            <span>S</span>
+            <span>S</span>
+          </div>
+          <div class="contribution-grid" id="contribution-grid" role="img" aria-label="12-week contribution history"></div>
+        </div>
+      </div>
+
     </aside>
 
   </div><!-- /content-layout -->
