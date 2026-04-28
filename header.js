@@ -1,6 +1,5 @@
 (function () {
   var currentPath = window.location.pathname;
-
   var nav = document.createElement('nav');
   nav.setAttribute('aria-label', 'Site navigation');
   nav.style.cssText = [
@@ -15,10 +14,11 @@
   ].join(';');
 
   var links = [
-    { label: 'Card',      href: '/card'      },
-    { label: 'Daily',     href: '/daily'     },
-    { label: 'Bookmarks', href: '/bookmarks' },
-    { label: 'Notebook',  href: '/notebook'  },
+    { label: 'Card',       href: '/card'       },
+    { label: 'Daily',      href: '/daily'      },
+    { label: 'Bookmarks',  href: '/bookmarks'  },
+    { label: 'Notebook',   href: '/notebook'   },
+    { label: 'Human Text', href: '/humantext'  },
   ];
 
   links.forEach(function (item, i) {
@@ -34,7 +34,6 @@
     var a = document.createElement('a');
     a.href = item.href;
     a.textContent = item.label;
-
     a.style.cssText = [
       'font-family: "Karla", system-ui, sans-serif',
       'font-size: 11px',
@@ -59,7 +58,6 @@
         a.style.borderColor = 'rgba(245,242,235,0.16)';
       }
     });
-
     a.addEventListener('mouseleave', function () {
       if (!isActive) {
         a.style.color = 'rgba(245,242,235,0.28)';
