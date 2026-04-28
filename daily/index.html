@@ -19,7 +19,6 @@
       --text-light:    #B3ADA5;
       --circle-stroke: #C5BFB7;
       --line-rule:     rgba(42, 40, 37, 0.07);
-      --streak-gold:   #C4A066;
       --shadow-card:   0 6px 32px rgba(0,0,0,0.28), 0 1px 6px rgba(0,0,0,0.14);
       --radius-lg:     14px;
       --radius-md:     10px;
@@ -166,10 +165,7 @@
       display: block;
     }
 
-    .dot-filled {
-      background: var(--circle-stroke);
-      border-color: var(--circle-stroke);
-    }
+    .dot-filled { background: var(--circle-stroke); border-color: var(--circle-stroke); }
 
     .card-body {
       padding: 24px 22px 22px;
@@ -187,10 +183,7 @@
       padding: 40px 0;
     }
 
-    /* =============================================
-       PRAYER PANEL
-    ============================================= */
-
+    /* ── PRAYER PANEL ── */
     .prayer-eyebrow {
       font-family: var(--font-body);
       font-size: 9px;
@@ -256,10 +249,7 @@
       padding: 30px 0;
     }
 
-    /* =============================================
-       MOTIVATION PANEL
-    ============================================= */
-
+    /* ── MOTIVATION PANEL ── */
     .mot-quote {
       font-family: var(--font-display);
       font-size: clamp(16px, 1.6vw, 22px);
@@ -290,9 +280,7 @@
       margin-bottom: 24px;
     }
 
-    .mot-image-wrap {
-      margin-bottom: 16px;
-    }
+    .mot-image-wrap { margin-bottom: 16px; }
 
     .mot-image-wrap img {
       width: 100%;
@@ -329,7 +317,7 @@
 
   <div class="split-layout">
 
-    <!-- ===== LEFT: PRAYER ===== -->
+    <!-- LEFT: PRAYER -->
     <div class="panel-card aff-card">
       <div class="card-top">
         <span class="card-label">Prayer</span>
@@ -342,10 +330,8 @@
           </div>
         </div>
       </div>
-
       <div class="card-body">
         <p class="panel-loading" id="prayer-loading">Loading…</p>
-
         <div id="prayer-content" class="hidden">
           <div class="prayer-eyebrow">Today's Prayer</div>
           <div class="prayer-image-wrap">
@@ -358,12 +344,11 @@
             <span class="prayer-footer-text" id="prayer-countdown"></span>
           </div>
         </div>
-
-        <p class="prayer-error hidden" id="prayer-error">Could not load — check connection.</p>
+        <p class="prayer-error hidden" id="prayer-error">Could not load prayer — check connection.</p>
       </div>
     </div>
 
-    <!-- ===== RIGHT: NO EXCUSES ===== -->
+    <!-- RIGHT: NO EXCUSES -->
     <div class="panel-card mot-card">
       <div class="card-top">
         <span class="card-label">No Excuses</span>
@@ -376,10 +361,8 @@
           </div>
         </div>
       </div>
-
       <div class="card-body">
         <p class="panel-loading" id="mot-loading">Loading…</p>
-
         <div id="mot-content" class="hidden">
           <div class="mot-quote" id="mot-quote"></div>
           <div id="mot-goal-wrap">
@@ -394,358 +377,323 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+// ============================================================
+// CONFIGURATION — no Supabase library needed, plain fetch only
+// ============================================================
+var AFF_URL      = 'https://rvwyjipseusvqjqbwken.supabase.co';
+var AFF_KEY      = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ2d3lqaXBzZXVzdnFqcWJ3a2VuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NDA4MDAsImV4cCI6MjA5MjAxNjgwMH0.UFYPZndWuY3uDOWovjxa7qreidWM9sacUlIS9iteMXc';
+var PRAYER_BUCKET = 'prayers';
 
-  // ============================================================
-  // CONFIGURATION
-  const AFF_URL = 'https://rvwyjipseusvqjqbwken.supabase.co';
-  const AFF_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ2d3lqaXBzZXVzdnFqcWJ3a2VuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NDA4MDAsImV4cCI6MjA5MjAxNjgwMH0.UFYPZndWuY3uDOWovjxa7qreidWM9sacUlIS9iteMXc';
+var MOT_URL = 'https://urfsijczxmngbixprdkq.supabase.co';
+var MOT_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZnNpamN6eG1uZ2JpeHByZGtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTU1NzIsImV4cCI6MjA5MTA3MTU3Mn0.KxNLu5Rg0A0IdxQbaAapDa-vmTkVmeUlub689o0ZOaM';
+// ============================================================
 
-  const MOT_URL = 'https://urfsijczxmngbixprdkq.supabase.co';
-  const MOT_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZnNpamN6eG1uZ2JpeHByZGtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTU1NzIsImV4cCI6MjA5MTA3MTU3Mn0.KxNLu5Rg0A0IdxQbaAapDa-vmTkVmeUlub689o0ZOaM';
+// ── HELPERS ──
 
-  const PRAYER_BUCKET = 'prayers';
-  // ============================================================
+function todayDateString() {
+  var d = new Date();
+  return d.getFullYear() + '-' +
+    String(d.getMonth() + 1).padStart(2, '0') + '-' +
+    String(d.getDate()).padStart(2, '0');
+}
 
-  const { createClient } = supabase;
-  const affDB = createClient(AFF_URL, AFF_KEY);
+function pickRandom(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
 
-  // ── HELPERS ──
+function escHtml(str) {
+  var d = document.createElement('div');
+  d.appendChild(document.createTextNode(str));
+  return d.innerHTML;
+}
 
-  function todayDateString() {
-    const d = new Date();
-    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-  }
+function affHeaders(key) {
+  return {
+    'Content-Type': 'application/json',
+    'apikey': key,
+    'Authorization': 'Bearer ' + key
+  };
+}
 
-  function pickRandom(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
-  }
+// ── HEADER DATE ──
+(function () {
+  var d = new Date();
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var days   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var label  = days[d.getDay()] + ' ' + months[d.getMonth()] + ' ' + d.getDate();
+  document.getElementById('header-date').textContent = label;
+  document.getElementById('aff-date').textContent    = label;
+  document.getElementById('mot-date').textContent    = label;
+})();
 
-  function escHtml(str) {
-    const d = document.createElement('div');
-    d.appendChild(document.createTextNode(str));
-    return d.innerHTML;
-  }
+// ── COUNTDOWN ──
+var countdownTimer = null;
 
-  // ── HEADER DATE ──
-  (function() {
-    const d = new Date();
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const days   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    const label  = days[d.getDay()] + ' ' + months[d.getMonth()] + ' ' + d.getDate();
-    document.getElementById('header-date').textContent = label;
-    document.getElementById('aff-date').textContent    = label;
-    document.getElementById('mot-date').textContent    = label;
-  })();
-
-  // ── COUNTDOWN ──
-  let countdownTimer = null;
-  function startCountdown() {
-    function tick() {
-      const midnight = new Date();
-      midnight.setHours(24, 0, 0, 0);
-      const diff = midnight.getTime() - Date.now();
-      if (diff <= 0) { clearInterval(countdownTimer); setTimeout(() => location.reload(), 1000); return; }
-      const h = Math.floor(diff / 3600000);
-      const m = Math.floor((diff % 3600000) / 60000);
-      const s = Math.floor((diff % 60000) / 1000);
-      const el = document.getElementById('prayer-countdown');
-      if (el) el.textContent = 'New prayer in ' + h + 'h ' + m + 'm ' + s + 's';
+function startCountdown() {
+  function tick() {
+    var midnight = new Date();
+    midnight.setHours(24, 0, 0, 0);
+    var diff = midnight.getTime() - Date.now();
+    if (diff <= 0) {
+      clearInterval(countdownTimer);
+      setTimeout(function () { location.reload(); }, 1000);
+      return;
     }
-    tick();
-    countdownTimer = setInterval(tick, 1000);
+    var h = Math.floor(diff / 3600000);
+    var m = Math.floor((diff % 3600000) / 60000);
+    var s = Math.floor((diff % 60000) / 1000);
+    var el = document.getElementById('prayer-countdown');
+    if (el) el.textContent = 'New prayer in ' + h + 'h ' + m + 'm ' + s + 's';
   }
+  tick();
+  countdownTimer = setInterval(tick, 1000);
+}
 
-  // ============================================================
-  //  PRAYER PANEL
-  //  Uses direct fetch() calls to the Supabase Storage REST API
-  //  instead of the JS client library, which has a bug with .list()
-  // ============================================================
+// ============================================================
+//  PRAYER PANEL — all plain fetch, no Supabase library
+// ============================================================
 
-  // Lists all files in the bucket by calling the Storage API directly
-  async function listPrayerFiles() {
-    const res = await fetch(AFF_URL + '/storage/v1/object/list/' + PRAYER_BUCKET, {
+function prayerShowError() {
+  document.getElementById('prayer-loading').classList.add('hidden');
+  document.getElementById('prayer-error').classList.remove('hidden');
+}
+
+function prayerShow(imageName) {
+  var publicUrl = AFF_URL + '/storage/v1/object/public/' + PRAYER_BUCKET + '/' + encodeURIComponent(imageName);
+  console.log('Loading prayer image:', publicUrl);
+  var img = document.getElementById('prayer-img');
+  img.onload = function () {
+    document.getElementById('prayer-loading').classList.add('hidden');
+    document.getElementById('prayer-content').classList.remove('hidden');
+    startCountdown();
+  };
+  img.onerror = function () {
+    console.error('Image failed to load:', publicUrl);
+    prayerShowError();
+  };
+  img.src = publicUrl;
+}
+
+function prayerInit() {
+  var today = todayDateString();
+
+  // Step 1: check if we already picked a prayer today
+  fetch(AFF_URL + '/rest/v1/daily_prayer?id=eq.today', {
+    headers: affHeaders(AFF_KEY)
+  })
+  .then(function (res) { return res.json(); })
+  .then(function (rows) {
+    var existing = rows && rows.length > 0 ? rows[0] : null;
+    console.log('Existing daily prayer record:', existing);
+
+    if (existing && existing.day === today && existing.image_path) {
+      // Already have today's prayer — just show it
+      prayerShow(existing.image_path);
+      return;
+    }
+
+    // Step 2: list all images in the bucket
+    fetch(AFF_URL + '/storage/v1/object/list/' + PRAYER_BUCKET, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': AFF_KEY,
-        'Authorization': 'Bearer ' + AFF_KEY
-      },
+      headers: affHeaders(AFF_KEY),
       body: JSON.stringify({ prefix: '', limit: 500, offset: 0 })
-    });
-    if (!res.ok) throw new Error('Storage list failed: ' + res.status);
-    return res.json();
-  }
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (files) {
+      console.log('Files in bucket:', files);
 
-  // Saves today's chosen image name to the daily_prayer table
-  async function saveDailyPrayer(imageName, today) {
-    await fetch(AFF_URL + '/rest/v1/daily_prayer', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': AFF_KEY,
-        'Authorization': 'Bearer ' + AFF_KEY,
-        'Prefer': 'resolution=merge-duplicates'
-      },
-      body: JSON.stringify({ id: 'today', image_path: imageName, day: today })
-    });
-  }
-
-  // Reads today's saved choice from the daily_prayer table
-  async function loadDailyPrayer() {
-    const res = await fetch(AFF_URL + '/rest/v1/daily_prayer?id=eq.today', {
-      headers: {
-        'apikey': AFF_KEY,
-        'Authorization': 'Bearer ' + AFF_KEY
-      }
-    });
-    if (!res.ok) return null;
-    const rows = await res.json();
-    return rows && rows.length > 0 ? rows[0] : null;
-  }
-
-  async function prayerInit() {
-    try {
-      const today = todayDateString();
-
-      // Check if we already picked a prayer for today
-      const existing = await loadDailyPrayer();
-
-      if (existing && existing.day === today && existing.image_path) {
-        console.log('Using saved prayer:', existing.image_path);
-        prayerShow(existing.image_path);
+      if (!Array.isArray(files) || files.length === 0) {
+        console.error('No files returned from bucket');
+        prayerShowError();
         return;
       }
 
-      // List all images in the bucket
-      const rawResponse = await fetch(AFF_URL + '/storage/v1/object/list/' + PRAYER_BUCKET, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': AFF_KEY,
-          'Authorization': 'Bearer ' + AFF_KEY
-        },
-        body: JSON.stringify({ prefix: '', limit: 500, offset: 0 })
+      // Filter out hidden/system files
+      var imageFiles = files.filter(function (f) {
+        return f.name && !f.name.startsWith('.');
       });
 
-      const rawText = await rawResponse.text();
-      console.log('Storage list raw response:', rawText);
-
-      let files;
-      try {
-        files = JSON.parse(rawText);
-      } catch(e) {
-        throw new Error('Could not parse storage response: ' + rawText);
-      }
-
-      console.log('Files parsed:', files);
-
-      if (!Array.isArray(files)) {
-        throw new Error('Unexpected response shape — not an array: ' + rawText);
-      }
-
-      const imageFiles = files.filter(f => f.name && !f.name.startsWith('.'));
-      console.log('Image files after filter:', imageFiles.length, imageFiles.map(f => f.name));
+      console.log('Valid image files:', imageFiles.length);
 
       if (imageFiles.length === 0) {
-        throw new Error('No images found in bucket — did you upload your prayer screenshots?');
-      }
-
-      const chosen = pickRandom(imageFiles);
-      console.log('Chosen prayer:', chosen.name);
-
-      await saveDailyPrayer(chosen.name, today);
-      prayerShow(chosen.name);
-
-    } catch (err) {
-      console.error('Prayer error:', err);
-      document.getElementById('prayer-loading').classList.add('hidden');
-      document.getElementById('prayer-error').classList.remove('hidden');
-    }
-  }
-
-      // No prayer yet — list all images and pick one randomly
-      const files = await listPrayerFiles();
-
-      // Filter out hidden/system files (filenames starting with a dot)
-      const imageFiles = files.filter(f => f.name && !f.name.startsWith('.'));
-
-      if (!imageFiles || imageFiles.length === 0) {
-        throw new Error('No images found in bucket — did you upload your prayer screenshots?');
-      }
-
-      const chosen = pickRandom(imageFiles);
-
-      // Save the choice so it stays the same all day
-      await saveDailyPrayer(chosen.name, today);
-
-      prayerShow(chosen.name);
-
-    } catch (err) {
-      console.error('Prayer error:', err);
-      document.getElementById('prayer-loading').classList.add('hidden');
-      document.getElementById('prayer-error').classList.remove('hidden');
-    }
-  }
-
-  function prayerShow(imageName) {
-    // Build the public URL directly — no JS client needed
-    // Public URL format: [project-url]/storage/v1/object/public/[bucket]/[filename]
-    const publicUrl = AFF_URL + '/storage/v1/object/public/' + PRAYER_BUCKET + '/' + encodeURIComponent(imageName);
-
-    const img = document.getElementById('prayer-img');
-    img.src = publicUrl;
-    img.onload = function() {
-      document.getElementById('prayer-loading').classList.add('hidden');
-      document.getElementById('prayer-content').classList.remove('hidden');
-      startCountdown();
-    };
-    img.onerror = function() {
-      console.error('Image failed to load:', publicUrl);
-      document.getElementById('prayer-loading').classList.add('hidden');
-      document.getElementById('prayer-error').classList.remove('hidden');
-    };
-  }
-
-  // ============================================================
-  //  NO EXCUSES / MOTIVATION  (unchanged)
-  // ============================================================
-
-  const HOURS_18 = 18 * 60 * 60 * 1000;
-
-  const QUOTES = [
-    'You said this mattered. Prove it.',
-    'Everyone who doubted you is watching. What are you doing right now?',
-    'The version of you that achieves this doesn\'t make excuses. Be that person TODAY.',
-    'Stop waiting to feel ready. You will never feel ready. Move anyway.',
-    'Your competition isn\'t resting. What\'s your excuse?',
-    'This is the work. Not the glamour. Not the results. THIS moment, right now. Do the work.',
-    'You\'ve been comfortable long enough. Comfortable doesn\'t build anything.',
-    'Future you is either grateful or disappointed. You\'re deciding which one right now.',
-    'No one is coming to save you. No one is going to do this for you. Get up.',
-    'The goal doesn\'t care how you feel today. Show up anyway.',
-    'Discipline is doing it when you don\'t want to. You don\'t want to right now. Do it anyway.',
-    'Every day you delay is a day you hand to someone else who wants it more.',
-    'You already know what you need to do. Stop pretending you don\'t.',
-    'Mediocrity is comfortable. Is that what you came here for?',
-    'The people living the life you want didn\'t get there by being soft.',
-    'What would the hardest version of you do right now? Go do that.',
-    'You\'re not tired. You\'re avoiding. There\'s a difference.',
-    'This is your reminder that time is running out and excuses don\'t age well.',
-    'The gap between who you are and who you want to be is closed by action. Not intentions.',
-    'You set these goals for a reason. Remember that reason. NOW MOVE.',
-    'You are not special enough to skip the work. Nobody is.',
-    'The life you want is on the other side of the effort you keep avoiding.',
-    'Stop treating rest like you\'ve earned it. You haven\'t yet.',
-    'Every excuse you make is a brick in the wall between you and everything you want.',
-    'You talk about it more than you do it. That ends today.',
-    'Comfort is a trap and you keep walking into it with a smile.',
-    'You don\'t get to be proud of goals you haven\'t hit yet. Earn it first.',
-    'Other people are outworking you right now. While you read this. Think about that.',
-    'Stop waiting for motivation. Motivation is for amateurs. You move because you decided to.'
-  ];
-
-  function motFetch(path, method, body) {
-    const opts = {
-      method: method || 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': MOT_KEY,
-        'Authorization': 'Bearer ' + MOT_KEY,
-        'Prefer': 'return=representation'
-      }
-    };
-    if (body) opts.body = JSON.stringify(body);
-    return fetch(MOT_URL + path, opts).then(res => {
-      if (!res.ok) return res.text().then(t => { throw new Error(t); });
-      return res.text().then(t => t ? JSON.parse(t) : []);
-    });
-  }
-
-  function motIsStale(record) {
-    if (!record || !record.saved_at || !record.card) return true;
-    if (Date.now() - record.saved_at >= HOURS_18) return true;
-    return new Date(record.saved_at).toDateString() !== new Date().toDateString();
-  }
-
-  function motRender(card) {
-    document.getElementById('mot-loading').classList.add('hidden');
-    document.getElementById('mot-content').classList.remove('hidden');
-    document.getElementById('mot-quote').textContent = card.quote;
-
-    if (card.goal) {
-      document.getElementById('mot-goal').textContent = card.goal;
-      document.getElementById('mot-goal-wrap').style.display = 'block';
-    } else {
-      document.getElementById('mot-goal-wrap').style.display = 'none';
-    }
-
-    const imagesEl = document.getElementById('mot-images');
-    imagesEl.innerHTML = '';
-
-    if (card.pinnedImageUrl) {
-      const wrap = document.createElement('div');
-      wrap.className = 'mot-image-wrap';
-      wrap.innerHTML =
-        '<div class="mot-section-label" style="margin-bottom:8px;">Always remember this</div>' +
-        '<img src="' + escHtml(card.pinnedImageUrl) + '" alt="pinned motivation" loading="lazy" />';
-      imagesEl.appendChild(wrap);
-    }
-
-    if (card.randomImageUrl) {
-      const wrap = document.createElement('div');
-      wrap.className = 'mot-image-wrap';
-      wrap.innerHTML =
-        '<div class="mot-section-label" style="margin-top:16px;margin-bottom:8px;">Remember why</div>' +
-        '<img src="' + escHtml(card.randomImageUrl) + '" alt="motivation" loading="lazy" />';
-      imagesEl.appendChild(wrap);
-    }
-  }
-
-  async function motInit() {
-    try {
-      const rows   = await motFetch('/rest/v1/daily_card?id=eq.today');
-      const record = (rows && rows.length > 0) ? rows[0] : null;
-
-      if (!motIsStale(record)) {
-        motRender(record.card);
+        console.error('No valid image files after filter');
+        prayerShowError();
         return;
       }
 
-      const [goals, images] = await Promise.all([
-        motFetch('/rest/v1/goals?order=created_at.asc'),
-        motFetch('/rest/v1/images?order=created_at.asc')
-      ]);
+      var chosen = pickRandom(imageFiles);
+      console.log('Chosen:', chosen.name);
 
-      const pinned = images.find(i => i.pinned) || null;
-      const random = (() => {
-        const u = images.filter(i => !i.pinned);
-        return u.length > 0 ? pickRandom(u) : null;
-      })();
+      // Step 3: save the choice so it stays all day
+      fetch(AFF_URL + '/rest/v1/daily_prayer', {
+        method: 'POST',
+        headers: Object.assign({}, affHeaders(AFF_KEY), {
+          'Prefer': 'resolution=merge-duplicates'
+        }),
+        body: JSON.stringify({ id: 'today', image_path: chosen.name, day: today })
+      })
+      .then(function () {
+        prayerShow(chosen.name);
+      })
+      .catch(function (err) {
+        // Save failed but still show the image
+        console.warn('Could not save daily prayer, showing anyway:', err);
+        prayerShow(chosen.name);
+      });
+    })
+    .catch(function (err) {
+      console.error('Could not list bucket files:', err);
+      prayerShowError();
+    });
+  })
+  .catch(function (err) {
+    console.error('Could not load daily prayer record:', err);
+    prayerShowError();
+  });
+}
 
-      const card = {
+// ============================================================
+//  NO EXCUSES — plain fetch, no Supabase library
+// ============================================================
+
+var HOURS_18 = 18 * 60 * 60 * 1000;
+
+var QUOTES = [
+  'You said this mattered. Prove it.',
+  'Everyone who doubted you is watching. What are you doing right now?',
+  'The version of you that achieves this doesn\'t make excuses. Be that person TODAY.',
+  'Stop waiting to feel ready. You will never feel ready. Move anyway.',
+  'Your competition isn\'t resting. What\'s your excuse?',
+  'This is the work. Not the glamour. Not the results. THIS moment, right now. Do the work.',
+  'You\'ve been comfortable long enough. Comfortable doesn\'t build anything.',
+  'Future you is either grateful or disappointed. You\'re deciding which one right now.',
+  'No one is coming to save you. No one is going to do this for you. Get up.',
+  'The goal doesn\'t care how you feel today. Show up anyway.',
+  'Discipline is doing it when you don\'t want to. You don\'t want to right now. Do it anyway.',
+  'Every day you delay is a day you hand to someone else who wants it more.',
+  'You already know what you need to do. Stop pretending you don\'t.',
+  'Mediocrity is comfortable. Is that what you came here for?',
+  'The people living the life you want didn\'t get there by being soft.',
+  'What would the hardest version of you do right now? Go do that.',
+  'You\'re not tired. You\'re avoiding. There\'s a difference.',
+  'This is your reminder that time is running out and excuses don\'t age well.',
+  'The gap between who you are and who you want to be is closed by action. Not intentions.',
+  'You set these goals for a reason. Remember that reason. NOW MOVE.',
+  'You are not special enough to skip the work. Nobody is.',
+  'The life you want is on the other side of the effort you keep avoiding.',
+  'Stop treating rest like you\'ve earned it. You haven\'t yet.',
+  'Every excuse you make is a brick in the wall between you and everything you want.',
+  'You talk about it more than you do it. That ends today.',
+  'Comfort is a trap and you keep walking into it with a smile.',
+  'You don\'t get to be proud of goals you haven\'t hit yet. Earn it first.',
+  'Other people are outworking you right now. While you read this. Think about that.',
+  'Stop waiting for motivation. Motivation is for amateurs. You move because you decided to.'
+];
+
+function motHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    'apikey': MOT_KEY,
+    'Authorization': 'Bearer ' + MOT_KEY,
+    'Prefer': 'return=representation'
+  };
+}
+
+function motFetch(path, method, body) {
+  var opts = { method: method || 'GET', headers: motHeaders() };
+  if (body) opts.body = JSON.stringify(body);
+  return fetch(MOT_URL + path, opts).then(function (res) {
+    if (!res.ok) return res.text().then(function (t) { throw new Error(t); });
+    return res.text().then(function (t) { return t ? JSON.parse(t) : []; });
+  });
+}
+
+function motIsStale(record) {
+  if (!record || !record.saved_at || !record.card) return true;
+  if (Date.now() - record.saved_at >= HOURS_18) return true;
+  return new Date(record.saved_at).toDateString() !== new Date().toDateString();
+}
+
+function motRender(card) {
+  document.getElementById('mot-loading').classList.add('hidden');
+  document.getElementById('mot-content').classList.remove('hidden');
+  document.getElementById('mot-quote').textContent = card.quote;
+
+  if (card.goal) {
+    document.getElementById('mot-goal').textContent = card.goal;
+    document.getElementById('mot-goal-wrap').style.display = 'block';
+  } else {
+    document.getElementById('mot-goal-wrap').style.display = 'none';
+  }
+
+  var imagesEl = document.getElementById('mot-images');
+  imagesEl.innerHTML = '';
+
+  if (card.pinnedImageUrl) {
+    var wrap1 = document.createElement('div');
+    wrap1.className = 'mot-image-wrap';
+    wrap1.innerHTML =
+      '<div class="mot-section-label" style="margin-bottom:8px;">Always remember this</div>' +
+      '<img src="' + escHtml(card.pinnedImageUrl) + '" alt="pinned motivation" loading="lazy" />';
+    imagesEl.appendChild(wrap1);
+  }
+
+  if (card.randomImageUrl) {
+    var wrap2 = document.createElement('div');
+    wrap2.className = 'mot-image-wrap';
+    wrap2.innerHTML =
+      '<div class="mot-section-label" style="margin-top:16px;margin-bottom:8px;">Remember why</div>' +
+      '<img src="' + escHtml(card.randomImageUrl) + '" alt="motivation" loading="lazy" />';
+    imagesEl.appendChild(wrap2);
+  }
+}
+
+function motInit() {
+  motFetch('/rest/v1/daily_card?id=eq.today')
+  .then(function (rows) {
+    var record = rows && rows.length > 0 ? rows[0] : null;
+    if (!motIsStale(record)) {
+      motRender(record.card);
+      return;
+    }
+
+    Promise.all([
+      motFetch('/rest/v1/goals?order=created_at.asc'),
+      motFetch('/rest/v1/images?order=created_at.asc')
+    ]).then(function (results) {
+      var goals  = results[0];
+      var images = results[1];
+      var pinned = images.find(function (i) { return i.pinned; }) || null;
+      var unpinned = images.filter(function (i) { return !i.pinned; });
+      var random = unpinned.length > 0 ? pickRandom(unpinned) : null;
+
+      var card = {
         quote:          pickRandom(QUOTES),
         goal:           goals.length > 0 ? pickRandom(goals).text : null,
         pinnedImageUrl: pinned ? pinned.url : null,
         randomImageUrl: random ? random.url : null
       };
 
-      await motFetch('/rest/v1/daily_card?id=eq.today', 'PATCH', {
-        card,
+      motFetch('/rest/v1/daily_card?id=eq.today', 'PATCH', {
+        card: card,
         saved_at: Date.now()
+      }).then(function () {
+        motRender(card);
+      }).catch(function () {
+        motRender(card);
       });
+    });
+  })
+  .catch(function (err) {
+    console.error('Mot error:', err);
+    document.getElementById('mot-loading').textContent = 'Could not load — check connection.';
+  });
+}
 
-      motRender(card);
-    } catch(e) {
-      console.error('Mot error:', e);
-      document.getElementById('mot-loading').textContent = 'Could not load — check connection.';
-    }
-  }
-
-  // ── BOOT ──
-  prayerInit();
-  motInit();
+// ── BOOT ──
+prayerInit();
+motInit();
 
 </script>
 </body>
