@@ -3,101 +3,220 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Notebook</title>
-  <link href="https://fonts.googleapis.com/css2?family=Lustria&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+  <title>Notebook — Analog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Karla:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:            #2B2D22;
+      --card-today:    #F5F2EB;
+      --card-someday:  #EDE8DF;
+      --card-future:   #E3DAC9;
+      --card-wb:       #E8E4DA;
+      --text-dark:     #2A2825;
+      --text-mid:      #76706A;
+      --text-light:    #B3ADA5;
+      --circle-stroke: #C5BFB7;
+      --line-rule:     rgba(42, 40, 37, 0.07);
+      --streak-gold:   #C4A066;
+      --shadow-card:   0 6px 32px rgba(0,0,0,0.28), 0 1px 6px rgba(0,0,0,0.14);
+      --shadow-mini:   0 3px 18px rgba(0,0,0,0.22), 0 1px 4px rgba(0,0,0,0.10);
+      --radius-lg:     14px;
+      --radius-md:     10px;
+      --font-display:  'Cormorant Garamond', Georgia, serif;
+      --font-body:     'Karla', system-ui, sans-serif;
+    }
+
+    html, body { height: 100%; }
 
     body {
-      background: #111111;
-      color: #f3f6f4;
-      font-family: 'Lato', sans-serif;
       min-height: 100vh;
+      background-color: var(--bg);
+      font-family: var(--font-body);
+      color: var(--text-dark);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
 
-    .wrap {
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 0 32px 64px;
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-size: 180px 180px;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.5;
     }
 
-    .page-title-block {
-      margin: 40px 0 40px;
-      padding-bottom: 28px;
-      border-bottom: 1px solid #2a2a2a;
+    #page {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 80px;
+    }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      width: 100%;
+      max-width: 720px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 24px;
     }
 
     .page-title {
-      font-family: 'Lustria', serif;
-      font-size: clamp(24px, 4vw, 36px);
-      font-weight: normal;
-      color: #e0e0e0;
-      margin-bottom: 8px;
+      font-family: var(--font-display);
+      font-size: clamp(22px, 3vw, 32px);
+      font-weight: 500;
+      color: rgba(245,242,235,0.55);
+      letter-spacing: 0.01em;
+      line-height: 1;
     }
 
     .page-slogan {
-      font-size: 13px;
-      font-family: 'Lato', sans-serif;
+      font-family: var(--font-body);
+      font-size: 11px;
       font-weight: 300;
-      color: #555555;
+      color: rgba(245,242,235,0.2);
       font-style: italic;
+      letter-spacing: 0.04em;
     }
 
-    .write-form { margin-bottom: 48px; }
-
-    .form-section-label {
-      font-family: 'Lato', sans-serif;
-      font-weight: 300;
-      font-size: 10px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: #555555;
-      margin-bottom: 20px;
+    /* ── CARD BASE ── */
+    .panel-card {
+      width: 100%;
+      max-width: 720px;
+      background: var(--card-today);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 16px;
+      animation: cardRise 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
 
+    .panel-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255,255,255,0.55);
+      pointer-events: none;
+    }
+
+    .entries-card { background: var(--card-wb); animation-delay: 0.06s; }
+
+    @keyframes cardRise {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── CARD TOP ── */
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 20px 22px 14px;
+      border-bottom: 1px solid var(--line-rule);
+    }
+
+    .card-label {
+      font-family: var(--font-display);
+      font-size: 23px;
+      font-weight: 500;
+      color: var(--text-dark);
+      letter-spacing: 0.01em;
+      line-height: 1;
+    }
+
+    .card-top-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-dots {
+      display: flex;
+      flex-direction: column;
+      gap: 3.5px;
+    }
+
+    .dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      border: 1px solid var(--circle-stroke);
+      display: block;
+    }
+
+    .dot-filled { background: var(--circle-stroke); border-color: var(--circle-stroke); }
+
+    /* ── CARD BODY ── */
+    .card-body { padding: 20px 22px 22px; }
+
+    /* ── FIELD LABELS ── */
     .field-label {
-      font-family: 'Lato', sans-serif;
-      font-weight: 300;
-      font-size: 10px;
-      letter-spacing: 0.14em;
+      font-family: var(--font-body);
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
-      color: #555555;
+      color: var(--text-light);
       margin-bottom: 6px;
     }
 
-    .field-input {
+    /* ── TITLE INPUT ── */
+    .title-input {
+      width: 100%;
       background: transparent;
       border: none;
-      border-bottom: 1px solid #2a2a2a;
-      color: #e0e0e0;
-      font-family: 'Lato', sans-serif;
-      font-weight: 300;
-      font-size: 14px;
-      padding: 8px 0;
+      border-bottom: 1px solid var(--circle-stroke);
+      color: var(--text-dark);
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 500;
+      padding: 6px 0 10px;
       outline: none;
       transition: border-color 0.2s;
-      width: 100%;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
+      caret-color: var(--text-dark);
     }
 
-    .field-input:focus { border-bottom-color: #555555; }
-    .field-input::placeholder { color: #333333; font-style: italic; }
+    .title-input:focus { border-bottom-color: var(--text-mid); }
 
+    .title-input::placeholder {
+      color: var(--text-light);
+      font-style: italic;
+      font-size: 16px;
+    }
+
+    /* ── TOOLBAR ── */
     .toolbar {
       display: flex;
-      gap: 4px;
+      gap: 3px;
       margin-bottom: 10px;
       flex-wrap: wrap;
+      align-items: center;
     }
 
     .toolbar-btn {
       background: transparent;
-      border: 1px solid #2a2a2a;
-      color: #555555;
-      font-size: 13px;
-      width: 32px;
-      height: 30px;
+      border: 1px solid var(--circle-stroke);
+      color: var(--text-light);
+      font-family: var(--font-body);
+      font-size: 12px;
+      width: 30px;
+      height: 28px;
       cursor: pointer;
+      border-radius: 5px;
       transition: border-color 0.15s, color 0.15s, background 0.15s;
       display: flex;
       align-items: center;
@@ -105,96 +224,110 @@
       line-height: 1;
     }
 
-    .toolbar-btn:hover { border-color: #555555; color: #e0e0e0; }
+    .toolbar-btn:hover {
+      border-color: var(--text-mid);
+      color: var(--text-dark);
+      background: rgba(42,40,37,0.05);
+    }
 
     .toolbar-divider {
       width: 1px;
-      background: #2a2a2a;
-      margin: 0 4px;
+      height: 20px;
+      background: var(--circle-stroke);
+      margin: 0 3px;
     }
 
     .toolbar-img-btn {
       background: transparent;
-      border: 1px solid #2a2a2a;
-      color: #555555;
-      font-family: 'Lato', sans-serif;
-      font-weight: 300;
+      border: 1px solid var(--circle-stroke);
+      color: var(--text-light);
+      font-family: var(--font-body);
+      font-weight: 400;
       font-size: 10px;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      height: 30px;
+      height: 28px;
       padding: 0 12px;
       cursor: pointer;
-      transition: border-color 0.15s, color 0.15s;
+      border-radius: 5px;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
       white-space: nowrap;
     }
 
-    .toolbar-img-btn:hover { border-color: #555555; color: #e0e0e0; }
+    .toolbar-img-btn:hover {
+      border-color: var(--text-mid);
+      color: var(--text-dark);
+      background: rgba(42,40,37,0.05);
+    }
 
+    /* ── EDITOR ── */
     .editor {
+      width: 100%;
       background: transparent;
       border: none;
-      border-bottom: 1px solid #2a2a2a;
-      color: #e0e0e0;
-      font-family: 'Lato', sans-serif;
+      border-bottom: 1px solid var(--circle-stroke);
+      color: var(--text-dark);
+      font-family: var(--font-body);
       font-weight: 300;
       font-size: 14px;
       line-height: 1.9;
       padding: 8px 0 20px;
       outline: none;
-      min-height: 260px;
+      min-height: 220px;
       transition: border-color 0.2s;
-      width: 100%;
+      caret-color: var(--text-dark);
     }
 
-    .editor:focus { border-bottom-color: #555555; }
+    .editor:focus { border-bottom-color: var(--text-mid); }
 
     .editor:empty:before {
       content: attr(data-placeholder);
-      color: #333333;
+      color: var(--text-light);
       font-style: italic;
       pointer-events: none;
     }
 
     .editor b, .editor strong { font-weight: 700; }
-    .editor i, .editor em { font-style: italic; }
-    .editor u { text-decoration: underline; }
+    .editor i, .editor em     { font-style: italic; }
+    .editor u                  { text-decoration: underline; }
 
     .editor img {
       max-width: 100%;
       height: auto;
       display: block;
       margin: 12px 0;
-      opacity: 0.9;
     }
 
+    /* ── IMAGE PREVIEWS ── */
     .image-preview-area {
-      margin-top: 16px;
+      margin-top: 14px;
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
     }
 
     .preview-thumb-wrap { position: relative; display: inline-block; }
 
     .preview-thumb {
-      width: 72px;
-      height: 72px;
+      width: 64px;
+      height: 64px;
       object-fit: cover;
-      border: 1px solid #2a2a2a;
+      border: 1px solid var(--circle-stroke);
+      border-radius: 5px;
       display: block;
     }
 
     .preview-remove {
       position: absolute;
-      top: -6px;
-      right: -6px;
-      background: #111111;
-      border: 1px solid #2a2a2a;
-      color: #555555;
-      font-size: 10px;
-      width: 18px;
-      height: 18px;
+      top: -5px;
+      right: -5px;
+      background: var(--card-today);
+      border: 1px solid var(--circle-stroke);
+      color: var(--text-light);
+      font-size: 9px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -203,250 +336,243 @@
       line-height: 1;
     }
 
-    .preview-remove:hover { color: #e0e0e0; }
+    .preview-remove:hover { color: var(--text-dark); }
 
-    #image-file-input { display: none; }
-
+    /* ── FORM ACTIONS ── */
     .form-actions {
-      margin-top: 28px;
+      margin-top: 22px;
       display: flex;
       justify-content: flex-end;
     }
 
-    .submit-btn {
-      font-family: 'Lato', sans-serif;
-      font-weight: 300;
+    .save-btn {
+      font-family: var(--font-body);
+      font-weight: 400;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      font-size: 13px;
-      background: transparent;
-      color: #e0e0e0;
-      border: 1px solid #e0e0e0;
-      padding: 10px 32px;
+      font-size: 11px;
+      background: var(--text-dark);
+      color: var(--card-today);
+      border: 1px solid var(--text-dark);
+      border-radius: var(--radius-md);
+      padding: 10px 28px;
       cursor: pointer;
-      transition: background 0.15s, color 0.15s;
+      transition: opacity 0.15s;
     }
 
-    .submit-btn:hover { background: #e0e0e0; color: #111111; }
-    .submit-btn:disabled { border-color: #2a2a2a; color: #333333; cursor: not-allowed; background: transparent; }
+    .save-btn:hover    { opacity: 0.8; }
+    .save-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
-    /* ── ENTRIES SECTION ── */
-
-    .entries-section {
-      margin-top: 8px;
-      border-top: 1px solid #2a2a2a;
-      padding-top: 32px;
-    }
-
-    .entries-header {
+    /* ── ENTRIES CARD ── */
+    .entries-card-top {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      margin-bottom: 20px;
+      align-items: center;
+      padding: 16px 22px;
+      cursor: pointer;
+      user-select: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.25s;
     }
 
-    .entries-toggle {
-      background: transparent;
-      border: none;
-      color: #555555;
-      font-family: 'Lato', sans-serif;
-      font-weight: 300;
-      font-size: 10px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      cursor: pointer;
-      padding: 0;
-      transition: color 0.15s;
+    .entries-card-top.open { border-bottom-color: var(--line-rule); }
+
+    .entries-toggle-label {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--text-dark);
+      letter-spacing: 0.01em;
+      line-height: 1;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
-    .entries-toggle:hover { color: #e0e0e0; }
-
-    .entries-toggle-arrow {
+    .entries-arrow {
       font-size: 9px;
-      transition: transform 0.2s;
+      color: var(--text-light);
+      transition: transform 0.22s;
       display: inline-block;
     }
 
-    .entries-toggle-arrow.open { transform: rotate(90deg); }
+    .entries-arrow.open { transform: rotate(90deg); }
 
     .load-btn {
-      font-family: 'Lato', sans-serif;
-      font-weight: 300;
+      font-family: var(--font-body);
+      font-weight: 400;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       font-size: 10px;
       background: transparent;
-      color: #555555;
-      border: 1px solid #2a2a2a;
-      padding: 6px 16px;
+      color: var(--text-mid);
+      border: 1px solid var(--circle-stroke);
+      border-radius: 20px;
+      padding: 5px 14px;
       cursor: pointer;
       transition: border-color 0.15s, color 0.15s;
     }
 
-    .load-btn:hover { border-color: #555555; color: #e0e0e0; }
-    .load-btn:disabled { color: #333333; border-color: #1e1e1e; cursor: not-allowed; }
+    .load-btn:hover    { border-color: var(--text-mid); color: var(--text-dark); }
+    .load-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    .entries-list { display: none; }
-    .entries-list.open { display: block; }
-
-    /* Each entry row */
-    .entry-item {
-      border-bottom: 1px solid #1e1e1e;
+    /* Collapsible entries list */
+    .entries-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.38s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
+    .entries-body.open { max-height: 9000px; }
+
+    .entries-inner { padding: 8px 22px 16px; }
+
+    /* Individual entry rows */
+    .entry-item { border-bottom: 1px solid var(--line-rule); }
     .entry-item:last-child { border-bottom: none; }
 
-    /* The clickable top bar showing title + date + delete */
     .entry-row {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      padding: 14px 0;
-      gap: 12px;
+      padding: 12px 0;
+      gap: 10px;
       cursor: pointer;
     }
+
+    .entry-expand-arrow {
+      font-size: 8px;
+      color: var(--text-light);
+      margin-top: 4px;
+      flex-shrink: 0;
+      transition: transform 0.2s, color 0.15s;
+    }
+
+    .entry-row:hover .entry-expand-arrow { color: var(--text-mid); }
+    .entry-expand-arrow.open { transform: rotate(90deg); }
 
     .entry-info { flex: 1; min-width: 0; }
 
     .entry-item-title {
-      font-family: 'Lato', sans-serif;
-      font-weight: 300;
-      font-size: 14px;
-      color: #c0c0c0;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-dark);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       transition: color 0.15s;
     }
 
-    .entry-row:hover .entry-item-title { color: #e0e0e0; }
+    .entry-row:hover .entry-item-title { color: var(--text-mid); }
 
     .entry-item-date {
-      font-size: 11px;
-      color: #444444;
-      margin-top: 3px;
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 300;
+      color: var(--text-light);
+      margin-top: 2px;
       font-style: italic;
     }
 
-    .entry-expand-arrow {
-      font-size: 9px;
-      color: #444444;
-      margin-top: 4px;
-      flex-shrink: 0;
-      transition: transform 0.2s, color 0.15s;
-    }
-
-    .entry-row:hover .entry-expand-arrow { color: #777777; }
-    .entry-expand-arrow.open { transform: rotate(90deg); }
-
     .entry-delete-btn {
       background: transparent;
-      border: 1px solid #2a2a2a;
-      color: #444444;
-      font-size: 11px;
-      width: 24px;
-      height: 24px;
+      border: 1px solid var(--circle-stroke);
+      color: var(--text-light);
+      font-size: 10px;
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      transition: border-color 0.15s, color 0.15s;
       margin-top: 2px;
+      transition: border-color 0.15s, color 0.15s;
     }
 
-    .entry-delete-btn:hover { border-color: #888888; color: #e0e0e0; }
+    .entry-delete-btn:hover { border-color: var(--text-mid); color: var(--text-dark); }
 
-    /* The expandable content area below each title row */
-    .entry-content {
-      display: none;
-      padding: 0 0 20px 0;
-    }
-
+    /* Expandable content */
+    .entry-content { display: none; padding: 0 0 16px 16px; }
     .entry-content.open { display: block; }
 
-    /* Styles for the fetched content rendered inside the entry */
     .entry-content-inner {
-      font-family: 'Lato', sans-serif;
+      font-family: var(--font-body);
       font-weight: 300;
-      font-size: 14px;
-      line-height: 1.9;
-      color: #aaaaaa;
-      border-left: 1px solid #2a2a2a;
-      padding-left: 16px;
+      font-size: 13px;
+      line-height: 1.85;
+      color: var(--text-mid);
+      border-left: 1px solid var(--circle-stroke);
+      padding-left: 14px;
     }
 
     .entry-content-inner b,
-    .entry-content-inner strong { font-weight: 700; color: #c0c0c0; }
-
+    .entry-content-inner strong { font-weight: 500; color: var(--text-dark); }
     .entry-content-inner i,
-    .entry-content-inner em { font-style: italic; }
-
-    .entry-content-inner u { text-decoration: underline; }
+    .entry-content-inner em     { font-style: italic; }
+    .entry-content-inner u      { text-decoration: underline; }
 
     .entry-content-inner img {
       max-width: 100%;
       height: auto;
       display: block;
-      margin: 12px 0;
-      opacity: 0.85;
+      margin: 10px 0;
+      border-radius: 4px;
     }
 
     .entry-content-loading {
+      font-family: var(--font-body);
+      font-weight: 300;
       font-size: 12px;
       font-style: italic;
-      color: #444444;
-      padding: 8px 0 8px 16px;
-      border-left: 1px solid #2a2a2a;
+      color: var(--text-light);
+      padding: 6px 0 6px 14px;
+      border-left: 1px solid var(--circle-stroke);
     }
 
-    /* ── STATUS BAR ── */
+    .entries-empty,
+    .entries-loading {
+      font-family: var(--font-body);
+      font-weight: 300;
+      font-size: 12px;
+      font-style: italic;
+      color: var(--text-light);
+      padding: 16px 0 8px;
+    }
 
+    /* ── STATUS TOAST ── */
     .status-bar {
       position: fixed;
       bottom: 0; left: 0; right: 0;
-      background: #1a1a1a;
-      border-top: 1px solid #2a2a2a;
+      background: var(--card-wb);
+      border-top: 1px solid var(--circle-stroke);
       padding: 14px 24px;
-      font-size: 13px;
-      font-family: 'Lato', sans-serif;
+      font-family: var(--font-body);
+      font-size: 12px;
       font-weight: 300;
       font-style: italic;
-      color: #555555;
+      color: var(--text-mid);
       text-align: center;
       transform: translateY(100%);
       transition: transform 0.3s;
-      z-index: 100;
+      z-index: 200;
     }
 
-    .status-bar.show { transform: translateY(0); }
-    .status-bar.success { color: #e0e0e0; }
-    .status-bar.error { color: #888888; }
+    .status-bar.show    { transform: translateY(0); }
+    .status-bar.success { color: var(--text-dark); }
+    .status-bar.error   { color: var(--text-mid); }
 
-    .entries-empty {
-      font-family: 'Lato', sans-serif;
-      font-weight: 300;
-      font-size: 13px;
-      font-style: italic;
-      color: #444444;
-      padding: 16px 0;
-    }
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(42,40,37,0.18); border-radius: 4px; }
 
-    .entries-loading {
-      font-family: 'Lato', sans-serif;
-      font-weight: 300;
-      font-size: 13px;
-      font-style: italic;
-      color: #444444;
-      padding: 16px 0;
-    }
-
+    /* ── RESPONSIVE ── */
     @media (max-width: 480px) {
-      .wrap { padding: 0 20px 48px; }
-      .page-title { font-size: 26px; }
+      #page { padding: 16px 12px 72px; }
+      .card-label { font-size: 20px; }
     }
   </style>
 </head>
@@ -455,67 +581,84 @@
 <div id="site-header"></div>
 <script src="/header.js"></script>
 
-<div class="wrap">
+<div id="page">
 
-  <div class="page-title-block">
-    <div class="page-title">Notebook</div>
-    <div class="page-slogan">Write it down. Let it go.</div>
-  </div>
-
-  <div class="write-form">
-    <div class="form-section-label">New entry</div>
-
-    <div class="field-label">Title</div>
-    <input
-      class="field-input"
-      type="text"
-      id="entry-title"
-      placeholder="What's this about?"
-      autocomplete="off"
-    />
-
-    <div class="field-label">Body</div>
-
-    <div class="toolbar">
-      <button class="toolbar-btn" title="Bold" onclick="fmt('bold')"><b>B</b></button>
-      <button class="toolbar-btn" title="Italic" onclick="fmt('italic')"><i>I</i></button>
-      <button class="toolbar-btn" title="Underline" onclick="fmt('underline')"><u>U</u></button>
-      <div class="toolbar-divider"></div>
-      <button class="toolbar-img-btn" onclick="document.getElementById('image-file-input').click()">+ Image</button>
-      <input type="file" id="image-file-input" accept="image/*" multiple onchange="handleImageUpload(event)" />
-    </div>
-
-    <div
-      class="editor"
-      id="entry-body"
-      contenteditable="true"
-      data-placeholder="Start writing..."
-    ></div>
-
-    <div class="image-preview-area" id="image-preview-area"></div>
-
-    <div class="form-actions">
-      <button class="submit-btn" id="submit-btn" onclick="handleSubmit()">Save Entry</button>
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Notebook</h1>
+      <p class="page-slogan">Write it down. Let it go.</p>
     </div>
   </div>
 
-  <!-- ── PAST ENTRIES SECTION ── -->
-  <div class="entries-section">
-    <div class="entries-header">
-      <button class="entries-toggle" onclick="toggleEntriesList()">
-        <span class="entries-toggle-arrow" id="toggle-arrow">▶</span>
-        Past entries
-      </button>
-      <button class="load-btn" id="load-btn" onclick="handleLoadEntries()">Load</button>
+  <!-- WRITE CARD -->
+  <div class="panel-card">
+    <div class="card-top">
+      <span class="card-label">New Entry</span>
+      <div class="card-top-right">
+        <div class="card-dots">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot dot-filled"></span>
+        </div>
+      </div>
     </div>
+    <div class="card-body">
 
-    <div class="entries-list" id="entries-list">
-      <div class="entries-loading" id="entries-loading" style="display:none;">Loading...</div>
-      <div id="entries-items"></div>
+      <div class="field-label">Title</div>
+      <input
+        class="title-input"
+        type="text"
+        id="entry-title"
+        placeholder="What's this about?"
+        autocomplete="off"
+      />
+
+      <div class="field-label">Body</div>
+      <div class="toolbar">
+        <button class="toolbar-btn" title="Bold"      onclick="fmt('bold')"><b>B</b></button>
+        <button class="toolbar-btn" title="Italic"    onclick="fmt('italic')"><i>I</i></button>
+        <button class="toolbar-btn" title="Underline" onclick="fmt('underline')"><u>U</u></button>
+        <div class="toolbar-divider"></div>
+        <button class="toolbar-img-btn" onclick="document.getElementById('image-file-input').click()">+ Image</button>
+        <input type="file" id="image-file-input" accept="image/*" multiple onchange="handleImageUpload(event)" style="display:none;" />
+      </div>
+
+      <div
+        class="editor"
+        id="entry-body"
+        contenteditable="true"
+        data-placeholder="Start writing..."
+      ></div>
+
+      <div class="image-preview-area" id="image-preview-area"></div>
+
+      <div class="form-actions">
+        <button class="save-btn" id="submit-btn" onclick="handleSubmit()">Save Entry</button>
+      </div>
+
     </div>
   </div>
 
-</div>
+  <!-- ENTRIES CARD -->
+  <div class="panel-card entries-card">
+    <div class="entries-card-top" id="entries-card-top" onclick="toggleEntriesList()">
+      <span class="entries-toggle-label">
+        <span class="entries-arrow" id="toggle-arrow">▶</span>
+        Past Entries
+      </span>
+      <button class="load-btn" id="load-btn" onclick="event.stopPropagation(); handleLoadEntries();">Load</button>
+    </div>
+
+    <div class="entries-body" id="entries-body">
+      <div class="entries-inner">
+        <div class="entries-loading" id="entries-loading" style="display:none;">Loading…</div>
+        <div id="entries-items"></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page -->
 
 <div class="status-bar" id="status-bar"></div>
 
@@ -523,21 +666,18 @@
 <script src="https://accounts.google.com/gsi/client"></script>
 
 <script>
-  var CLIENT_ID = '1014290983612-sg3a714jt49n6k8i77thbk3q065016dp.apps.googleusercontent.com';
-  var SCOPE = 'https://www.googleapis.com/auth/drive.file';
-
+  var CLIENT_ID     = '1014290983612-sg3a714jt49n6k8i77thbk3q065016dp.apps.googleusercontent.com';
+  var SCOPE         = 'https://www.googleapis.com/auth/drive.file';
   var tokenClient;
-  var gapiReady = false;
+  var gapiReady     = false;
   var pendingImages = [];
   var pendingAction = 'save';
-  var entriesOpen = false;
+  var entriesOpen   = false;
 
   gapi.load('client', function() {
     gapi.client.init({}).then(function() {
       return gapi.client.load('https://www.googleapis.com/discovery/v1/apis/drive/v3/rest');
-    }).then(function() {
-      gapiReady = true;
-    });
+    }).then(function() { gapiReady = true; });
   });
 
   window.addEventListener('load', function() {
@@ -548,27 +688,22 @@
         if (response.error) {
           showStatus('Sign-in cancelled or failed.', 'error');
           document.getElementById('submit-btn').disabled = false;
-          document.getElementById('load-btn').disabled = false;
+          document.getElementById('load-btn').disabled   = false;
           return;
         }
-        if (pendingAction === 'load') {
-          loadEntries();
-        } else {
-          saveEntry();
-        }
+        if (pendingAction === 'load') loadEntries();
+        else                          saveEntry();
       }
     });
   });
 
   // ── FORMATTING ──
-
   function fmt(command) {
     document.execCommand(command, false, null);
     document.getElementById('entry-body').focus();
   }
 
   // ── IMAGE HANDLING ──
-
   function handleImageUpload(event) {
     var files = Array.from(event.target.files);
     if (!files.length) return;
@@ -609,32 +744,28 @@
   }
 
   // ── SAVING ──
-
   function handleSubmit() {
-    var title = document.getElementById('entry-title').value.trim();
+    var title    = document.getElementById('entry-title').value.trim();
     var bodyText = document.getElementById('entry-body').innerText.trim();
     if (!title && !bodyText && pendingImages.length === 0) {
       showStatus('Nothing to save — write something first.', 'error');
       return;
     }
-    if (!gapiReady) {
-      showStatus('Still loading — try again in a moment.', 'error');
-      return;
-    }
+    if (!gapiReady) { showStatus('Still loading — try again in a moment.', 'error'); return; }
     pendingAction = 'save';
     document.getElementById('submit-btn').disabled = true;
-    showStatus('Opening Google sign-in...', '');
+    showStatus('Opening Google sign-in…', '');
     tokenClient.requestAccessToken({ prompt: '' });
   }
 
   async function saveEntry() {
-    var title = document.getElementById('entry-title').value.trim();
-    var bodyHtml = document.getElementById('entry-body').innerHTML.trim();
+    var title        = document.getElementById('entry-title').value.trim();
+    var bodyHtml     = document.getElementById('entry-body').innerHTML.trim();
     var displayTitle = title || 'Untitled';
-    var now = new Date();
-    var dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-    var timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-    var fileDate = now.toISOString().slice(0, 10);
+    var now          = new Date();
+    var dateStr      = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    var timeStr      = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    var fileDate     = now.toISOString().slice(0, 10);
 
     var imagesHtml = '';
     if (pendingImages.length > 0) {
@@ -666,7 +797,6 @@
     var fileName = fileDate + ' \u2014 ' + displayTitle + '.html';
     var boundary = 'nb_boundary_' + Date.now();
     var metadata = JSON.stringify({ name: fileName, mimeType: 'text/html' });
-
     var multipart =
       '--' + boundary + '\r\n' +
       'Content-Type: application/json\r\n\r\n' +
@@ -684,44 +814,33 @@
         headers: { 'Content-Type': 'multipart/related; boundary=' + boundary },
         body: multipart
       });
-
       document.getElementById('entry-title').value = '';
       document.getElementById('entry-body').innerHTML = '';
       document.getElementById('image-preview-area').innerHTML = '';
       pendingImages = [];
       showStatus('Saved to Google Drive.', 'success');
-
-      if (entriesOpen) { loadEntries(); }
-
+      if (entriesOpen) loadEntries();
     } catch(e) {
       console.error('Drive save error:', e);
       showStatus('Something went wrong. Try again.', 'error');
     }
-
     document.getElementById('submit-btn').disabled = false;
   }
 
-  // ── LOADING ENTRIES LIST ──
-
+  // ── LOADING ENTRIES ──
   function toggleEntriesList() {
     entriesOpen = !entriesOpen;
-    var list = document.getElementById('entries-list');
+    var body  = document.getElementById('entries-body');
+    var top   = document.getElementById('entries-card-top');
     var arrow = document.getElementById('toggle-arrow');
-    if (entriesOpen) {
-      list.classList.add('open');
-      arrow.classList.add('open');
-    } else {
-      list.classList.remove('open');
-      arrow.classList.remove('open');
-    }
+    body.classList.toggle('open', entriesOpen);
+    top.classList.toggle('open', entriesOpen);
+    arrow.classList.toggle('open', entriesOpen);
   }
 
   function handleLoadEntries() {
-    if (!gapiReady) {
-      showStatus('Still loading — try again in a moment.', 'error');
-      return;
-    }
-    if (!entriesOpen) { toggleEntriesList(); }
+    if (!gapiReady) { showStatus('Still loading — try again in a moment.', 'error'); return; }
+    if (!entriesOpen) toggleEntriesList();
     pendingAction = 'load';
     document.getElementById('load-btn').disabled = true;
     tokenClient.requestAccessToken({ prompt: '' });
@@ -729,7 +848,7 @@
 
   async function loadEntries() {
     var loadingEl = document.getElementById('entries-loading');
-    var itemsEl = document.getElementById('entries-items');
+    var itemsEl   = document.getElementById('entries-items');
     loadingEl.style.display = 'block';
     itemsEl.innerHTML = '';
 
@@ -741,8 +860,7 @@
         pageSize: 100
       });
 
-      var files = response.result.files || [];
-      files = files.filter(function(f) {
+      var files = (response.result.files || []).filter(function(f) {
         return f.name && f.name.indexOf('\u2014') !== -1 && f.name.endsWith('.html');
       });
 
@@ -755,20 +873,17 @@
       }
 
       files.forEach(function(file) {
-        var name = file.name.replace('.html', '');
-        var parts = name.split(' \u2014 ');
-        var datepart = parts[0] ? parts[0].trim() : '';
+        var name      = file.name.replace('.html', '');
+        var parts     = name.split(' \u2014 ');
+        var datepart  = parts[0] ? parts[0].trim() : '';
         var titlepart = parts.slice(1).join(' \u2014 ').trim() || 'Untitled';
 
         var item = document.createElement('div');
         item.className = 'entry-item';
         item.id = 'entry_' + file.id;
 
-        // The clickable row (title + arrow + delete button)
         var row = document.createElement('div');
         row.className = 'entry-row';
-
-        // Clicking the row area (but not the delete button) expands the entry
         row.onclick = function(e) {
           if (e.target.classList.contains('entry-delete-btn') || e.target.closest('.entry-delete-btn')) return;
           toggleEntryContent(file.id);
@@ -778,11 +893,10 @@
           '<span class="entry-expand-arrow" id="arrow_' + file.id + '">▶</span>' +
           '<div class="entry-info">' +
             '<div class="entry-item-title">' + escapeHtml(titlepart) + '</div>' +
-            '<div class="entry-item-date">' + escapeHtml(datepart) + '</div>' +
+            '<div class="entry-item-date">'  + escapeHtml(datepart)  + '</div>' +
           '</div>' +
-          '<button class="entry-delete-btn" title="Delete this entry" onclick="handleDeleteEntry(\'' + file.id + '\', \'' + escapeHtml(titlepart).replace(/'/g, "\\'") + '\')">✕</button>';
+          '<button class="entry-delete-btn" onclick="handleDeleteEntry(\'' + file.id + '\', \'' + escapeHtml(titlepart).replace(/'/g, "\\'") + '\')">✕</button>';
 
-        // The hidden content area that appears when expanded
         var contentArea = document.createElement('div');
         contentArea.className = 'entry-content';
         contentArea.id = 'content_' + file.id;
@@ -801,16 +915,13 @@
     document.getElementById('load-btn').disabled = false;
   }
 
-  // ── EXPANDING / READING AN ENTRY ──
-
-  // Keeps track of which entry is currently open so we can close it if you click another
+  // ── EXPANDING ENTRIES ──
   var openEntryId = null;
 
   async function toggleEntryContent(fileId) {
     var contentArea = document.getElementById('content_' + fileId);
-    var arrow = document.getElementById('arrow_' + fileId);
+    var arrow       = document.getElementById('arrow_' + fileId);
 
-    // If this entry is already open, close it
     if (openEntryId === fileId) {
       contentArea.classList.remove('open');
       arrow.classList.remove('open');
@@ -818,55 +929,37 @@
       return;
     }
 
-    // Close whichever entry was previously open
     if (openEntryId) {
-      var prevContent = document.getElementById('content_' + openEntryId);
-      var prevArrow = document.getElementById('arrow_' + openEntryId);
-      if (prevContent) prevContent.classList.remove('open');
+      var prev      = document.getElementById('content_' + openEntryId);
+      var prevArrow = document.getElementById('arrow_'   + openEntryId);
+      if (prev)      prev.classList.remove('open');
       if (prevArrow) prevArrow.classList.remove('open');
     }
 
-    // Open this entry
     openEntryId = fileId;
     contentArea.classList.add('open');
     arrow.classList.add('open');
 
-    // If we already loaded the content, don't fetch again
     if (contentArea.dataset.loaded === 'true') return;
 
-    // Show a loading message while we fetch
-    contentArea.innerHTML = '<div class="entry-content-loading">Loading...</div>';
+    contentArea.innerHTML = '<div class="entry-content-loading">Loading…</div>';
 
     try {
-      // Fetch the raw HTML file content from Google Drive
-      // "alt=media" means "give me the actual file bytes, not just metadata"
       var response = await gapi.client.request({
         path: '/drive/v3/files/' + fileId,
         method: 'GET',
         params: { alt: 'media' }
       });
-
-      var html = response.body;
-
-      // Parse the saved HTML file and pull out just the body text
-      // We don't want to render the full HTML page inside our page —
-      // just the content the user wrote (the div with class "body") and any images
-      var parser = new DOMParser();
-      // DOMParser: a built-in browser tool that reads an HTML string and turns it into a document we can search through
-      var doc = parser.parseFromString(html, 'text/html');
-
+      var parser  = new DOMParser();
+      var doc     = parser.parseFromString(response.body, 'text/html');
       var bodyDiv = doc.querySelector('.body');
-      var imagesDiv = doc.querySelector('.images-section');
-
+      var imgDiv  = doc.querySelector('.images-section');
       var extracted = '';
       if (bodyDiv) extracted += bodyDiv.innerHTML;
-      if (imagesDiv) extracted += imagesDiv.innerHTML;
-      if (!extracted.trim()) extracted = '<em style="color:#444;">No content.</em>';
-
+      if (imgDiv)  extracted += imgDiv.innerHTML;
+      if (!extracted.trim()) extracted = '<em>No content.</em>';
       contentArea.innerHTML = '<div class="entry-content-inner">' + extracted + '</div>';
       contentArea.dataset.loaded = 'true';
-      // dataset.loaded is a flag we set so we don't re-fetch next time you open the same entry
-
     } catch(e) {
       console.error('Drive read error:', e);
       contentArea.innerHTML = '<div class="entry-content-loading">Could not load content.</div>';
@@ -874,29 +967,23 @@
   }
 
   // ── DELETING ──
-
   function handleDeleteEntry(fileId, title) {
-    var confirmed = window.confirm('Delete "' + title + '"? This cannot be undone.');
-    if (!confirmed) return;
+    if (!window.confirm('Delete "' + title + '"? This cannot be undone.')) return;
     deleteEntry(fileId);
   }
 
   async function deleteEntry(fileId) {
     var row = document.getElementById('entry_' + fileId);
-    if (row) row.style.opacity = '0.3';
-
+    if (row) row.style.opacity = '0.35';
     try {
       await gapi.client.drive.files.delete({ fileId: fileId });
       if (row) row.remove();
-
       var itemsEl = document.getElementById('entries-items');
       if (itemsEl && itemsEl.children.length === 0) {
         itemsEl.innerHTML = '<div class="entries-empty">No entries yet.</div>';
       }
-
       if (openEntryId === fileId) openEntryId = null;
       showStatus('Entry deleted.', 'success');
-
     } catch(e) {
       console.error('Drive delete error:', e);
       if (row) row.style.opacity = '1';
@@ -905,7 +992,6 @@
   }
 
   // ── UTILITIES ──
-
   function escapeHtml(str) {
     var d = document.createElement('div');
     d.appendChild(document.createTextNode(str || ''));
