@@ -674,10 +674,48 @@
   var pendingAction = 'save';
   var entriesOpen   = false;
 
+  // ── TOKEN STORAGE ──
+  // We save the Google token in localStorage so the browser remembers it
+  // between button clicks and page refreshes. A token lasts ~1 hour.
+  var TOKEN_KEY = 'nb_google_token';
+  var EXPIRY_KEY = 'nb_google_expiry';
+
+  function saveToken(token, expiresInSeconds) {
+    // expiresInSeconds is how long the token is valid (Google gives ~3600 = 1 hour)
+    // We save the exact moment it expires so we can check later
+    var expiryTime = Date.now() + (expiresInSeconds - 120) * 1000; // subtract 2 min buffer
+    localStorage.setItem(TOKEN_KEY, token);
+    localStorage.setItem(EXPIRY_KEY, String(expiryTime));
+  }
+
+  function getSavedToken() {
+    var token  = localStorage.getItem(TOKEN_KEY);
+    var expiry = localStorage.getItem(EXPIRY_KEY);
+    if (!token || !expiry) return null;
+    if (Date.now() > parseInt(expiry)) {
+      // Token has expired — clear it out
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(EXPIRY_KEY);
+      return null;
+    }
+    return token;
+  }
+
+  function applyToken(token) {
+    // Tell the Google API library to use this token for all requests
+    gapi.client.setToken({ access_token: token });
+  }
+
   gapi.load('client', function() {
     gapi.client.init({}).then(function() {
       return gapi.client.load('https://www.googleapis.com/discovery/v1/apis/drive/v3/rest');
-    }).then(function() { gapiReady = true; });
+    }).then(function() {
+      gapiReady = true;
+      // If we have a saved token from a previous visit, apply it immediately
+      // so the user doesn't need to sign in again
+      var saved = getSavedToken();
+      if (saved) applyToken(saved);
+    });
   });
 
   window.addEventListener('load', function() {
@@ -691,11 +729,40 @@
           document.getElementById('load-btn').disabled   = false;
           return;
         }
+        // Save the token so next time we don't need to ask Google again
+        saveToken(response.access_token, response.expires_in || 3600);
+        applyToken(response.access_token);
+
         if (pendingAction === 'load') loadEntries();
         else                          saveEntry();
       }
     });
   });
+
+  // ── GET TOKEN — use saved one if valid, otherwise ask Google ──
+  // This is the key function. Every action calls this instead of
+  // going straight to Google's sign-in popup.
+  function ensureToken(onReady) {
+    if (!gapiReady) {
+      showStatus('Still loading — try again in a moment.', 'error');
+      document.getElementById('submit-btn').disabled = false;
+      document.getElementById('load-btn').disabled   = false;
+      return;
+    }
+
+    var saved = getSavedToken();
+    if (saved) {
+      // We already have a valid token — use it right away, no popup needed
+      applyToken(saved);
+      onReady();
+      return;
+    }
+
+    // No valid token — ask Google to sign in
+    // prompt: '' means "try silently first, only show popup if really needed"
+    tokenClient.requestAccessToken({ prompt: '' });
+    // The callback above handles calling onReady after sign-in
+  }
 
   // ── FORMATTING ──
   function fmt(command) {
@@ -751,11 +818,10 @@
       showStatus('Nothing to save — write something first.', 'error');
       return;
     }
-    if (!gapiReady) { showStatus('Still loading — try again in a moment.', 'error'); return; }
     pendingAction = 'save';
     document.getElementById('submit-btn').disabled = true;
-    showStatus('Opening Google sign-in…', '');
-    tokenClient.requestAccessToken({ prompt: '' });
+
+    ensureToken(saveEntry);
   }
 
   async function saveEntry() {
@@ -822,6 +888,9 @@
       if (entriesOpen) loadEntries();
     } catch(e) {
       console.error('Drive save error:', e);
+      // If save failed due to auth, clear the saved token so next attempt re-authenticates
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(EXPIRY_KEY);
       showStatus('Something went wrong. Try again.', 'error');
     }
     document.getElementById('submit-btn').disabled = false;
@@ -839,11 +908,11 @@
   }
 
   function handleLoadEntries() {
-    if (!gapiReady) { showStatus('Still loading — try again in a moment.', 'error'); return; }
     if (!entriesOpen) toggleEntriesList();
     pendingAction = 'load';
     document.getElementById('load-btn').disabled = true;
-    tokenClient.requestAccessToken({ prompt: '' });
+
+    ensureToken(loadEntries);
   }
 
   async function loadEntries() {
@@ -909,6 +978,9 @@
     } catch(e) {
       console.error('Drive list error:', e);
       loadingEl.style.display = 'none';
+      // If loading failed due to auth, clear the saved token
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(EXPIRY_KEY);
       itemsEl.innerHTML = '<div class="entries-empty">Could not load entries. Try again.</div>';
     }
 
