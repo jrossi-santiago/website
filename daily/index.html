@@ -38,7 +38,6 @@
       overflow-x: hidden;
     }
 
-    /* Noise texture — same as card app */
     body::before {
       content: '';
       position: fixed;
@@ -196,104 +195,42 @@
     }
 
     /* =============================================
-       AFFIRMATIONS PANEL
+       PRAYER PANEL
     ============================================= */
 
-    .aff-dots-row {
-      display: flex;
-      gap: 7px;
-      justify-content: center;
-      margin-bottom: 24px;
-    }
-
-    .aff-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      border: 1px solid var(--circle-stroke);
-      background: transparent;
-      transition: background 0.25s, border-color 0.25s;
-    }
-
-    .aff-dot.done    { background: var(--text-light); border-color: var(--text-light); }
-    .aff-dot.current { background: var(--text-dark);  border-color: var(--text-dark); }
-
-    .aff-progress {
+    .prayer-eyebrow {
       font-family: var(--font-body);
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
       color: var(--text-light);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
       text-align: center;
-      margin-bottom: 4px;
+      margin-bottom: 18px;
     }
 
-    .aff-category {
-      font-family: var(--font-body);
-      font-size: 10px;
-      font-weight: 400;
-      color: var(--text-mid);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      text-align: center;
-      margin-bottom: 24px;
-    }
-
-    .aff-prompt {
-      font-family: var(--font-display);
-      font-size: clamp(15px, 1.5vw, 21px);
-      font-weight: 500;
-      line-height: 1.75;
-      color: var(--text-dark);
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    .aff-input {
+    .prayer-image-wrap {
       width: 100%;
-      background: transparent;
-      border: none;
-      border-bottom: 1px solid var(--circle-stroke);
-      color: var(--text-dark);
-      font-family: var(--font-body);
-      font-size: 14px;
-      font-weight: 300;
-      padding: 8px 0;
-      outline: none;
-      text-align: center;
-      caret-color: var(--text-dark);
-      transition: border-color 0.2s;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid rgba(42,40,37,0.07);
+      background: rgba(42,40,37,0.04);
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .aff-input::placeholder {
-      color: var(--text-light);
-      font-style: italic;
-      font-size: 13px;
+    .prayer-image-wrap img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: var(--radius-md);
     }
 
-    .aff-input:focus   { border-bottom-color: var(--text-mid); }
-    .aff-input.error   { border-bottom-color: rgba(160,80,60,0.45); color: var(--text-light); }
-    .aff-input.success { border-bottom-color: var(--text-dark); }
-
-    .aff-hint {
-      margin-top: 10px;
-      font-family: var(--font-body);
-      font-size: 11px;
-      font-weight: 300;
-      color: transparent;
-      font-style: italic;
-      text-align: center;
-      min-height: 16px;
-      transition: color 0.2s;
-    }
-
-    .aff-hint.visible { color: var(--text-mid); }
-
-    /* Streak bar */
-    .aff-streak-bar {
-      margin-top: 28px;
-      padding-top: 16px;
+    .prayer-footer {
+      margin-top: 16px;
+      padding-top: 14px;
       border-top: 1px solid var(--line-rule);
       display: flex;
       align-items: center;
@@ -301,67 +238,29 @@
       gap: 6px;
     }
 
-    .aff-streak-icon { width: 11px; height: 13px; color: var(--streak-gold); flex-shrink: 0; }
-
-    .aff-streak-num {
-      font-family: var(--font-body);
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--streak-gold);
+    .prayer-footer-icon {
+      width: 12px;
+      height: 12px;
+      color: var(--circle-stroke);
+      flex-shrink: 0;
     }
 
-    .aff-streak-lbl {
-      font-family: var(--font-body);
-      font-size: 11px;
-      font-weight: 300;
-      color: rgba(196,160,102,0.55);
-    }
-
-    /* Locked view */
-    .aff-locked-heading {
-      font-family: var(--font-body);
-      font-size: 10px;
-      font-weight: 400;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--text-mid);
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .aff-locked-item {
-      padding: 12px 0;
-      border-bottom: 1px solid var(--line-rule);
-    }
-
-    .aff-locked-item:last-of-type { border-bottom: none; }
-
-    .aff-locked-cat {
-      font-family: var(--font-body);
-      font-size: 9px;
-      font-weight: 400;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--text-light);
-      margin-bottom: 4px;
-    }
-
-    .aff-locked-text {
-      font-family: var(--font-display);
-      font-size: 15px;
-      font-weight: 500;
-      line-height: 1.7;
-      color: var(--text-dark);
-    }
-
-    .aff-countdown {
-      margin-top: 20px;
+    .prayer-footer-text {
       font-family: var(--font-body);
       font-size: 10px;
       font-weight: 300;
       color: var(--text-light);
-      letter-spacing: 0.06em;
+      letter-spacing: 0.08em;
+    }
+
+    .prayer-error {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text-light);
       text-align: center;
+      padding: 30px 0;
     }
 
     /* =============================================
@@ -448,10 +347,10 @@
   <!-- SPLIT LAYOUT -->
   <div class="split-layout">
 
-    <!-- ===== LEFT: AFFIRMATIONS ===== -->
+    <!-- ===== LEFT: PRAYER ===== -->
     <div class="panel-card aff-card">
       <div class="card-top">
-        <span class="card-label">Affirmations</span>
+        <span class="card-label">Prayer</span>
         <div class="card-top-right">
           <span class="card-date-label" id="aff-date"></span>
           <div class="card-dots">
@@ -464,43 +363,24 @@
 
       <div class="card-body">
         <!-- Loading -->
-        <p class="panel-loading" id="aff-loading">Loading…</p>
+        <p class="panel-loading" id="prayer-loading">Loading…</p>
 
-        <!-- Active: type-to-confirm -->
-        <div id="aff-active" class="hidden">
-          <div class="aff-dots-row" id="aff-dots-row"></div>
-          <div class="aff-progress"  id="aff-progress"></div>
-          <div class="aff-category"  id="aff-category"></div>
-          <div class="aff-prompt"    id="aff-prompt"></div>
-          <input
-            id="aff-input"
-            class="aff-input"
-            type="text"
-            autocomplete="off"
-            autocorrect="off"
-            autocapitalize="off"
-            spellcheck="false"
-            placeholder="type it here and press Enter"
-          />
-          <div class="aff-hint" id="aff-hint"></div>
+        <!-- Prayer content -->
+        <div id="prayer-content" class="hidden">
+          <div class="prayer-eyebrow">Today's Prayer</div>
+          <div class="prayer-image-wrap">
+            <img id="prayer-img" src="" alt="Today's prayer" />
+          </div>
+          <div class="prayer-footer">
+            <svg class="prayer-footer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1M4.22 4.22l.71.71m13.66 13.66.71.71M3 12H2m20 0h-1M4.22 19.78l.71-.71M18.36 5.64l.71-.71" />
+            </svg>
+            <span class="prayer-footer-text" id="prayer-countdown"></span>
+          </div>
         </div>
 
-        <!-- Locked: done for today -->
-        <div id="aff-locked" class="hidden">
-          <div class="aff-locked-heading">Today's Five</div>
-          <div id="aff-locked-list"></div>
-          <div class="aff-countdown" id="aff-countdown"></div>
-        </div>
-
-        <!-- Streak — always visible at bottom -->
-        <div class="aff-streak-bar" id="aff-streak-bar">
-          <svg class="aff-streak-icon" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M10 1C10 1 4 8.5 4 13.5C4 16.99 6.69 19.8 10 19.8C13.31 19.8 16 16.99 16 13.5C16 8.5 10 1 10 1Z" fill="currentColor"/>
-            <path d="M10 13C10 13 7.5 11 8 8.5C6.5 10 6 11.5 6 13.5C6 15.71 7.79 17.5 10 17.5C12.21 17.5 14 15.71 14 13.5C14 12 13.5 10.8 12.5 10C12.5 12 10 13 10 13Z" fill="rgba(196,160,102,0.22)"/>
-          </svg>
-          <span class="aff-streak-num"  id="aff-streak-count">0</span>
-          <span class="aff-streak-lbl">day streak</span>
-        </div>
+        <!-- Error state -->
+        <p class="prayer-error hidden" id="prayer-error">Could not load — check connection.</p>
       </div>
     </div>
 
@@ -538,18 +418,20 @@
 </div><!-- /page -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/affirmations/data.js"></script>
 <script>
 
   // ============================================================
   // CONFIGURATION
-  // Your affirmations Supabase project:
+  // Your affirmations / prayer Supabase project:
   const AFF_URL = 'https://rvwyjipseusvqjqbwken.supabase.co';
   const AFF_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ2d3lqaXBzZXVzdnFqcWJ3a2VuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NDA4MDAsImV4cCI6MjA5MjAxNjgwMH0.UFYPZndWuY3uDOWovjxa7qreidWM9sacUlIS9iteMXc';
 
   // Your No Excuses Supabase project:
   const MOT_URL = 'https://urfsijczxmngbixprdkq.supabase.co';
   const MOT_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZnNpamN6eG1uZ2JpeHByZGtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTU1NzIsImV4cCI6MjA5MTA3MTU3Mn0.KxNLu5Rg0A0IdxQbaAapDa-vmTkVmeUlub689o0ZOaM';
+
+  // Name of the Supabase Storage bucket where your prayer images live:
+  const PRAYER_BUCKET = 'prayers';
   // ============================================================
 
   const { createClient } = supabase;
@@ -557,28 +439,20 @@
 
   // ── SHARED HELPERS ──
 
-  function todayStr() {
+  function todayDateString() {
+    // Returns something like "2026-04-28" — used to check if we already picked a prayer today
     const d = new Date();
-    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
   }
 
-  function shuffle(arr) {
-    const a = [...arr];
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
+  function pickRandom(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
   }
 
   function escHtml(str) {
     const d = document.createElement('div');
     d.appendChild(document.createTextNode(str));
     return d.innerHTML;
-  }
-
-  function pickRandom(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
   }
 
   // ── HEADER DATE ──
@@ -592,177 +466,105 @@
     document.getElementById('mot-date').textContent    = label;
   })();
 
-  // ============================================================
-  //  AFFIRMATIONS
-  // ============================================================
-
-  let affStreak  = 0;
-  let affLastDay = '';
-  let affSession = null;
-  let affIndex   = 0;
-  let affTimer   = null;
-
-  function pickFive() {
-    const affPick  = shuffle(AFFIRMATIONS)[0];
-    const goalPick = shuffle(GOALS)[0];
-    const used = [
-      { text: affPick,  category: 'Affirmation' },
-      { text: goalPick, category: 'Goal' },
-    ];
-    const remaining = [
-      ...AFFIRMATIONS.filter(x => x !== affPick).map(x => ({ text: x, category: 'Affirmation' })),
-      ...GOALS.filter(x => x !== goalPick).map(x => ({ text: x, category: 'Goal' })),
-    ];
-    return shuffle([...used, ...shuffle(remaining).slice(0, 3)]);
-  }
-
-  async function affLoad() {
-    const { data, error } = await affDB
-      .from('affirmations_progress')
-      .select('*')
-      .eq('id', 'me')
-      .single();
-    if (error) { console.error('Aff load:', error); return null; }
-    return data;
-  }
-
-  async function affSave(streak, lastDay, sess) {
-    const { error } = await affDB
-      .from('affirmations_progress')
-      .upsert({ id: 'me', streak, last_day: lastDay, session: sess });
-    if (error) { console.error('Aff save:', error); }
-  }
-
-  function affSetStreak(n) {
-    affStreak = n;
-    document.getElementById('aff-streak-count').textContent = n;
-  }
-
-  function affBuildDots(idx) {
-    const row = document.getElementById('aff-dots-row');
-    row.innerHTML = '';
-    affSession.items.forEach((_, i) => {
-      const dot = document.createElement('div');
-      dot.className = 'aff-dot' + (i < idx ? ' done' : i === idx ? ' current' : '');
-      row.appendChild(dot);
-    });
-  }
-
-  function affShowItem(idx) {
-    const item = affSession.items[idx];
-    document.getElementById('aff-progress').textContent = `${idx + 1} of 5`;
-    document.getElementById('aff-category').textContent = item.category;
-    document.getElementById('aff-prompt').textContent   = item.text;
-    const inp  = document.getElementById('aff-input');
-    const hint = document.getElementById('aff-hint');
-    inp.value       = '';
-    inp.className   = 'aff-input';
-    hint.textContent = '';
-    hint.className  = 'aff-hint';
-    affBuildDots(idx);
-    setTimeout(() => inp.focus(), 50);
-  }
-
-  function affShowActive() {
-    document.getElementById('aff-loading').classList.add('hidden');
-    document.getElementById('aff-active').classList.remove('hidden');
-    document.getElementById('aff-locked').classList.add('hidden');
-    affIndex = affSession.completedCount;
-    affShowItem(affIndex);
-  }
-
-  function affShowLocked(sess) {
-    document.getElementById('aff-loading').classList.add('hidden');
-    document.getElementById('aff-active').classList.add('hidden');
-    document.getElementById('aff-locked').classList.remove('hidden');
-
-    const list = document.getElementById('aff-locked-list');
-    list.innerHTML = '';
-    sess.items.forEach(item => {
-      const div = document.createElement('div');
-      div.className = 'aff-locked-item';
-      div.innerHTML =
-        `<div class="aff-locked-cat">${escHtml(item.category)}</div>` +
-        `<div class="aff-locked-text">${escHtml(item.text)}</div>`;
-      list.appendChild(div);
-    });
-
+  // ── COUNTDOWN TICKER ──
+  let countdownTimer = null;
+  function startCountdown() {
     function tick() {
       const midnight = new Date();
       midnight.setHours(24, 0, 0, 0);
       const diff = midnight.getTime() - Date.now();
-      if (diff <= 0) { clearInterval(affTimer); setTimeout(() => location.reload(), 1000); return; }
+      if (diff <= 0) { clearInterval(countdownTimer); setTimeout(() => location.reload(), 1000); return; }
       const h = Math.floor(diff / 3600000);
       const m = Math.floor((diff % 3600000) / 60000);
       const s = Math.floor((diff % 60000) / 1000);
-      document.getElementById('aff-countdown').textContent = `Resets in ${h}h ${m}m ${s}s`;
+      const el = document.getElementById('prayer-countdown');
+      if (el) el.textContent = 'New prayer in ' + h + 'h ' + m + 'm ' + s + 's';
     }
     tick();
-    affTimer = setInterval(tick, 1000);
+    countdownTimer = setInterval(tick, 1000);
   }
 
-  document.getElementById('aff-input').addEventListener('keydown', async function(e) {
-    if (e.key !== 'Enter') return;
-    const typed   = this.value.trim();
-    const correct = affSession.items[affIndex].text.trim();
-    const hint    = document.getElementById('aff-hint');
+  // ============================================================
+  //  PRAYER PANEL
+  // ============================================================
 
-    if (typed === correct) {
-      this.className = 'aff-input success';
-      affSession.completedCount++;
+  async function prayerInit() {
+    try {
+      const today = todayDateString();
 
-      if (affSession.completedCount === 5) {
-        const today = todayStr();
-        if (affLastDay !== today) {
-          const yest = new Date();
-          yest.setDate(yest.getDate() - 1);
-          const yStr = `${yest.getFullYear()}-${yest.getMonth()}-${yest.getDate()}`;
-          affStreak  = (affLastDay === yStr) ? affStreak + 1 : 1;
-          affLastDay = today;
-        }
-        affSetStreak(affStreak);
-        await affSave(affStreak, affLastDay, affSession);
-        setTimeout(() => affShowLocked(affSession), 700);
-      } else {
-        await affSave(affStreak, affLastDay, affSession);
-        setTimeout(() => { affIndex = affSession.completedCount; affShowItem(affIndex); }, 700);
+      // 1. Check if we already picked a prayer for today
+      const { data: existing, error: fetchErr } = await affDB
+        .from('daily_prayer')
+        .select('*')
+        .eq('id', 'today')
+        .single();
+
+      if (!fetchErr && existing && existing.day === today && existing.image_path) {
+        // We already have today's prayer — just show it
+        prayerShow(existing.image_path);
+        return;
       }
-    } else {
-      this.className = 'aff-input error';
-      hint.textContent = 'Not quite — type it exactly as shown above.';
-      hint.className   = 'aff-hint visible';
-      setTimeout(() => {
-        this.value       = '';
-        this.className   = 'aff-input';
-        hint.textContent = '';
-        hint.className   = 'aff-hint';
-      }, 1400);
-    }
-  });
 
-  async function affInit() {
-    const record = await affLoad();
-    const today  = todayStr();
+      // 2. No prayer yet for today — list all images in the bucket and pick one randomly
+      const { data: files, error: listErr } = await affDB
+        .storage
+        .from(PRAYER_BUCKET)
+        .list('', { limit: 500 });
 
-    if (record) {
-      affSetStreak(record.streak || 0);
-      affLastDay = record.last_day || '';
-      const saved = record.session || null;
-
-      if (saved && saved.day === today) {
-        affSession = saved;
-        affSession.completedCount >= 5 ? affShowLocked(affSession) : affShowActive();
-      } else {
-        affSession = { day: today, items: pickFive(), completedCount: 0 };
-        await affSave(record.streak || 0, affLastDay, affSession);
-        affShowActive();
+      if (listErr || !files || files.length === 0) {
+        throw new Error('No images found in bucket');
       }
-    } else {
-      affSetStreak(0);
-      affSession = { day: today, items: pickFive(), completedCount: 0 };
-      await affSave(0, '', affSession);
-      affShowActive();
+
+      // Filter out any hidden/system files (they start with a dot)
+      const imageFiles = files.filter(f => f.name && !f.name.startsWith('.'));
+
+      if (imageFiles.length === 0) {
+        throw new Error('No images found');
+      }
+
+      const chosen = pickRandom(imageFiles);
+
+      // 3. Save the chosen image path to the database so it stays the same all day
+      const { error: saveErr } = await affDB
+        .from('daily_prayer')
+        .upsert({ id: 'today', image_path: chosen.name, day: today });
+
+      if (saveErr) {
+        console.warn('Could not save daily prayer selection:', saveErr);
+        // Still show it even if save failed
+      }
+
+      prayerShow(chosen.name);
+
+    } catch (err) {
+      console.error('Prayer error:', err);
+      document.getElementById('prayer-loading').classList.add('hidden');
+      document.getElementById('prayer-error').classList.remove('hidden');
     }
+  }
+
+  function prayerShow(imagePath) {
+    // Get the public URL for the image from Supabase Storage
+    // A "public URL" is a web address anyone can use to view the image
+    const { data } = affDB.storage.from(PRAYER_BUCKET).getPublicUrl(imagePath);
+
+    if (!data || !data.publicUrl) {
+      document.getElementById('prayer-loading').classList.add('hidden');
+      document.getElementById('prayer-error').classList.remove('hidden');
+      return;
+    }
+
+    const img = document.getElementById('prayer-img');
+    img.src = data.publicUrl;
+    img.onload = function() {
+      document.getElementById('prayer-loading').classList.add('hidden');
+      document.getElementById('prayer-content').classList.remove('hidden');
+      startCountdown();
+    };
+    img.onerror = function() {
+      document.getElementById('prayer-loading').classList.add('hidden');
+      document.getElementById('prayer-error').classList.remove('hidden');
+    };
   }
 
   // ============================================================
@@ -901,7 +703,7 @@
   }
 
   // ── BOOT ──
-  affInit();
+  prayerInit();
   motInit();
 
 </script>
