@@ -12,149 +12,179 @@
 </head>
 <body>
 
-  <div id="app">
+<div id="app">
 
-    <!-- Header -->
-    <header class="app-header">
-      <div class="streak-display" id="streak-display">
-        <svg class="streak-icon" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M10 1C10 1 4 8.5 4 13.5C4 16.99 6.69 19.8 10 19.8C13.31 19.8 16 16.99 16 13.5C16 8.5 10 1 10 1Z" fill="currentColor"/>
-          <path d="M10 13C10 13 7.5 11 8 8.5C6.5 10 6 11.5 6 13.5C6 15.71 7.79 17.5 10 17.5C12.21 17.5 14 15.71 14 13.5C14 12 13.5 10.8 12.5 10C12.5 12 10 13 10 13Z" fill="rgba(255,255,255,0.25)"/>
-        </svg>
-        <span id="streak-number">0</span>
-        <span class="streak-label">day streak</span>
+  <!-- ============ HEADER ============ -->
+  <header class="app-header" id="app-header">
+    <div class="streak-display" id="streak-display">
+      <svg class="streak-icon" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M10 1C10 1 4 8.5 4 13.5C4 16.99 6.69 19.8 10 19.8C13.31 19.8 16 16.99 16 13.5C16 8.5 10 1 10 1Z" fill="currentColor"/>
+        <path d="M10 13C10 13 7.5 11 8 8.5C6.5 10 6 11.5 6 13.5C6 15.71 7.79 17.5 10 17.5C12.21 17.5 14 15.71 14 13.5C14 12 13.5 10.8 12.5 10C12.5 12 10 13 10 13Z" fill="rgba(255,255,255,0.25)"/>
+      </svg>
+      <span id="streak-number">0</span>
+      <span class="streak-label">day streak</span>
+    </div>
+    <button class="archive-btn" id="archive-btn">Archive</button>
+  </header>
+
+  <!-- ============ THREE-COLUMN LAYOUT ============ -->
+  <div id="content-layout">
+
+    <!-- LEFT: Business Sidebar -->
+    <aside class="sidebar sidebar-left" id="business-sidebar">
+      <div class="card sidebar-card-inner business-card-bg" id="business-card-inner">
+        <!-- Rendered by JavaScript -->
       </div>
-      <button class="archive-btn" id="archive-btn">Archive</button>
-    </header>
+    </aside>
 
-    <!-- ===================== MAIN VIEW ===================== -->
-    <main id="main-view">
+    <!-- CENTER: Today card + mini cards + contribution grid -->
+    <div id="center-column">
 
-      <!-- Today Card -->
-      <div class="card today-card" id="today-card">
-        <div class="card-top">
-          <span class="card-label">Today</span>
-          <div class="card-top-right">
-            <span class="card-date" id="today-date"></span>
-            <div class="card-dots">
-              <span class="dot"></span>
-              <span class="dot"></span>
-              <span class="dot dot-filled"></span>
-            </div>
-          </div>
-        </div>
-        <div class="task-list" id="task-list">
-          <!-- Rendered by JavaScript -->
-        </div>
-      </div>
+      <main id="main-view">
 
-      <!-- Mini Cards Row -->
-      <div class="mini-cards-row">
-
-        <!-- Someday Card -->
-        <div class="card mini-card someday-card" id="someday-card">
-          <div class="card-top mini-card-header" id="someday-header">
-            <span class="card-label">Someday</span>
+        <!-- Today Card -->
+        <div class="card today-card" id="today-card">
+          <div class="card-top">
+            <span class="card-label">Today</span>
             <div class="card-top-right">
-              <span class="item-count" id="someday-count">0 items</span>
-              <div class="card-dots card-dots-sm">
+              <span class="card-date" id="today-date"></span>
+              <div class="card-dots">
                 <span class="dot"></span>
                 <span class="dot"></span>
                 <span class="dot dot-filled"></span>
               </div>
             </div>
           </div>
-          <div class="backlog-content" id="someday-content">
-            <div class="backlog-list" id="someday-list"></div>
-            <div class="backlog-add">
-              <input
-                type="text"
-                class="backlog-input"
-                id="someday-input"
-                placeholder="Add to someday..."
-                maxlength="120"
-                aria-label="Add someday item"
-              >
-              <button class="add-btn" id="someday-add-btn" aria-label="Add someday item">+</button>
-            </div>
-          </div>
+          <div class="task-list" id="task-list"></div>
         </div>
 
-        <!-- Future Card -->
-        <div class="card mini-card future-card" id="future-card">
-          <div class="card-top mini-card-header" id="future-header">
-            <span class="card-label">Future</span>
-            <div class="card-top-right">
-              <span class="item-count" id="future-count">0 items</span>
-              <div class="card-dots card-dots-sm">
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot dot-filled"></span>
+        <!-- Mini Cards Row -->
+        <div class="mini-cards-row">
+
+          <div class="card mini-card someday-card" id="someday-card">
+            <div class="card-top mini-card-header" id="someday-header">
+              <span class="card-label">Someday</span>
+              <div class="card-top-right">
+                <span class="item-count" id="someday-count">0 items</span>
+                <div class="card-dots card-dots-sm">
+                  <span class="dot"></span>
+                  <span class="dot"></span>
+                  <span class="dot dot-filled"></span>
+                </div>
+              </div>
+            </div>
+            <div class="backlog-content" id="someday-content">
+              <div class="backlog-list" id="someday-list"></div>
+              <div class="backlog-add">
+                <input type="text" class="backlog-input" id="someday-input" placeholder="Add to someday..." maxlength="120" aria-label="Add someday item">
+                <button class="add-btn" id="someday-add-btn">+</button>
               </div>
             </div>
           </div>
-          <div class="backlog-content" id="future-content">
-            <div class="backlog-list" id="future-list"></div>
-            <div class="backlog-add">
-              <input
-                type="text"
-                class="backlog-input"
-                id="future-input"
-                placeholder="Add to future..."
-                maxlength="120"
-                aria-label="Add future item"
-              >
-              <button class="add-btn" id="future-add-btn" aria-label="Add future item">+</button>
+
+          <div class="card mini-card future-card" id="future-card">
+            <div class="card-top mini-card-header" id="future-header">
+              <span class="card-label">Future</span>
+              <div class="card-top-right">
+                <span class="item-count" id="future-count">0 items</span>
+                <div class="card-dots card-dots-sm">
+                  <span class="dot"></span>
+                  <span class="dot"></span>
+                  <span class="dot dot-filled"></span>
+                </div>
+              </div>
             </div>
+            <div class="backlog-content" id="future-content">
+              <div class="backlog-list" id="future-list"></div>
+              <div class="backlog-add">
+                <input type="text" class="backlog-input" id="future-input" placeholder="Add to future..." maxlength="120" aria-label="Add future item">
+                <button class="add-btn" id="future-add-btn">+</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Contribution Grid -->
+        <div class="contribution-section" id="contribution-section">
+          <div class="contrib-header">
+            <span class="contrib-title">12 weeks</span>
+            <div class="contrib-legend">
+              <span class="contrib-legend-label">Less</span>
+              <div class="contrib-dot contrib-s1"></div>
+              <div class="contrib-dot contrib-s2"></div>
+              <div class="contrib-dot contrib-s3"></div>
+              <div class="contrib-dot contrib-s4"></div>
+              <div class="contrib-dot contrib-s5"></div>
+              <span class="contrib-legend-label">More</span>
+            </div>
+          </div>
+          <div class="contrib-wrapper">
+            <div class="contrib-day-labels" aria-hidden="true">
+              <span>M</span>
+              <span>T</span>
+              <span>W</span>
+              <span>T</span>
+              <span>F</span>
+              <span>S</span>
+              <span>S</span>
+            </div>
+            <div class="contribution-grid" id="contribution-grid" role="img" aria-label="12-week contribution history"></div>
           </div>
         </div>
 
-      </div>
-    </main>
+      </main>
 
-    <!-- ===================== ARCHIVE VIEW ===================== -->
-    <div id="archive-view" class="hidden">
-      <div class="archive-header">
-        <button class="back-btn" id="back-btn">← Back</button>
-        <h1 class="archive-title">Archive</h1>
-      </div>
-      <div class="archive-grid" id="archive-grid"></div>
-    </div>
-
-    <!-- ===================== MODALS ===================== -->
-
-    <!-- Archive card detail modal -->
-    <div id="card-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="Card detail">
-      <div class="modal-scroll-area">
-        <div class="modal-inner" id="modal-inner"></div>
-      </div>
-      <button class="modal-close" id="modal-close" aria-label="Close">×</button>
-    </div>
-
-    <!-- Rollover prompt modal -->
-    <div id="rollover-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="Rollover tasks">
-      <div class="rollover-card">
-        <p class="rollover-title">Yesterday's card</p>
-        <p class="rollover-body">
-          You have <strong id="rollover-count">0</strong> unfinished task<span id="rollover-plural">s</span> from yesterday.
-          Roll them over to today?
-        </p>
-        <div class="rollover-actions">
-          <button class="btn-secondary" id="rollover-no">Start fresh</button>
-          <button class="btn-primary" id="rollover-yes">Roll over</button>
+      <!-- Archive View (replaces main-view) -->
+      <div id="archive-view" class="hidden">
+        <div class="archive-header">
+          <button class="back-btn" id="back-btn">← Back</button>
+          <h1 class="archive-title">Archive</h1>
         </div>
+        <div class="archive-grid" id="archive-grid"></div>
       </div>
-    </div>
 
-    <!-- Loading screen -->
-    <div id="loading" class="loading-overlay" aria-label="Loading">
-      <div class="loading-card">
-        <span class="loading-dot"></span>
+    </div><!-- /center-column -->
+
+    <!-- RIGHT: Why Buildings Sidebar -->
+    <aside class="sidebar sidebar-right" id="wb-sidebar">
+      <div class="card sidebar-card-inner wb-card-bg" id="wb-card-inner">
+        <!-- Rendered by JavaScript -->
       </div>
-    </div>
+    </aside>
 
+  </div><!-- /content-layout -->
+
+  <!-- ============ MODALS ============ -->
+
+  <div id="card-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="Card detail">
+    <div class="modal-scroll-area">
+      <div class="modal-inner" id="modal-inner"></div>
+    </div>
+    <button class="modal-close" id="modal-close" aria-label="Close">×</button>
   </div>
 
-  <script src="/card/script.js"></script>
+  <div id="rollover-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="Rollover tasks">
+    <div class="rollover-card">
+      <p class="rollover-title">Yesterday's card</p>
+      <p class="rollover-body">
+        You have <strong id="rollover-count">0</strong> unfinished task<span id="rollover-plural">s</span> from yesterday. Roll them over to today?
+      </p>
+      <div class="rollover-actions">
+        <button class="btn-secondary" id="rollover-no">Start fresh</button>
+        <button class="btn-primary" id="rollover-yes">Roll over</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="loading" class="loading-overlay" aria-label="Loading">
+    <div class="loading-card">
+      <span class="loading-dot"></span>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<script src="/card/script.js"></script>
 </body>
 </html>
