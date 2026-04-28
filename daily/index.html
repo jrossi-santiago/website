@@ -460,7 +460,7 @@ function prayerShowError() {
 }
 
 function prayerShow(imageName) {
-  var publicUrl = AFF_URL + '/storage/v1/object/public/' + PRAYER_BUCKET + '/' + encodeURIComponent(imageName);
+ var publicUrl = AFF_URL + '/storage/v1/object/public/' + PRAYER_BUCKET + '/' + imageName;
   console.log('Loading prayer image:', publicUrl);
   var img = document.getElementById('prayer-img');
   img.onload = function () {
