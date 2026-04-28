@@ -1,9 +1,7 @@
 /* ============================================================
    ANALOG — style.css
-   Ugmonk-inspired card system
    ============================================================ */
 
-/* --- Reset & Base --- */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -16,6 +14,8 @@
   --card-today:    #F5F2EB;
   --card-someday:  #EDE8DF;
   --card-future:   #E3DAC9;
+  --card-business: #F0EDE6;
+  --card-wb:       #E8E4DA;
   --text-dark:     #2A2825;
   --text-mid:      #76706A;
   --text-light:    #B3ADA5;
@@ -28,6 +28,16 @@
   --radius-md:     10px;
   --font-display:  'Cormorant Garamond', Georgia, serif;
   --font-body:     'Karla', system-ui, sans-serif;
+
+  /* Contribution dot colors */
+  --contrib-empty:   rgba(245, 242, 235, 0.06);
+  --contrib-missed:  rgba(160, 80, 60, 0.22);
+  --contrib-s1:      rgba(210, 185, 150, 0.35);
+  --contrib-s2:      rgba(196, 160, 102, 0.55);
+  --contrib-s3:      rgba(175, 130, 70, 0.72);
+  --contrib-s4:      rgba(148, 100, 42, 0.88);
+  --contrib-s5:      rgba(110, 72, 20, 1);
+  --contrib-future:  rgba(245, 242, 235, 0.04);
 }
 
 html, body {
@@ -44,7 +54,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Subtle grain texture on the background */
 body::before {
   content: '';
   position: fixed;
@@ -72,7 +81,7 @@ body::before {
 
 .app-header {
   width: 100%;
-  max-width: 440px;
+  max-width: 1200px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -104,8 +113,8 @@ body::before {
 
 .archive-btn {
   background: none;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  color: rgba(255, 255, 255, 0.42);
+  border: 1px solid rgba(255,255,255,0.14);
+  color: rgba(255,255,255,0.42);
   padding: 7px 16px;
   border-radius: 20px;
   font-family: var(--font-body);
@@ -114,12 +123,196 @@ body::before {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: border-color 0.2s ease, color 0.2s ease;
+  transition: border-color 0.2s, color 0.2s;
 }
 
 .archive-btn:hover {
-  border-color: rgba(255, 255, 255, 0.28);
-  color: rgba(255, 255, 255, 0.7);
+  border-color: rgba(255,255,255,0.28);
+  color: rgba(255,255,255,0.7);
+}
+
+/* ============================================================
+   THREE-COLUMN LAYOUT
+   ============================================================ */
+
+#content-layout {
+  width: 100%;
+  max-width: 1200px;
+  display: grid;
+  grid-template-columns: 220px 1fr 220px;
+  gap: 20px;
+  align-items: start;
+}
+
+#center-column {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ============================================================
+   SIDEBAR CARDS
+   ============================================================ */
+
+.sidebar {
+  position: sticky;
+  top: 24px;
+}
+
+.sidebar-card-inner {
+  width: 100%;
+  padding: 0;
+}
+
+.business-card-bg {
+  background: var(--card-business);
+}
+
+.wb-card-bg {
+  background: var(--card-wb);
+}
+
+.sidebar-card-header {
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid var(--line-rule);
+}
+
+.sidebar-day-label {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 500;
+  color: var(--text-dark);
+  display: block;
+  margin-bottom: 2px;
+  line-height: 1;
+}
+
+.sidebar-section-label {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--text-mid);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sidebar-task-group {
+  padding: 10px 0 4px;
+}
+
+.sidebar-group-label {
+  font-family: var(--font-body);
+  font-size: 9.5px;
+  font-weight: 500;
+  color: var(--text-mid);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 18px 6px;
+  display: block;
+}
+
+.sidebar-task-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 5px 18px;
+  border-bottom: 1px solid var(--line-rule);
+}
+
+.sidebar-task-row:last-child {
+  border-bottom: none;
+}
+
+.sidebar-circle-btn {
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--circle-stroke);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+  transition: color 0.15s;
+  touch-action: manipulation;
+  flex-shrink: 0;
+}
+
+.sidebar-circle-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.sidebar-circle-btn.checked {
+  color: var(--text-dark);
+}
+
+.sidebar-circle-btn.checked .sidebar-circle-inner {
+  transform: scale(1);
+}
+
+.sidebar-circle-inner {
+  transform-origin: center;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform: scale(0);
+}
+
+.sidebar-task-text {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--text-dark);
+  line-height: 1.5;
+  flex: 1;
+  min-width: 0;
+  word-break: break-word;
+  padding-top: 1px;
+}
+
+.sidebar-task-text.checked-text {
+  text-decoration: line-through;
+  color: var(--text-light);
+}
+
+.sidebar-task-text a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--circle-stroke);
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.sidebar-task-text a:hover {
+  color: var(--text-mid);
+  border-color: var(--text-mid);
+}
+
+/* Weekend rest message */
+.sidebar-rest {
+  padding: 18px 18px 20px;
+  text-align: center;
+}
+
+.sidebar-rest-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-dark);
+  display: block;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.sidebar-rest-body {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--text-mid);
+  line-height: 1.65;
+  font-style: italic;
 }
 
 /* ============================================================
@@ -134,13 +327,12 @@ body::before {
   overflow: hidden;
 }
 
-/* Subtle paper edge highlight */
 .card::after {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255,255,255,0.55);
   pointer-events: none;
 }
 
@@ -176,7 +368,6 @@ body::before {
   letter-spacing: 0.08em;
 }
 
-/* Three-dot badge (decorative, like the physical card) */
 .card-dots {
   display: flex;
   flex-direction: column;
@@ -207,7 +398,6 @@ body::before {
 
 .today-card {
   width: 100%;
-  max-width: 440px;
   margin-bottom: 14px;
   animation: cardRise 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
@@ -217,7 +407,6 @@ body::before {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ---- Task list ---- */
 .task-list {
   padding: 4px 0 6px;
 }
@@ -229,7 +418,7 @@ body::before {
   padding: 0 22px;
   height: 46px;
   border-bottom: 1px solid var(--line-rule);
-  transition: background 0.15s ease;
+  transition: background 0.15s;
 }
 
 .task-row:last-child {
@@ -240,7 +429,6 @@ body::before {
   background: rgba(42, 40, 37, 0.025);
 }
 
-/* Circle toggle button */
 .task-circle {
   width: 24px;
   height: 24px;
@@ -253,31 +441,23 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.18s ease;
+  transition: color 0.18s;
   touch-action: manipulation;
 }
 
-.task-circle:hover {
-  color: var(--text-mid);
-}
-
-.task-circle.completed {
-  color: var(--text-dark);
-}
+.task-circle:hover { color: var(--text-mid); }
+.task-circle.completed { color: var(--text-dark); }
 
 .task-circle svg {
   width: 20px;
   height: 20px;
-  overflow: visible;
 }
 
-/* Inner fill circle — CSS-driven animation */
 .circle-inner {
   transform-origin: 10px 10px;
   transition: transform 0.24s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Task text input */
 .task-input {
   flex: 1;
   border: none;
@@ -292,7 +472,7 @@ body::before {
   padding: 0;
   line-height: 1;
   caret-color: var(--text-dark);
-  transition: color 0.18s ease;
+  transition: color 0.18s;
 }
 
 .task-input::placeholder {
@@ -306,34 +486,27 @@ body::before {
 }
 
 /* ============================================================
-   MINI CARDS (Someday + Future)
+   MINI CARDS
    ============================================================ */
 
 .mini-cards-row {
   width: 100%;
-  max-width: 440px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
+  margin-bottom: 16px;
   animation: cardRise 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
 }
 
-.mini-card {
-  background: var(--card-someday);
-  transition: box-shadow 0.2s ease;
-}
+.mini-card { background: var(--card-someday); transition: box-shadow 0.2s; }
+.future-card { background: var(--card-future); }
 
-.future-card {
-  background: var(--card-future);
-}
-
-/* Mini card header — clickable to expand */
 .mini-card-header {
   padding: 16px 18px 14px;
   border-bottom: none;
   cursor: pointer;
   user-select: none;
-  transition: padding-bottom 0.3s ease, border-color 0.3s ease;
+  transition: padding-bottom 0.3s, border-color 0.3s;
 }
 
 .mini-card.expanded .mini-card-header {
@@ -341,9 +514,7 @@ body::before {
   border-bottom: 1px solid var(--line-rule);
 }
 
-.mini-card .card-label {
-  font-size: 19px;
-}
+.mini-card .card-label { font-size: 19px; }
 
 .item-count {
   font-family: var(--font-body);
@@ -353,7 +524,6 @@ body::before {
   letter-spacing: 0.05em;
 }
 
-/* Expandable backlog content */
 .backlog-content {
   max-height: 0;
   overflow: hidden;
@@ -365,12 +535,10 @@ body::before {
   overflow-y: auto;
 }
 
-/* Backlog list */
 .backlog-list {
   padding: 8px 18px 4px;
   display: flex;
   flex-direction: column;
-  gap: 0;
 }
 
 .backlog-row {
@@ -381,9 +549,7 @@ body::before {
   border-bottom: 1px solid var(--line-rule);
 }
 
-.backlog-row:last-child {
-  border-bottom: none;
-}
+.backlog-row:last-child { border-bottom: none; }
 
 .backlog-circle {
   width: 20px;
@@ -397,19 +563,13 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.15s ease;
+  transition: color 0.15s;
   margin-top: 1px;
   touch-action: manipulation;
 }
 
-.backlog-circle:hover {
-  color: var(--text-dark);
-}
-
-.backlog-circle svg {
-  width: 14px;
-  height: 14px;
-}
+.backlog-circle:hover { color: var(--text-dark); }
+.backlog-circle svg { width: 14px; height: 14px; }
 
 .backlog-text {
   flex: 1;
@@ -430,17 +590,13 @@ body::before {
   font-size: 17px;
   line-height: 1;
   padding: 1px 3px;
-  transition: color 0.15s ease;
+  transition: color 0.15s;
   font-weight: 300;
-  margin-top: 0px;
   touch-action: manipulation;
 }
 
-.backlog-delete:hover {
-  color: var(--text-dark);
-}
+.backlog-delete:hover { color: var(--text-dark); }
 
-/* Add item row */
 .backlog-add {
   display: flex;
   align-items: center;
@@ -482,13 +638,130 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.15s ease;
+  transition: color 0.15s;
   touch-action: manipulation;
 }
 
-.add-btn:hover {
-  color: var(--text-dark);
+.add-btn:hover { color: var(--text-dark); }
+
+/* ============================================================
+   CONTRIBUTION GRID
+   ============================================================ */
+
+.contribution-section {
+  width: 100%;
+  margin-top: 4px;
+  animation: cardRise 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.14s both;
 }
+
+.contrib-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 0 2px;
+}
+
+.contrib-title {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.28);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.contrib-legend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.contrib-legend-label {
+  font-family: var(--font-body);
+  font-size: 10px;
+  color: rgba(255,255,255,0.2);
+  letter-spacing: 0.04em;
+}
+
+.contrib-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+}
+
+.contrib-s1 { background: var(--contrib-s1); }
+.contrib-s2 { background: var(--contrib-s2); }
+.contrib-s3 { background: var(--contrib-s3); }
+.contrib-s4 { background: var(--contrib-s4); }
+.contrib-s5 { background: var(--contrib-s5); }
+
+.contrib-wrapper {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+}
+
+.contrib-day-labels {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-top: 0;
+}
+
+.contrib-day-labels span {
+  font-family: var(--font-body);
+  font-size: 9px;
+  color: rgba(255,255,255,0.2);
+  height: 11px;
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.04em;
+}
+
+/* The grid itself is columns of 7 dots (Mon–Sun) */
+.contribution-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 3px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+/* Each week is a column */
+.contrib-week {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+/* Each day dot */
+.contrib-cell {
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
+  background: var(--contrib-empty);
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: transform 0.15s;
+  cursor: default;
+  position: relative;
+}
+
+.contrib-cell:hover {
+  transform: scale(1.4);
+  z-index: 10;
+}
+
+.contrib-cell[data-score="missed"]  { background: var(--contrib-missed);  border-color: transparent; }
+.contrib-cell[data-score="s1"]      { background: var(--contrib-s1);      border-color: transparent; }
+.contrib-cell[data-score="s2"]      { background: var(--contrib-s2);      border-color: transparent; }
+.contrib-cell[data-score="s3"]      { background: var(--contrib-s3);      border-color: transparent; }
+.contrib-cell[data-score="s4"]      { background: var(--contrib-s4);      border-color: transparent; }
+.contrib-cell[data-score="s5"]      { background: var(--contrib-s5);      border-color: transparent; }
+.contrib-cell[data-score="future"]  { background: var(--contrib-future);  border-color: rgba(255,255,255,0.04); }
+.contrib-cell[data-score="today"]   { background: var(--contrib-future);  border-color: rgba(196,160,102,0.5); }
 
 /* ============================================================
    ARCHIVE VIEW
@@ -496,7 +769,6 @@ body::before {
 
 #archive-view {
   width: 100%;
-  max-width: 440px;
   animation: cardRise 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
@@ -510,30 +782,27 @@ body::before {
 .back-btn {
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255,255,255,0.4);
   font-family: var(--font-body);
   font-size: 13px;
   font-weight: 400;
   cursor: pointer;
   padding: 0;
   letter-spacing: 0.02em;
-  transition: color 0.18s ease;
+  transition: color 0.18s;
   touch-action: manipulation;
 }
 
-.back-btn:hover {
-  color: rgba(255, 255, 255, 0.75);
-}
+.back-btn:hover { color: rgba(255,255,255,0.75); }
 
 .archive-title {
   font-family: var(--font-display);
   font-size: 26px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255,255,255,0.55);
   letter-spacing: 0.01em;
 }
 
-/* Archive grid */
 .archive-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -546,7 +815,7 @@ body::before {
   padding: 13px 14px;
   cursor: pointer;
   box-shadow: var(--shadow-mini);
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  transition: transform 0.18s, box-shadow 0.18s;
   position: relative;
   overflow: hidden;
 }
@@ -596,11 +865,7 @@ body::before {
   margin-bottom: 6px;
 }
 
-.archive-tasks {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
+.archive-tasks { display: flex; flex-direction: column; gap: 3px; }
 
 .archive-task {
   display: flex;
@@ -613,14 +878,9 @@ body::before {
   line-height: 1.35;
 }
 
-.archive-task.done {
-  color: var(--text-light);
-}
+.archive-task.done { color: var(--text-light); }
 
-.archive-task-text {
-  word-break: break-word;
-  min-width: 0;
-}
+.archive-task-text { word-break: break-word; min-width: 0; }
 
 .archive-dot {
   width: 7px;
@@ -633,18 +893,11 @@ body::before {
   flex-shrink: 0;
 }
 
-.archive-dot.filled {
-  background: var(--text-dark);
-  border-color: var(--text-dark);
-}
-
-.archive-task.done .archive-dot.filled {
-  background: var(--text-light);
-  border-color: var(--text-light);
-}
+.archive-dot.filled { background: var(--text-dark); border-color: var(--text-dark); }
+.archive-task.done .archive-dot.filled { background: var(--text-light); border-color: var(--text-light); }
 
 .empty-archive {
-  color: rgba(255, 255, 255, 0.25);
+  color: rgba(255,255,255,0.25);
   font-family: var(--font-body);
   font-size: 14px;
   font-weight: 300;
@@ -654,7 +907,7 @@ body::before {
   font-style: italic;
 }
 
-/* ---- Full archive card (shown in modal) ---- */
+/* Full archive modal card */
 .archive-full-card {
   background: var(--card-today);
   border-radius: var(--radius-lg);
@@ -683,9 +936,7 @@ body::before {
   border-bottom: 1px solid var(--line-rule);
 }
 
-.archive-full-tasks {
-  padding: 4px 0 6px;
-}
+.archive-full-tasks { padding: 4px 0 6px; }
 
 .archive-static-row {
   display: flex;
@@ -696,13 +947,8 @@ body::before {
   border-bottom: 1px solid var(--line-rule);
 }
 
-.archive-static-row:last-child {
-  border-bottom: none;
-}
-
-.archive-static-row.empty-row {
-  opacity: 0.35;
-}
+.archive-static-row:last-child { border-bottom: none; }
+.archive-static-row.empty-row { opacity: 0.35; }
 
 .static-circle {
   width: 20px;
@@ -715,14 +961,8 @@ body::before {
   flex-shrink: 0;
 }
 
-.static-circle.completed {
-  color: var(--text-dark);
-}
-
-.static-circle svg {
-  width: 20px;
-  height: 20px;
-}
+.static-circle.completed { color: var(--text-dark); }
+.static-circle svg { width: 20px; height: 20px; }
 
 .static-text {
   font-family: var(--font-body);
@@ -736,15 +976,8 @@ body::before {
   text-overflow: ellipsis;
 }
 
-.static-text.completed {
-  text-decoration: line-through;
-  color: var(--text-light);
-}
-
-.static-text.empty {
-  color: var(--text-light);
-  font-style: italic;
-}
+.static-text.completed { text-decoration: line-through; color: var(--text-light); }
+.static-text.empty { color: var(--text-light); font-style: italic; }
 
 .archive-full-footer {
   padding: 12px 22px 16px;
@@ -782,17 +1015,15 @@ body::before {
   padding: 40px 16px 16px;
 }
 
-.modal-inner {
-  width: 100%;
-}
+.modal-inner { width: 100%; }
 
 .modal-close {
   position: fixed;
   top: 18px;
   right: 18px;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255,255,255,0.12);
   border: none;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255,255,255,0.7);
   width: 38px;
   height: 38px;
   border-radius: 50%;
@@ -802,16 +1033,13 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.15s ease;
+  transition: background 0.15s;
   touch-action: manipulation;
   z-index: 101;
 }
 
-.modal-close:hover {
-  background: rgba(255, 255, 255, 0.22);
-}
+.modal-close:hover { background: rgba(255,255,255,0.22); }
 
-/* Rollover prompt */
 .rollover-card {
   background: var(--card-today);
   border-radius: var(--radius-lg);
@@ -849,10 +1077,7 @@ body::before {
   margin-bottom: 24px;
 }
 
-.rollover-body strong {
-  color: var(--text-dark);
-  font-weight: 500;
-}
+.rollover-body strong { color: var(--text-dark); font-weight: 500; }
 
 .rollover-actions {
   display: flex;
@@ -871,18 +1096,16 @@ body::before {
   font-weight: 500;
   letter-spacing: 0.04em;
   cursor: pointer;
-  transition: opacity 0.15s ease;
+  transition: opacity 0.15s;
   touch-action: manipulation;
 }
 
-.btn-primary:hover {
-  opacity: 0.82;
-}
+.btn-primary:hover { opacity: 0.82; }
 
 .btn-secondary {
   background: transparent;
   color: var(--text-mid);
-  border: 1px solid rgba(42, 40, 37, 0.2);
+  border: 1px solid rgba(42,40,37,0.2);
   padding: 10px 20px;
   border-radius: 8px;
   font-family: var(--font-body);
@@ -890,17 +1113,14 @@ body::before {
   font-weight: 400;
   letter-spacing: 0.04em;
   cursor: pointer;
-  transition: border-color 0.15s ease, color 0.15s ease;
+  transition: border-color 0.15s, color 0.15s;
   touch-action: manipulation;
 }
 
-.btn-secondary:hover {
-  border-color: rgba(42, 40, 37, 0.4);
-  color: var(--text-dark);
-}
+.btn-secondary:hover { border-color: rgba(42,40,37,0.4); color: var(--text-dark); }
 
 /* ============================================================
-   LOADING SCREEN
+   LOADING
    ============================================================ */
 
 .loading-overlay {
@@ -911,13 +1131,10 @@ body::before {
   align-items: center;
   justify-content: center;
   z-index: 200;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.4s;
 }
 
-.loading-overlay.fade-out {
-  opacity: 0;
-  pointer-events: none;
-}
+.loading-overlay.fade-out { opacity: 0; pointer-events: none; }
 
 .loading-card {
   width: 52px;
@@ -947,45 +1164,48 @@ body::before {
    UTILITY
    ============================================================ */
 
-.hidden {
-  display: none !important;
-}
+.hidden { display: none !important; }
 
 /* ============================================================
-   RESPONSIVE — small phones
+   SCROLLBAR
    ============================================================ */
 
-@media (max-width: 380px) {
-  .mini-cards-row {
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(42,40,37,0.18); border-radius: 4px; }
+
+/* ============================================================
+   RESPONSIVE — MOBILE (hide sidebars into column stack)
+   ============================================================ */
+
+@media (max-width: 860px) {
+  #content-layout {
     grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* On mobile: business sidebar goes below center, wb goes after that */
+  .sidebar-left  { order: 2; }
+  #center-column { order: 1; }
+  .sidebar-right { order: 3; }
+
+  .sidebar {
+    position: static;
+    width: 100%;
+  }
+
+  .sidebar-card-inner {
+    width: 100%;
   }
 
   .archive-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .card-label {
-    font-size: 20px;
-  }
-
-  .task-input {
-    font-size: 14px;
+    grid-template-columns: 1fr 1fr;
   }
 }
 
-/* ============================================================
-   SCROLLBAR (subtle, on-brand)
-   ============================================================ */
-
-::-webkit-scrollbar {
-  width: 4px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(42, 40, 37, 0.18);
-  border-radius: 4px;
+@media (max-width: 380px) {
+  .mini-cards-row    { grid-template-columns: 1fr; }
+  .archive-grid      { grid-template-columns: 1fr; }
+  .card-label        { font-size: 20px; }
+  .task-input        { font-size: 14px; }
 }
