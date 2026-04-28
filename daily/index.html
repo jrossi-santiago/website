@@ -513,10 +513,57 @@
       const existing = await loadDailyPrayer();
 
       if (existing && existing.day === today && existing.image_path) {
-        // Already have today's prayer — show it
+        console.log('Using saved prayer:', existing.image_path);
         prayerShow(existing.image_path);
         return;
       }
+
+      // List all images in the bucket
+      const rawResponse = await fetch(AFF_URL + '/storage/v1/object/list/' + PRAYER_BUCKET, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': AFF_KEY,
+          'Authorization': 'Bearer ' + AFF_KEY
+        },
+        body: JSON.stringify({ prefix: '', limit: 500, offset: 0 })
+      });
+
+      const rawText = await rawResponse.text();
+      console.log('Storage list raw response:', rawText);
+
+      let files;
+      try {
+        files = JSON.parse(rawText);
+      } catch(e) {
+        throw new Error('Could not parse storage response: ' + rawText);
+      }
+
+      console.log('Files parsed:', files);
+
+      if (!Array.isArray(files)) {
+        throw new Error('Unexpected response shape — not an array: ' + rawText);
+      }
+
+      const imageFiles = files.filter(f => f.name && !f.name.startsWith('.'));
+      console.log('Image files after filter:', imageFiles.length, imageFiles.map(f => f.name));
+
+      if (imageFiles.length === 0) {
+        throw new Error('No images found in bucket — did you upload your prayer screenshots?');
+      }
+
+      const chosen = pickRandom(imageFiles);
+      console.log('Chosen prayer:', chosen.name);
+
+      await saveDailyPrayer(chosen.name, today);
+      prayerShow(chosen.name);
+
+    } catch (err) {
+      console.error('Prayer error:', err);
+      document.getElementById('prayer-loading').classList.add('hidden');
+      document.getElementById('prayer-error').classList.remove('hidden');
+    }
+  }
 
       // No prayer yet — list all images and pick one randomly
       const files = await listPrayerFiles();
