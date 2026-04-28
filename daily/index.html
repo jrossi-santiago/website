@@ -49,7 +49,6 @@
       opacity: 0.5;
     }
 
-    /* ── PAGE ── */
     #page {
       position: relative;
       z-index: 1;
@@ -60,7 +59,6 @@
       padding: 24px 16px 56px;
     }
 
-    /* ── HEADER ── */
     .page-header {
       width: 100%;
       max-width: 1100px;
@@ -87,7 +85,6 @@
       text-transform: uppercase;
     }
 
-    /* ── SPLIT LAYOUT ── */
     .split-layout {
       width: 100%;
       max-width: 1100px;
@@ -97,7 +94,6 @@
       align-items: start;
     }
 
-    /* ── CARD BASE ── */
     .panel-card {
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-card);
@@ -124,7 +120,6 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── CARD TOP ── */
     .card-top {
       display: flex;
       justify-content: space-between;
@@ -176,14 +171,12 @@
       border-color: var(--circle-stroke);
     }
 
-    /* ── CARD BODY ── */
     .card-body {
       padding: 24px 22px 22px;
       display: flex;
       flex-direction: column;
     }
 
-    /* ── LOADING STATE ── */
     .panel-loading {
       font-family: var(--font-body);
       font-size: 12px;
@@ -308,23 +301,14 @@
       border: 1px solid rgba(42,40,37,0.07);
     }
 
-    /* =============================================
-       UTILITY
-    ============================================= */
     .hidden { display: none !important; }
 
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(42,40,37,0.18); border-radius: 4px; }
 
-    /* =============================================
-       RESPONSIVE
-    ============================================= */
     @media (max-width: 720px) {
-      .split-layout {
-        grid-template-columns: 1fr;
-        gap: 16px;
-      }
+      .split-layout { grid-template-columns: 1fr; gap: 16px; }
     }
 
     @media (max-width: 400px) {
@@ -338,13 +322,11 @@
 <script src="/header.js"></script>
 <div id="page">
 
-  <!-- HEADER -->
   <header class="page-header">
     <span class="page-title">Daily</span>
     <span class="page-date" id="header-date"></span>
   </header>
 
-  <!-- SPLIT LAYOUT -->
   <div class="split-layout">
 
     <!-- ===== LEFT: PRAYER ===== -->
@@ -362,10 +344,8 @@
       </div>
 
       <div class="card-body">
-        <!-- Loading -->
         <p class="panel-loading" id="prayer-loading">Loading…</p>
 
-        <!-- Prayer content -->
         <div id="prayer-content" class="hidden">
           <div class="prayer-eyebrow">Today's Prayer</div>
           <div class="prayer-image-wrap">
@@ -379,7 +359,6 @@
           </div>
         </div>
 
-        <!-- Error state -->
         <p class="prayer-error hidden" id="prayer-error">Could not load — check connection.</p>
       </div>
     </div>
@@ -399,10 +378,8 @@
       </div>
 
       <div class="card-body">
-        <!-- Loading -->
         <p class="panel-loading" id="mot-loading">Loading…</p>
 
-        <!-- Content -->
         <div id="mot-content" class="hidden">
           <div class="mot-quote" id="mot-quote"></div>
           <div id="mot-goal-wrap">
@@ -414,33 +391,29 @@
       </div>
     </div>
 
-  </div><!-- /split-layout -->
-</div><!-- /page -->
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 
   // ============================================================
   // CONFIGURATION
-  // Your affirmations / prayer Supabase project:
   const AFF_URL = 'https://rvwyjipseusvqjqbwken.supabase.co';
   const AFF_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ2d3lqaXBzZXVzdnFqcWJ3a2VuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NDA4MDAsImV4cCI6MjA5MjAxNjgwMH0.UFYPZndWuY3uDOWovjxa7qreidWM9sacUlIS9iteMXc';
 
-  // Your No Excuses Supabase project:
   const MOT_URL = 'https://urfsijczxmngbixprdkq.supabase.co';
   const MOT_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZnNpamN6eG1uZ2JpeHByZGtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTU1NzIsImV4cCI6MjA5MTA3MTU3Mn0.KxNLu5Rg0A0IdxQbaAapDa-vmTkVmeUlub689o0ZOaM';
 
-  // Name of the Supabase Storage bucket where your prayer images live:
   const PRAYER_BUCKET = 'prayers';
   // ============================================================
 
   const { createClient } = supabase;
   const affDB = createClient(AFF_URL, AFF_KEY);
 
-  // ── SHARED HELPERS ──
+  // ── HELPERS ──
 
   function todayDateString() {
-    // Returns something like "2026-04-28" — used to check if we already picked a prayer today
     const d = new Date();
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
   }
@@ -466,7 +439,7 @@
     document.getElementById('mot-date').textContent    = label;
   })();
 
-  // ── COUNTDOWN TICKER ──
+  // ── COUNTDOWN ──
   let countdownTimer = null;
   function startCountdown() {
     function tick() {
@@ -486,53 +459,79 @@
 
   // ============================================================
   //  PRAYER PANEL
+  //  Uses direct fetch() calls to the Supabase Storage REST API
+  //  instead of the JS client library, which has a bug with .list()
   // ============================================================
+
+  // Lists all files in the bucket by calling the Storage API directly
+  async function listPrayerFiles() {
+    const res = await fetch(AFF_URL + '/storage/v1/object/list/' + PRAYER_BUCKET, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': AFF_KEY,
+        'Authorization': 'Bearer ' + AFF_KEY
+      },
+      body: JSON.stringify({ prefix: '', limit: 500, offset: 0 })
+    });
+    if (!res.ok) throw new Error('Storage list failed: ' + res.status);
+    return res.json();
+  }
+
+  // Saves today's chosen image name to the daily_prayer table
+  async function saveDailyPrayer(imageName, today) {
+    await fetch(AFF_URL + '/rest/v1/daily_prayer', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': AFF_KEY,
+        'Authorization': 'Bearer ' + AFF_KEY,
+        'Prefer': 'resolution=merge-duplicates'
+      },
+      body: JSON.stringify({ id: 'today', image_path: imageName, day: today })
+    });
+  }
+
+  // Reads today's saved choice from the daily_prayer table
+  async function loadDailyPrayer() {
+    const res = await fetch(AFF_URL + '/rest/v1/daily_prayer?id=eq.today', {
+      headers: {
+        'apikey': AFF_KEY,
+        'Authorization': 'Bearer ' + AFF_KEY
+      }
+    });
+    if (!res.ok) return null;
+    const rows = await res.json();
+    return rows && rows.length > 0 ? rows[0] : null;
+  }
 
   async function prayerInit() {
     try {
       const today = todayDateString();
 
-      // 1. Check if we already picked a prayer for today
-      const { data: existing, error: fetchErr } = await affDB
-        .from('daily_prayer')
-        .select('*')
-        .eq('id', 'today')
-        .single();
+      // Check if we already picked a prayer for today
+      const existing = await loadDailyPrayer();
 
-      if (!fetchErr && existing && existing.day === today && existing.image_path) {
-        // We already have today's prayer — just show it
+      if (existing && existing.day === today && existing.image_path) {
+        // Already have today's prayer — show it
         prayerShow(existing.image_path);
         return;
       }
 
-      // 2. No prayer yet for today — list all images in the bucket and pick one randomly
-      const { data: files, error: listErr } = await affDB
-        .storage
-        .from(PRAYER_BUCKET)
-        .list('', { limit: 500 });
+      // No prayer yet — list all images and pick one randomly
+      const files = await listPrayerFiles();
 
-      if (listErr || !files || files.length === 0) {
-        throw new Error('No images found in bucket');
-      }
-
-      // Filter out any hidden/system files (they start with a dot)
+      // Filter out hidden/system files (filenames starting with a dot)
       const imageFiles = files.filter(f => f.name && !f.name.startsWith('.'));
 
-      if (imageFiles.length === 0) {
-        throw new Error('No images found');
+      if (!imageFiles || imageFiles.length === 0) {
+        throw new Error('No images found in bucket — did you upload your prayer screenshots?');
       }
 
       const chosen = pickRandom(imageFiles);
 
-      // 3. Save the chosen image path to the database so it stays the same all day
-      const { error: saveErr } = await affDB
-        .from('daily_prayer')
-        .upsert({ id: 'today', image_path: chosen.name, day: today });
-
-      if (saveErr) {
-        console.warn('Could not save daily prayer selection:', saveErr);
-        // Still show it even if save failed
-      }
+      // Save the choice so it stays the same all day
+      await saveDailyPrayer(chosen.name, today);
 
       prayerShow(chosen.name);
 
@@ -543,32 +542,27 @@
     }
   }
 
-  function prayerShow(imagePath) {
-    // Get the public URL for the image from Supabase Storage
-    // A "public URL" is a web address anyone can use to view the image
-    const { data } = affDB.storage.from(PRAYER_BUCKET).getPublicUrl(imagePath);
-
-    if (!data || !data.publicUrl) {
-      document.getElementById('prayer-loading').classList.add('hidden');
-      document.getElementById('prayer-error').classList.remove('hidden');
-      return;
-    }
+  function prayerShow(imageName) {
+    // Build the public URL directly — no JS client needed
+    // Public URL format: [project-url]/storage/v1/object/public/[bucket]/[filename]
+    const publicUrl = AFF_URL + '/storage/v1/object/public/' + PRAYER_BUCKET + '/' + encodeURIComponent(imageName);
 
     const img = document.getElementById('prayer-img');
-    img.src = data.publicUrl;
+    img.src = publicUrl;
     img.onload = function() {
       document.getElementById('prayer-loading').classList.add('hidden');
       document.getElementById('prayer-content').classList.remove('hidden');
       startCountdown();
     };
     img.onerror = function() {
+      console.error('Image failed to load:', publicUrl);
       document.getElementById('prayer-loading').classList.add('hidden');
       document.getElementById('prayer-error').classList.remove('hidden');
     };
   }
 
   // ============================================================
-  //  NO EXCUSES / MOTIVATION
+  //  NO EXCUSES / MOTIVATION  (unchanged)
   // ============================================================
 
   const HOURS_18 = 18 * 60 * 60 * 1000;
