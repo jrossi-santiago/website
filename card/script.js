@@ -1,82 +1,116 @@
 /* ============================================================
    ANALOG — script.js
-   Digital Ugmonk Analog card system
    ============================================================ */
 
 // --- YOUR SUPABASE CREDENTIALS ---
-// Replace both values below with your own from supabase.com
-// Settings → API → Project URL and anon public key
 const SUPABASE_URL      = 'https://rvwyjipseusvqjqbwken.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ2d3lqaXBzZXVzdnFqcWJ3a2VuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NDA4MDAsImV4cCI6MjA5MjAxNjgwMH0.UFYPZndWuY3uDOWovjxa7qreidWM9sacUlIS9iteMXc';
 
-// --- DATABASE CONNECTION ---
-// createClient connects your app to your Supabase database
 const { createClient } = window.supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // --- APP STATE ---
-// These variables hold data while the app is running in memory
-let todayCard     = null;  // The current today card object
-let somedayItems  = [];    // Array of someday backlog items
-let futureItems   = [];    // Array of future backlog items
+let todayCard    = null;
+let somedayItems = [];
+let futureItems  = [];
+
+/* ============================================================
+   RECURRING TASK DEFINITIONS
+   ============================================================ */
+
+// Tasks that appear every weekday (Mon–Fri)
+const DAILY_TASKS = [
+  { text: 'Check Instantly',                      url: 'https://app.instantly.ai' },
+  { text: 'Check Fillout',                        url: 'https://fillout.com' },
+  { text: 'Check LinkedIn notifications',         url: 'https://linkedin.com' },
+  { text: 'Comment on 5 posts (LinkedIn skill)',  url: 'https://linkedin.com' },
+];
+
+// Extra tasks added on top of daily tasks for each weekday
+const EXTRA_TASKS = {
+  1: [ // Monday
+    { text: 'Add leads to Instantly' },
+    { text: 'Review and update Instantly campaigns' },
+    { text: 'Schedule this week\'s LinkedIn posts' },
+    { text: 'Connect with 1 referral' },
+  ],
+  2: [ // Tuesday
+    { text: 'Connect with 1 referral' },
+    { text: 'Build lead magnets' },
+  ],
+  3: [ // Wednesday
+    { text: 'Connect with 1 referral' },
+    { text: 'SEO article (SEO skill)' },
+    { text: 'Work on the business — systems, methods & new ideas' },
+  ],
+  4: [ // Thursday
+    { text: 'Connect with 1 referral' },
+    { text: 'Reach out to expanded LinkedIn network' },
+    { text: 'Invite personal connections to follow business page' },
+  ],
+  5: [ // Friday
+    { text: 'Connect with 1 referral' },
+    { text: 'Review analytics' },
+    { text: 'Come up with plan for next week' },
+    { text: 'Log report on successes and failings of this week' },
+  ],
+};
+
+const WHY_BUILDINGS_TASKS = [
+  { text: 'Post on Twitter' },
+  { text: 'Comment on 15 posts' },
+  { text: 'Reply to everything (likes, comments, follows)' },
+];
+
+const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
 /* ============================================================
    DATE HELPERS
-   These functions figure out what "today" and "yesterday" are
-   in a format the database understands: YYYY-MM-DD
    ============================================================ */
 
 function getLocalDate() {
   const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 
 function getYesterdayDate() {
   const d = new Date();
   d.setDate(d.getDate() - 1);
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 
-// Turns "2025-04-27" into "04.27.25" for display on the card
 function formatDateDisplay(dateStr) {
   if (!dateStr) return '';
   const [y, m, d] = dateStr.split('-');
   return `${m}.${d}.${y.slice(2)}`;
 }
 
-// Builds a fresh array of 10 empty task slots
-// If prefill tasks are passed in (rollover), they fill the first slots
 function makeFreshTasks(prefill = []) {
   return Array.from({ length: 10 }, (_, i) => ({
     id: i,
     text: prefill[i] ? prefill[i].text : '',
-    completed: false
+    completed: false,
   }));
 }
 
 /* ============================================================
    INITIALIZATION
-   This runs when the page first loads
    ============================================================ */
 
 async function init() {
   try {
     renderTodayDate();
+    renderBusinessSidebar();
+    renderWhyBuildingsSidebar();
     await loadTodayCard();
     await loadBacklogItems();
     await updateStreak();
+    await renderContributionGrid();
     setupEventListeners();
     scheduleMidnightReload();
   } catch (err) {
-    console.error('Error starting app:', err);
+    console.error('Init error:', err);
   } finally {
-    // Always hide the loading screen, even if something went wrong
     hideLoading();
   }
 }
@@ -86,50 +120,253 @@ function renderTodayDate() {
 }
 
 /* ============================================================
-   TODAY CARD — Load or create
+   BUSINESS SIDEBAR — Day-aware recurring tasks
+   ============================================================ */
+
+function renderBusinessSidebar() {
+  const container = document.getElementById('business-card-inner');
+  const dayIndex  = new Date().getDay(); // 0=Sun, 1=Mon ... 6=Sat
+  const dayName   = DAY_NAMES[dayIndex];
+  const isWeekend = dayIndex === 0 || dayIndex === 6;
+
+  if (isWeekend) {
+    container.innerHTML = `
+      <div class="sidebar-card-header">
+        <span class="sidebar-day-label">${dayName}</span>
+        <span class="sidebar-section-label">Business</span>
+      </div>
+      <div class="sidebar-rest">
+        <span class="sidebar-rest-title">Rest &amp; reflect.</span>
+        <p class="sidebar-rest-body">Weekdays are for business. Today is for recharging so you can show up fully on Monday.</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Build daily tasks rows
+  const dailyRows = DAILY_TASKS.map((t, i) => buildSidebarRow(t, `biz-daily-${i}`)).join('');
+
+  // Build extra tasks for today
+  const extras     = EXTRA_TASKS[dayIndex] || [];
+  const extraRows  = extras.map((t, i) => buildSidebarRow(t, `biz-extra-${i}`)).join('');
+  const extraGroup = extras.length ? `
+    <div class="sidebar-task-group">
+      <span class="sidebar-group-label">Also today</span>
+      ${extraRows}
+    </div>
+  ` : '';
+
+  container.innerHTML = `
+    <div class="sidebar-card-header">
+      <span class="sidebar-day-label">${dayName}</span>
+      <span class="sidebar-section-label">Business</span>
+    </div>
+    <div class="sidebar-task-group">
+      <span class="sidebar-group-label">Every day</span>
+      ${dailyRows}
+    </div>
+    ${extraGroup}
+  `;
+
+  // Wire up circle toggles
+  container.querySelectorAll('.sidebar-circle-btn').forEach(btn => {
+    btn.addEventListener('click', onSidebarToggle);
+  });
+}
+
+/* ============================================================
+   WHY BUILDINGS SIDEBAR — Same every day
+   ============================================================ */
+
+function renderWhyBuildingsSidebar() {
+  const container = document.getElementById('wb-card-inner');
+  const rows = WHY_BUILDINGS_TASKS.map((t, i) => buildSidebarRow(t, `wb-${i}`)).join('');
+
+  container.innerHTML = `
+    <div class="sidebar-card-header">
+      <span class="sidebar-day-label">Why Buildings</span>
+      <span class="sidebar-section-label">Daily</span>
+    </div>
+    <div class="sidebar-task-group">
+      ${rows}
+    </div>
+  `;
+
+  container.querySelectorAll('.sidebar-circle-btn').forEach(btn => {
+    btn.addEventListener('click', onSidebarToggle);
+  });
+}
+
+/* ============================================================
+   SIDEBAR HELPERS
+   ============================================================ */
+
+// Builds one sidebar task row with a circle toggle and optional hyperlink
+function buildSidebarRow(task, id) {
+  const label = task.url
+    ? `<a href="${task.url}" target="_blank" rel="noopener noreferrer">${escHtml(task.text)}</a>`
+    : escHtml(task.text);
+
+  return `
+    <div class="sidebar-task-row">
+      <button class="sidebar-circle-btn" data-sid="${id}" aria-label="Toggle ${escHtml(task.text)}">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.25"/>
+          <circle class="sidebar-circle-inner" cx="8" cy="8" r="4.5" fill="currentColor"/>
+        </svg>
+      </button>
+      <span class="sidebar-task-text" data-sid="${id}">${label}</span>
+    </div>
+  `;
+}
+
+// Visual-only toggle — no database, resets on reload
+function onSidebarToggle(e) {
+  const btn     = e.currentTarget;
+  const sid     = btn.dataset.sid;
+  const isNow   = btn.classList.toggle('checked');
+  const inner   = btn.querySelector('.sidebar-circle-inner');
+  inner.style.transform = isNow ? 'scale(1)' : 'scale(0)';
+
+  const textEl = document.querySelector(`.sidebar-task-text[data-sid="${sid}"]`);
+  if (textEl) textEl.classList.toggle('checked-text', isNow);
+}
+
+/* ============================================================
+   CONTRIBUTION GRID
+   ============================================================ */
+
+async function renderContributionGrid() {
+  const grid    = document.getElementById('contribution-grid');
+  const today   = getLocalDate();
+  const todayDt = new Date(today + 'T00:00:00');
+
+  // Fetch all archived cards (not today's, which may be in progress)
+  const { data } = await db
+    .from('today_cards')
+    .select('date, tasks')
+    .order('date', { ascending: true });
+
+  // Build a map of date → score-tier for quick lookup
+  // score-tier: "missed" | "s1" | "s2" | "s3" | "s4" | "s5"
+  const scoreMap = {};
+  if (data) {
+    data.forEach(card => {
+      const filled    = (card.tasks || []).filter(t => t.text);
+      const completed = filled.filter(t => t.completed).length;
+      const total     = filled.length;
+
+      if (card.date === today) return; // today handled separately
+
+      if (total === 0) {
+        scoreMap[card.date] = 'missed';
+      } else {
+        const pct = completed / total;
+        if (pct === 0)        scoreMap[card.date] = 'missed';
+        else if (pct <= 0.25) scoreMap[card.date] = 's1';
+        else if (pct <= 0.50) scoreMap[card.date] = 's2';
+        else if (pct <= 0.75) scoreMap[card.date] = 's3';
+        else if (pct < 1)     scoreMap[card.date] = 's4';
+        else                   scoreMap[card.date] = 's5';
+      }
+    });
+  }
+
+  // Grid spans exactly 12 weeks = 84 days, starting from today
+  // We fill forward in time, left-to-right, Mon-Sun columns
+  // Find the Monday on or before today to start the grid cleanly
+  const startDt = new Date(todayDt);
+  // dayOfWeek: Mon=0 ... Sun=6 (we want weeks to start Monday)
+  const dow = (todayDt.getDay() + 6) % 7; // convert Sun=0 to Mon=0
+  startDt.setDate(startDt.getDate() - dow);
+
+  // Build 12 weeks of cells
+  grid.innerHTML = '';
+
+  for (let week = 0; week < 12; week++) {
+    const weekEl = document.createElement('div');
+    weekEl.className = 'contrib-week';
+
+    for (let day = 0; day < 7; day++) {
+      const cellDt  = new Date(startDt);
+      cellDt.setDate(startDt.getDate() + (week * 7) + day);
+      const cellStr = `${cellDt.getFullYear()}-${String(cellDt.getMonth()+1).padStart(2,'0')}-${String(cellDt.getDate()).padStart(2,'0')}`;
+
+      const cell = document.createElement('div');
+      cell.className = 'contrib-cell';
+
+      // Determine what to show
+      if (cellStr === today) {
+        cell.dataset.score = 'today';
+        cell.title = 'Today';
+      } else if (cellDt > todayDt) {
+        cell.dataset.score = 'future';
+        cell.title = formatDateDisplay(cellStr);
+      } else if (scoreMap[cellStr]) {
+        cell.dataset.score = scoreMap[cellStr];
+        cell.title = `${formatDateDisplay(cellStr)} — ${labelFromScore(scoreMap[cellStr])}`;
+      } else {
+        // Past day with no card logged
+        cell.dataset.score = 'missed';
+        cell.title = `${formatDateDisplay(cellStr)} — no card`;
+      }
+
+      weekEl.appendChild(cell);
+    }
+
+    grid.appendChild(weekEl);
+  }
+}
+
+function labelFromScore(score) {
+  const map = {
+    missed: 'No tasks completed',
+    s1: '1–25% complete',
+    s2: '26–50% complete',
+    s3: '51–75% complete',
+    s4: '76–99% complete',
+    s5: 'Perfect day',
+  };
+  return map[score] || '';
+}
+
+/* ============================================================
+   TODAY CARD
    ============================================================ */
 
 async function loadTodayCard() {
   const today = getLocalDate();
 
-  // Look for a card with today's date in the database
-  // maybeSingle() returns null (not an error) if nothing is found
-  const { data, error } = await db
+  const { data } = await db
     .from('today_cards')
     .select('*')
     .eq('date', today)
     .maybeSingle();
 
   if (data) {
-    // A card for today already exists — load it
     todayCard = data;
     renderTasks(data.tasks);
   } else {
-    // No card yet for today — check yesterday for incomplete tasks
     await checkYesterdayAndPrompt();
   }
 }
 
 async function checkYesterdayAndPrompt() {
   const yesterday = getYesterdayDate();
-
-  const { data } = await db
+  const { data }  = await db
     .from('today_cards')
     .select('*')
     .eq('date', yesterday)
     .maybeSingle();
 
   if (data) {
-    // Filter for tasks that have text but weren't completed
     const incomplete = (data.tasks || []).filter(t => t.text && !t.completed);
     if (incomplete.length > 0) {
-      // Show the "roll them over?" prompt
       showRolloverModal(incomplete);
       return;
     }
   }
 
-  // No incomplete tasks from yesterday — start fresh
   await createTodayCard([]);
 }
 
@@ -144,14 +381,11 @@ async function createTodayCard(prefillTasks) {
     .single();
 
   if (error) {
-    // If insert failed, the card might already exist (rare timing issue)
-    // Try loading it instead
     const { data: existing } = await db
       .from('today_cards')
       .select('*')
       .eq('date', today)
       .maybeSingle();
-
     if (existing) {
       todayCard = existing;
       renderTasks(existing.tasks);
@@ -165,7 +399,6 @@ async function createTodayCard(prefillTasks) {
 
 /* ============================================================
    RENDER TASKS
-   Builds the 10 task rows inside the Today card
    ============================================================ */
 
 function renderTasks(tasks) {
@@ -176,23 +409,12 @@ function renderTasks(tasks) {
     const isCompleted = task.completed;
     const row = document.createElement('div');
     row.className = 'task-row';
-
-    // Each row has a circle button + a text input
-    // The circle-inner element is the filled dot that animates in/out
     row.innerHTML = `
-      <button
-        class="task-circle${isCompleted ? ' completed' : ''}"
-        data-index="${i}"
-        aria-label="Toggle task ${i + 1}"
-      >
+      <button class="task-circle${isCompleted ? ' completed' : ''}" data-index="${i}" aria-label="Toggle task ${i+1}">
         <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
           <circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.5"/>
-          <circle
-            class="circle-inner"
-            cx="10" cy="10" r="6"
-            fill="currentColor"
-            style="transform: scale(${isCompleted ? '1' : '0'});"
-          />
+          <circle class="circle-inner" cx="10" cy="10" r="6" fill="currentColor"
+            style="transform: scale(${isCompleted ? '1' : '0'});"/>
         </svg>
       </button>
       <input
@@ -202,17 +424,15 @@ function renderTasks(tasks) {
         placeholder="—"
         data-index="${i}"
         maxlength="80"
-        aria-label="Task ${i + 1}"
+        aria-label="Task ${i+1}"
         autocomplete="off"
         autocorrect="off"
         spellcheck="false"
       >
     `;
-
     list.appendChild(row);
   });
 
-  // Attach events after all rows are in the DOM
   list.querySelectorAll('.task-circle').forEach(btn => {
     btn.addEventListener('click', onToggleTask);
   });
@@ -227,31 +447,23 @@ function renderTasks(tasks) {
    ============================================================ */
 
 async function onToggleTask(e) {
-  const btn = e.currentTarget;
+  const btn   = e.currentTarget;
   const index = parseInt(btn.dataset.index);
-  const task = todayCard.tasks[index];
-
-  // Don't allow toggling an empty task slot
+  const task  = todayCard.tasks[index];
   if (!task.text.trim()) return;
 
-  // Flip the completed state
   task.completed = !task.completed;
-
-  // Animate the circle fill
   btn.classList.toggle('completed', task.completed);
-  const innerCircle = btn.querySelector('.circle-inner');
-  innerCircle.style.transform = task.completed ? 'scale(1)' : 'scale(0)';
+  btn.querySelector('.circle-inner').style.transform = task.completed ? 'scale(1)' : 'scale(0)';
 
-  // Strike through (or un-strike) the task text
   const input = document.querySelector(`.task-input[data-index="${index}"]`);
   if (input) input.classList.toggle('completed', task.completed);
 
-  // Save to database and refresh streak
   await saveToday();
   await updateStreak();
+  await renderContributionGrid();
 }
 
-// Called as you type in a task input (debounced so it doesn't save every keystroke)
 async function onTaskInput(e) {
   const index = parseInt(e.target.dataset.index);
   if (!todayCard) return;
@@ -259,7 +471,6 @@ async function onTaskInput(e) {
   await saveToday();
 }
 
-// Writes the current state of todayCard.tasks to the database
 async function saveToday() {
   if (!todayCard) return;
   const { error } = await db
@@ -271,7 +482,6 @@ async function saveToday() {
 
 /* ============================================================
    ROLLOVER MODAL
-   Shown when yesterday had incomplete tasks
    ============================================================ */
 
 function showRolloverModal(incompleteTasks) {
@@ -292,11 +502,11 @@ function showRolloverModal(incompleteTasks) {
 }
 
 /* ============================================================
-   BACKLOG ITEMS — Someday + Future
+   BACKLOG — Someday + Future
    ============================================================ */
 
 async function loadBacklogItems() {
-  const { data, error } = await db
+  const { data } = await db
     .from('backlog_items')
     .select('*')
     .eq('is_done', false)
@@ -333,13 +543,8 @@ function renderBacklog(type) {
     list.appendChild(row);
   });
 
-  list.querySelectorAll('.backlog-circle').forEach(btn => {
-    btn.addEventListener('click', onMarkBacklogDone);
-  });
-
-  list.querySelectorAll('.backlog-delete').forEach(btn => {
-    btn.addEventListener('click', onDeleteBacklogItem);
-  });
+  list.querySelectorAll('.backlog-circle').forEach(btn => btn.addEventListener('click', onMarkBacklogDone));
+  list.querySelectorAll('.backlog-delete').forEach(btn => btn.addEventListener('click', onDeleteBacklogItem));
 }
 
 async function addBacklogItem(type) {
@@ -366,30 +571,23 @@ async function addBacklogItem(type) {
 async function onMarkBacklogDone(e) {
   const id   = e.currentTarget.dataset.id;
   const type = e.currentTarget.dataset.type;
-
   await db.from('backlog_items').update({ is_done: true }).eq('id', id);
-
   if (type === 'someday') somedayItems = somedayItems.filter(i => i.id !== id);
   else futureItems = futureItems.filter(i => i.id !== id);
-
   renderBacklog(type);
 }
 
 async function onDeleteBacklogItem(e) {
   const id   = e.currentTarget.dataset.id;
   const type = e.currentTarget.dataset.type;
-
   await db.from('backlog_items').delete().eq('id', id);
-
   if (type === 'someday') somedayItems = somedayItems.filter(i => i.id !== id);
   else futureItems = futureItems.filter(i => i.id !== id);
-
   renderBacklog(type);
 }
 
 /* ============================================================
    ARCHIVE
-   Grid of past Today cards
    ============================================================ */
 
 async function loadArchive() {
@@ -411,13 +609,12 @@ async function loadArchive() {
   grid.innerHTML = '';
 
   data.forEach(card => {
-    const allTasks   = card.tasks || [];
-    const filled     = allTasks.filter(t => t.text);
-    const completed  = filled.filter(t => t.completed).length;
-    const total      = filled.length;
-    const pct        = total > 0 ? Math.round((completed / total) * 100) : 0;
+    const allTasks  = card.tasks || [];
+    const filled    = allTasks.filter(t => t.text);
+    const completed = filled.filter(t => t.completed).length;
+    const total     = filled.length;
+    const pct       = total > 0 ? Math.round((completed / total) * 100) : 0;
 
-    // Show up to 5 task previews on the mini card
     const preview = filled.slice(0, 5).map(t => `
       <div class="archive-task${t.completed ? ' done' : ''}">
         <span class="archive-dot${t.completed ? ' filled' : ''}"></span>
@@ -443,7 +640,6 @@ async function loadArchive() {
   });
 }
 
-// Opens a full-size read-only view of a past card in a modal
 function openArchiveCardModal(card) {
   const allTasks  = card.tasks || [];
   const filled    = allTasks.filter(t => t.text);
@@ -487,7 +683,6 @@ function openArchiveCardModal(card) {
 
 /* ============================================================
    STREAK COUNTER
-   Counts consecutive days where at least one task was written
    ============================================================ */
 
 async function updateStreak() {
@@ -500,19 +695,17 @@ async function updateStreak() {
   let streak = 0;
 
   if (data && data.length > 0) {
-    // Build a Set of dates that count as "active" (had at least one task written)
     const activeDates = new Set(
       data
         .filter(card => (card.tasks || []).some(t => t.text))
         .map(card => card.date)
     );
 
-    // Walk backwards from today, counting consecutive active days
     let checkDate = new Date();
     for (let i = 0; i < 90; i++) {
       const y   = checkDate.getFullYear();
-      const m   = String(checkDate.getMonth() + 1).padStart(2, '0');
-      const d   = String(checkDate.getDate()).padStart(2, '0');
+      const m   = String(checkDate.getMonth()+1).padStart(2,'0');
+      const d   = String(checkDate.getDate()).padStart(2,'0');
       const str = `${y}-${m}-${d}`;
 
       if (activeDates.has(str)) {
@@ -529,22 +722,17 @@ async function updateStreak() {
 
 /* ============================================================
    MIDNIGHT RELOAD
-   At midnight, page reloads so a fresh Today card is created
    ============================================================ */
 
 function scheduleMidnightReload() {
   const now      = new Date();
   const midnight = new Date();
-  midnight.setHours(24, 0, 10, 0); // 10 seconds after midnight
-  const msUntil  = midnight - now;
-
-  setTimeout(() => {
-    window.location.reload();
-  }, msUntil);
+  midnight.setHours(24, 0, 10, 0);
+  setTimeout(() => window.location.reload(), midnight - now);
 }
 
 /* ============================================================
-   LOADING SCREEN
+   LOADING
    ============================================================ */
 
 function hideLoading() {
@@ -555,57 +743,46 @@ function hideLoading() {
 
 /* ============================================================
    EVENT LISTENERS
-   All button clicks and interactions wired up here
    ============================================================ */
 
 function setupEventListeners() {
 
-  // --- Archive button (opens archive view) ---
   document.getElementById('archive-btn').addEventListener('click', () => {
     document.getElementById('main-view').classList.add('hidden');
     document.getElementById('archive-view').classList.remove('hidden');
     loadArchive();
   });
 
-  // --- Back button (returns from archive to main) ---
   document.getElementById('back-btn').addEventListener('click', () => {
     document.getElementById('archive-view').classList.add('hidden');
     document.getElementById('main-view').classList.remove('hidden');
   });
 
-  // --- Close archive card modal ---
   document.getElementById('modal-close').addEventListener('click', () => {
     document.getElementById('card-modal').classList.add('hidden');
   });
 
-  // --- Clicking the dark overlay behind a modal also closes it ---
   document.getElementById('card-modal').addEventListener('click', (e) => {
     if (e.target === document.getElementById('card-modal')) {
       document.getElementById('card-modal').classList.add('hidden');
     }
   });
 
-  // --- Someday and Future mini cards ---
   ['someday', 'future'].forEach(type => {
-
-    // Clicking the card header expands/collapses it
     document.getElementById(`${type}-header`).addEventListener('click', () => {
       document.getElementById(`${type}-card`).classList.toggle('expanded');
     });
 
-    // The + button adds a new item
     document.getElementById(`${type}-add-btn`).addEventListener('click', (e) => {
-      e.stopPropagation(); // Prevent the click from also toggling the card
+      e.stopPropagation();
       addBacklogItem(type);
     });
 
-    // Pressing Enter in the input also adds a new item
     document.getElementById(`${type}-input`).addEventListener('keydown', (e) => {
       if (e.key === 'Enter') addBacklogItem(type);
       e.stopPropagation();
     });
 
-    // Clicking the input shouldn't collapse the card
     document.getElementById(`${type}-input`).addEventListener('click', (e) => {
       e.stopPropagation();
     });
@@ -616,8 +793,6 @@ function setupEventListeners() {
    UTILITIES
    ============================================================ */
 
-// Safely converts text so it can be displayed inside HTML
-// without accidentally running as code
 function escHtml(str) {
   if (!str) return '';
   return str
@@ -628,8 +803,6 @@ function escHtml(str) {
     .replace(/'/g,  '&#039;');
 }
 
-// Delays a function call until typing has paused for `delay` milliseconds
-// This prevents saving to the database on every single keystroke
 function debounce(fn, delay) {
   let timer;
   return function (...args) {
@@ -639,7 +812,7 @@ function debounce(fn, delay) {
 }
 
 /* ============================================================
-   START THE APP
+   START
    ============================================================ */
 
 init();
