@@ -18,6 +18,7 @@
     { label: 'Card',      href: '/card'      },
     { label: 'Daily',     href: '/daily'     },
     { label: 'Bookmarks', href: '/bookmarks' },
+    { label: 'Notebook',  href: '/notebook'  },
   ];
 
   links.forEach(function (item, i) {
@@ -26,9 +27,9 @@
     var isLast   = i === links.length - 1;
 
     var borderRadius;
-    if (isFirst)      borderRadius = '20px 0 0 20px';
-    else if (isLast)  borderRadius = '0 20px 20px 0';
-    else              borderRadius = '0';
+    if (isFirst)     borderRadius = '20px 0 0 20px';
+    else if (isLast) borderRadius = '0 20px 20px 0';
+    else             borderRadius = '0';
 
     var a = document.createElement('a');
     a.href = item.href;
