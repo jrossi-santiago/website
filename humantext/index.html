@@ -4,59 +4,174 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Human Text</title>
-  <link href="https://fonts.googleapis.com/css2?family=Lustria&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Karla:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    body {
-      background: #111111;
-      color: #e8e8e8;
-      font-family: 'Lato', sans-serif;
-      font-size: 16px;
-      line-height: 1.6;
-      min-height: 100vh;
+    :root {
+      --bg:            #2B2D22;
+      --card:          #F5F2EB;
+      --card-alt:      #E8E4DA;
+      --text-dark:     #2A2825;
+      --text-mid:      #76706A;
+      --text-light:    #B3ADA5;
+      --circle-stroke: #C5BFB7;
+      --line-rule:     rgba(42, 40, 37, 0.07);
+      --shadow-card:   0 6px 32px rgba(0,0,0,0.28), 0 1px 6px rgba(0,0,0,0.14);
+      --radius-lg:     14px;
+      --radius-md:     10px;
+      --font-display:  'Cormorant Garamond', Georgia, serif;
+      --font-body:     'Karla', system-ui, sans-serif;
     }
 
-    .wrap {
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 0 32px 80px;
+    html, body { height: 100%; }
+
+    body {
+      min-height: 100vh;
+      background-color: var(--bg);
+      font-family: var(--font-body);
+      color: var(--text-dark);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Noise texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-size: 180px 180px;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.5;
+    }
+
+    /* ── PAGE ── */
+    #page {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 56px;
     }
 
     /* ── PAGE HEADER ── */
     .page-header {
-      padding: 48px 0 36px;
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
     }
 
-    .page-header h1 {
-      font-family: 'Lustria', serif;
-      font-size: 2rem;
-      font-weight: normal;
-      color: #e0e0e0;
-      letter-spacing: -0.5px;
+    .page-title {
+      font-family: var(--font-display);
+      font-size: 19px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.32);
+      letter-spacing: 0.03em;
     }
 
-    .page-header p {
-      margin-top: 6px;
-      color: #555555;
-      font-size: 0.88rem;
+    .page-subtitle {
+      font-family: var(--font-body);
+      font-size: 11px;
       font-weight: 300;
-      letter-spacing: 0.04em;
+      color: rgba(255,255,255,0.18);
+      letter-spacing: 0.1em;
     }
 
     /* ── CARD ── */
-    .card {
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
-      border-radius: 14px;
-      padding: 28px;
+    .panel-card {
+      width: 100%;
+      max-width: 680px;
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      position: relative;
+      overflow: hidden;
       margin-bottom: 16px;
+      animation: cardRise 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .panel-card:nth-child(2) { animation-delay: 0.05s; }
+    .panel-card:nth-child(3) { animation-delay: 0.10s; }
+
+    /* Subtle inner border — same as Daily */
+    .panel-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255,255,255,0.55);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .panel-card.alt { background: var(--card-alt); }
+
+    @keyframes cardRise {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── CARD TOP ── */
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 20px 22px 14px;
+      border-bottom: 1px solid var(--line-rule);
+    }
+
+    .card-label {
+      font-family: var(--font-display);
+      font-size: 23px;
+      font-weight: 500;
+      color: var(--text-dark);
+      letter-spacing: 0.01em;
+      line-height: 1;
+    }
+
+    .card-dots {
+      display: flex;
+      flex-direction: column;
+      gap: 3.5px;
+      margin-top: 2px;
+    }
+
+    .dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      border: 1px solid var(--circle-stroke);
+      display: block;
+    }
+
+    .dot-filled { background: var(--circle-stroke); border-color: var(--circle-stroke); }
+
+    /* ── CARD BODY ── */
+    .card-body { padding: 22px 22px 22px; }
+
+    /* ── EYEBROW LABEL ── */
+    .eyebrow {
+      font-family: var(--font-body);
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      display: block;
+      margin-bottom: 10px;
     }
 
     /* ── SLIDER ── */
-    .slider-section {
-      margin-bottom: 28px;
-    }
+    .slider-section { margin-bottom: 24px; }
 
     .slider-labels {
       display: flex;
@@ -65,32 +180,30 @@
     }
 
     .slider-labels span {
-      font-size: 0.75rem;
+      font-family: var(--font-body);
+      font-size: 10px;
       font-weight: 300;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: #444444;
+      color: var(--text-light);
       transition: color 0.2s;
     }
 
-    .slider-labels span.active {
-      color: #e0e0e0;
-    }
+    .slider-labels span.active { color: var(--text-dark); font-weight: 500; }
 
     .slider-track {
       position: relative;
-      height: 4px;
-      background: #2a2a2a;
+      height: 3px;
+      background: var(--circle-stroke);
       border-radius: 99px;
       cursor: pointer;
     }
 
     .slider-fill {
       position: absolute;
-      left: 0;
-      top: 0;
+      left: 0; top: 0;
       height: 100%;
-      background: #e0e0e0;
+      background: var(--text-dark);
       border-radius: 99px;
       transition: width 0.15s;
       pointer-events: none;
@@ -100,197 +213,234 @@
       position: absolute;
       top: 50%;
       transform: translate(-50%, -50%);
-      width: 20px;
-      height: 20px;
-      background: #e0e0e0;
+      width: 18px;
+      height: 18px;
+      background: var(--text-dark);
       border-radius: 50%;
       cursor: grab;
       transition: left 0.15s;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      box-shadow: 0 2px 8px rgba(42,40,37,0.25);
     }
 
     .slider-thumb:active { cursor: grabbing; }
 
     .mode-badge {
       display: inline-block;
-      margin-top: 14px;
-      padding: 4px 12px;
+      margin-top: 12px;
+      padding: 3px 11px;
       border-radius: 99px;
-      font-size: 0.7rem;
-      font-weight: 300;
+      font-family: var(--font-body);
+      font-size: 9px;
+      font-weight: 400;
       letter-spacing: 0.14em;
       text-transform: uppercase;
       transition: all 0.2s;
     }
 
-    .mode-badge.subtle { background: #222222; color: #555555; border: 1px solid #2a2a2a; }
-    .mode-badge.human  { background: #2a2200; color: #a88a00; border: 1px solid #3a3000; }
-    .mode-badge.ceo    { background: #e0e0e0; color: #111111; }
+    .mode-badge.subtle {
+      background: rgba(42,40,37,0.06);
+      color: var(--text-light);
+      border: 1px solid var(--circle-stroke);
+    }
 
-    /* ── LABEL ── */
-    label {
-      display: block;
-      font-size: 0.7rem;
-      font-weight: 300;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: #555555;
-      margin-bottom: 10px;
+    .mode-badge.human {
+      background: rgba(42,40,37,0.10);
+      color: var(--text-mid);
+      border: 1px solid var(--circle-stroke);
+    }
+
+    .mode-badge.ceo {
+      background: var(--text-dark);
+      color: var(--card);
+      border: 1px solid var(--text-dark);
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--line-rule);
+      margin: 20px 0;
     }
 
     /* ── TEXTAREA ── */
     textarea {
       width: 100%;
-      background: #111111;
-      border: 1px solid #2a2a2a;
-      border-radius: 10px;
-      color: #e0e0e0;
-      font-size: 0.92rem;
-      line-height: 1.7;
+      background: rgba(42,40,37,0.04);
+      border: 1px solid var(--circle-stroke);
+      border-radius: var(--radius-md);
+      color: var(--text-dark);
+      font-size: 14px;
+      line-height: 1.75;
       padding: 14px;
       resize: vertical;
       min-height: 160px;
-      font-family: 'Lato', sans-serif;
+      font-family: var(--font-body);
       font-weight: 300;
       transition: border-color 0.2s;
     }
 
     textarea:focus {
       outline: none;
-      border-color: #444444;
+      border-color: var(--text-mid);
     }
 
-    textarea::placeholder { color: #333333; }
+    textarea::placeholder {
+      color: var(--text-light);
+      font-style: italic;
+      font-size: 13px;
+    }
 
     /* ── BUTTON ── */
     .btn {
       width: 100%;
-      padding: 14px;
-      background: #e0e0e0;
-      color: #111111;
+      padding: 13px;
+      background: var(--text-dark);
+      color: var(--card);
       border: none;
-      border-radius: 10px;
-      font-size: 0.88rem;
+      border-radius: var(--radius-md);
+      font-size: 11px;
       font-weight: 400;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       cursor: pointer;
       margin-top: 14px;
-      font-family: 'Lato', sans-serif;
-      transition: background 0.2s, transform 0.1s;
+      font-family: var(--font-body);
+      transition: opacity 0.2s, transform 0.1s;
     }
 
-    .btn:hover { background: #ffffff; }
+    .btn:hover { opacity: 0.85; }
     .btn:active { transform: scale(0.99); }
-    .btn:disabled { background: #2a2a2a; color: #444444; cursor: not-allowed; transform: none; }
+
+    .btn:disabled {
+      background: var(--circle-stroke);
+      color: var(--text-light);
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ── ERROR ── */
+    .error-box {
+      background: rgba(160,80,60,0.08);
+      border: 1px solid rgba(160,80,60,0.2);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      color: rgba(140,60,40,0.9);
+      font-size: 12px;
+      font-weight: 300;
+      display: none;
+      margin-top: 12px;
+    }
 
     /* ── LOADING ── */
     .loading-wrap {
+      width: 100%;
+      max-width: 680px;
       text-align: center;
-      padding: 48px 0;
+      padding: 40px 0;
       display: none;
     }
 
     .spinner {
-      width: 28px;
-      height: 28px;
-      border: 2px solid #2a2a2a;
-      border-top-color: #e0e0e0;
+      width: 24px;
+      height: 24px;
+      border: 2px solid var(--circle-stroke);
+      border-top-color: var(--text-dark);
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
-      margin: 0 auto 14px;
+      margin: 0 auto 12px;
     }
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
     .loading-wrap p {
-      color: #444444;
-      font-size: 0.82rem;
+      color: rgba(255,255,255,0.25);
+      font-size: 11px;
       font-weight: 300;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
+      font-family: var(--font-body);
     }
 
     /* ── RESULTS ── */
-    .results { display: none; }
+    .results { display: none; width: 100%; max-width: 680px; }
 
     .result-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
-      gap: 8px;
+      margin-bottom: 14px;
     }
 
     .result-text {
-      background: #111111;
-      border: 1px solid #2a2a2a;
-      border-radius: 10px;
-      padding: 16px;
-      font-size: 0.92rem;
-      line-height: 1.75;
-      color: #e0e0e0;
-      font-weight: 300;
+      font-family: var(--font-display);
+      font-size: 16px;
+      line-height: 1.85;
+      color: var(--text-dark);
+      font-weight: 500;
       white-space: pre-wrap;
       word-break: break-word;
     }
 
     .highlight {
-      background: #3a3000;
-      color: #e0c040;
+      background: rgba(196,160,102,0.22);
+      color: #7A5C20;
       border-radius: 3px;
       padding: 1px 3px;
     }
 
     .highlight-ceo {
-      background: #2a1a00;
-      color: #e08030;
+      background: rgba(42,40,37,0.10);
+      color: var(--text-mid);
       border-radius: 3px;
       padding: 1px 3px;
     }
 
     .copy-btn {
-      background: #222222;
-      color: #555555;
-      border: 1px solid #2a2a2a;
+      background: transparent;
+      color: var(--text-light);
+      border: 1px solid var(--circle-stroke);
       border-radius: 8px;
-      padding: 6px 14px;
-      font-size: 0.7rem;
-      letter-spacing: 0.1em;
+      padding: 5px 13px;
+      font-size: 9px;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       cursor: pointer;
-      font-family: 'Lato', sans-serif;
-      font-weight: 300;
+      font-family: var(--font-body);
+      font-weight: 400;
       transition: all 0.2s;
     }
 
-    .copy-btn:hover { background: #2a2a2a; color: #e0e0e0; }
-    .copy-btn.copied { background: #1a2a1a; color: #50a050; border-color: #2a3a2a; }
+    .copy-btn:hover { color: var(--text-dark); border-color: var(--text-mid); }
+
+    .copy-btn.copied {
+      background: rgba(42,40,37,0.06);
+      color: var(--text-mid);
+      border-color: var(--circle-stroke);
+    }
 
     .iphone-footer {
-      font-size: 0.82rem;
-      color: #444444;
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: var(--text-light);
       margin-top: 10px;
       padding-top: 10px;
-      border-top: 1px solid #2a2a2a;
+      border-top: 1px solid var(--line-rule);
       display: none;
       font-weight: 300;
+      font-style: italic;
     }
 
     /* ── CHANGES LIST ── */
-    .changes-list {
-      list-style: none;
-      padding: 0;
-    }
+    .changes-list { list-style: none; padding: 0; }
 
     .changes-list li {
-      padding: 9px 0 9px 20px;
-      border-bottom: 1px solid #1e1e1e;
-      font-size: 0.85rem;
-      color: #555555;
+      padding: 9px 0 9px 18px;
+      border-bottom: 1px solid var(--line-rule);
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--text-mid);
       font-weight: 300;
-      line-height: 1.5;
+      line-height: 1.6;
       position: relative;
     }
 
@@ -300,63 +450,62 @@
       content: '→';
       position: absolute;
       left: 0;
-      color: #333333;
-    }
-
-    /* ── ERROR ── */
-    .error-box {
-      background: #1e0000;
-      border: 1px solid #3a1010;
-      border-radius: 10px;
-      padding: 12px 14px;
-      color: #c07070;
-      font-size: 0.85rem;
-      font-weight: 300;
-      display: none;
-      margin-top: 12px;
+      color: var(--text-light);
+      font-size: 11px;
     }
 
     /* ── RESET ── */
     .reset-btn {
       background: transparent;
-      border: 1px solid #2a2a2a;
-      color: #444444;
-      border-radius: 10px;
-      padding: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.22);
+      border-radius: var(--radius-md);
+      padding: 11px;
       width: 100%;
-      font-size: 0.75rem;
-      letter-spacing: 0.1em;
+      max-width: 680px;
+      font-size: 10px;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       cursor: pointer;
-      font-family: 'Lato', sans-serif;
+      font-family: var(--font-body);
       font-weight: 300;
       transition: all 0.2s;
-      margin-top: 10px;
+      margin-top: 6px;
     }
 
-    .reset-btn:hover { border-color: #444444; color: #e0e0e0; }
+    .reset-btn:hover { border-color: rgba(255,255,255,0.22); color: rgba(255,255,255,0.4); }
 
     @media (max-width: 480px) {
-      .wrap { padding: 0 20px 60px; }
-      .page-header h1 { font-size: 1.6rem; }
-      .card { padding: 20px; }
+      #page { padding: 16px 12px 48px; }
+      .card-label { font-size: 20px; }
     }
   </style>
 </head>
 <body>
 
-  <div id="site-header"></div>
-  <script src="/header.js"></script>
+<div id="site-header"></div>
+<script src="/header.js"></script>
 
-  <div class="wrap">
+<div id="page">
 
-    <div class="page-header">
-      <h1>Human Text</h1>
-      <p>Make AI emails sound real.</p>
+  <!-- PAGE HEADER -->
+  <header class="page-header">
+    <span class="page-title">Human Text</span>
+    <span class="page-subtitle">Make AI emails sound real.</span>
+  </header>
+
+  <!-- INPUT CARD -->
+  <div class="panel-card">
+    <div class="card-top">
+      <span class="card-label">Humanize</span>
+      <div class="card-dots">
+        <span class="dot"></span>
+        <span class="dot dot-filled"></span>
+        <span class="dot dot-filled"></span>
+      </div>
     </div>
 
-    <!-- Input card -->
-    <div class="card">
+    <div class="card-body">
 
       <!-- Slider -->
       <div class="slider-section">
@@ -369,46 +518,58 @@
           <div class="slider-fill" id="sliderFill"></div>
           <div class="slider-thumb" id="sliderThumb"></div>
         </div>
-        <div>
-          <span class="mode-badge human" id="modeBadge">Human</span>
-        </div>
+        <span class="mode-badge human" id="modeBadge">Human</span>
       </div>
 
-      <label>Your AI-written email</label>
-      <textarea id="inputText" placeholder="Paste your AI email here..."></textarea>
+      <hr class="divider" />
+
+      <span class="eyebrow">Your AI-written email</span>
+      <textarea id="inputText" placeholder="Paste your AI email here…"></textarea>
       <div class="error-box" id="errorBox"></div>
       <button class="btn" id="humanizeBtn" onclick="humanize()">Humanize it →</button>
 
     </div>
+  </div>
 
-    <!-- Loading -->
-    <div class="loading-wrap" id="loadingWrap">
-      <div class="spinner"></div>
-      <p id="loadingMsg">Making it sound human...</p>
-    </div>
+  <!-- LOADING -->
+  <div class="loading-wrap" id="loadingWrap">
+    <div class="spinner"></div>
+    <p id="loadingMsg">Making it sound human…</p>
+  </div>
 
-    <!-- Results -->
-    <div class="results" id="results">
+  <!-- RESULTS -->
+  <div class="results" id="results">
 
-      <div class="card">
-        <div class="result-header">
-          <label style="margin-bottom:0">Humanized</label>
-          <button class="copy-btn" id="copyBtn" onclick="copyText()">Copy</button>
-        </div>
+    <div class="panel-card alt">
+      <div class="card-top">
+        <span class="card-label">Rewritten</span>
+        <button class="copy-btn" id="copyBtn" onclick="copyText()">Copy</button>
+      </div>
+      <div class="card-body">
         <div class="result-text" id="rewrittenText"></div>
         <div class="iphone-footer" id="iphoneFooter">Sent from my iPhone</div>
       </div>
-
-      <div class="card">
-        <label>What changed</label>
-        <ul class="changes-list" id="changesList"></ul>
-      </div>
-
-      <button class="reset-btn" onclick="reset()">← Start over</button>
-
     </div>
 
+    <div class="panel-card">
+      <div class="card-top">
+        <span class="card-label">What changed</span>
+        <div class="card-dots">
+          <span class="dot dot-filled"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+      </div>
+      <div class="card-body">
+        <ul class="changes-list" id="changesList"></ul>
+      </div>
+    </div>
+
+    <button class="reset-btn" onclick="reset()">← Start over</button>
+
   </div>
+
+</div><!-- /page -->
 
 <script>
   // ── SLIDER ──────────────────────────────────────────
@@ -420,9 +581,9 @@
   let sliderValue = 0.5;
 
   const loadingMessages = {
-    subtle: 'Softening the edges...',
-    human:  'Making it sound human...',
-    ceo:    'Stripping it down to nothing...'
+    subtle: 'Softening the edges…',
+    human:  'Making it sound human…',
+    ceo:    'Stripping it down to nothing…'
   };
 
   function getMode(val) {
@@ -434,16 +595,12 @@
   function updateSlider(val) {
     sliderValue = Math.max(0, Math.min(1, val));
     const pct = sliderValue * 100;
-
     thumb.style.left = pct + '%';
     fill.style.width = pct + '%';
-
     const mode = getMode(sliderValue);
-
     ['subtle','human','ceo'].forEach(m => {
       document.getElementById('label-' + m).classList.toggle('active', m === mode);
     });
-
     badge.textContent = mode.charAt(0).toUpperCase() + mode.slice(1);
     badge.className = 'mode-badge ' + mode;
   }
@@ -451,25 +608,20 @@
   updateSlider(0.5);
 
   let dragging = false;
-
   thumb.addEventListener('mousedown', () => dragging = true);
   thumb.addEventListener('touchstart', () => dragging = true, { passive: true });
-
   document.addEventListener('mousemove', e => {
     if (!dragging) return;
     const rect = track.getBoundingClientRect();
     updateSlider((e.clientX - rect.left) / rect.width);
   });
-
   document.addEventListener('touchmove', e => {
     if (!dragging) return;
     const rect = track.getBoundingClientRect();
     updateSlider((e.touches[0].clientX - rect.left) / rect.width);
   }, { passive: true });
-
   document.addEventListener('mouseup',  () => dragging = false);
   document.addEventListener('touchend', () => dragging = false);
-
   track.addEventListener('click', e => {
     const rect = track.getBoundingClientRect();
     updateSlider((e.clientX - rect.left) / rect.width);
@@ -479,14 +631,12 @@
   function buildHighlightedHTML(original, rewritten, mode) {
     const origWords = original.trim().split(/\s+/);
     const newWords  = rewritten.trim().split(/\s+/);
-
     const m = origWords.length;
     const n = newWords.length;
     const cap = 300;
     const om = Math.min(m, cap);
     const nm = Math.min(n, cap);
     const dp = Array.from({length: om + 1}, () => new Array(nm + 1).fill(0));
-
     for (let i = 1; i <= om; i++) {
       for (let j = 1; j <= nm; j++) {
         if (origWords[i-1].toLowerCase().replace(/[^a-z0-9]/g,'') ===
@@ -497,40 +647,26 @@
         }
       }
     }
-
     const inLCS = new Array(Math.min(n, cap)).fill(false);
     let i = om, j = nm;
     while (i > 0 && j > 0) {
       const ow = origWords[i-1].toLowerCase().replace(/[^a-z0-9]/g,'');
       const nw = newWords[j-1].toLowerCase().replace(/[^a-z0-9]/g,'');
-      if (ow === nw) {
-        inLCS[j-1] = true;
-        i--; j--;
-      } else if (dp[i-1][j] > dp[i][j-1]) {
-        i--;
-      } else {
-        j--;
-      }
+      if (ow === nw) { inLCS[j-1] = true; i--; j--; }
+      else if (dp[i-1][j] > dp[i][j-1]) { i--; }
+      else { j--; }
     }
-
     const hlClass = mode === 'ceo' ? 'highlight-ceo' : 'highlight';
-
-    const htmlParts = newWords.map((word, idx) => {
+    return newWords.map((word, idx) => {
       const changed = idx < cap ? !inLCS[idx] : true;
-      if (changed) {
-        return `<span class="${hlClass}">${escapeHTML(word)}</span>`;
-      }
-      return escapeHTML(word);
-    });
-
-    return htmlParts.join(' ');
+      return changed
+        ? `<span class="${hlClass}">${escapeHTML(word)}</span>`
+        : escapeHTML(word);
+    }).join(' ');
   }
 
   function escapeHTML(str) {
-    return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
   // ── HUMANIZE ────────────────────────────────────────
@@ -557,9 +693,8 @@
     }
 
     lastOriginal = text;
-
     btn.disabled = true;
-    btn.textContent = 'Working...';
+    btn.textContent = 'Working…';
     document.getElementById('loadingMsg').textContent = loadingMessages[mode];
     document.getElementById('loadingWrap').style.display = 'block';
     document.getElementById('results').style.display = 'none';
@@ -614,7 +749,6 @@
     const full = footer.style.display !== 'none'
       ? text + '\n\nSent from my iPhone'
       : text;
-
     navigator.clipboard.writeText(full).then(() => {
       const btn = document.getElementById('copyBtn');
       btn.textContent = 'Copied!';
