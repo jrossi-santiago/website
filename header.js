@@ -15,12 +15,20 @@
   ].join(';');
 
   var links = [
-    { label: 'Card',  href: '/card'  },
-    { label: 'Daily', href: '/daily' },
+    { label: 'Card',      href: '/card'      },
+    { label: 'Daily',     href: '/daily'     },
+    { label: 'Bookmarks', href: '/bookmarks' },
   ];
 
   links.forEach(function (item, i) {
     var isActive = currentPath === item.href || currentPath === item.href + '/';
+    var isFirst  = i === 0;
+    var isLast   = i === links.length - 1;
+
+    var borderRadius;
+    if (isFirst)      borderRadius = '20px 0 0 20px';
+    else if (isLast)  borderRadius = '0 20px 20px 0';
+    else              borderRadius = '0';
 
     var a = document.createElement('a');
     a.href = item.href;
@@ -36,8 +44,9 @@
       'color: ' + (isActive ? 'rgba(245,242,235,0.75)' : 'rgba(245,242,235,0.28)'),
       'padding: 6px 16px',
       'border: 1px solid ' + (isActive ? 'rgba(245,242,235,0.18)' : 'rgba(245,242,235,0.07)'),
-      'border-radius: ' + (i === 0 ? '20px 0 0 20px' : '0 20px 20px 0'),
+      'border-radius: ' + borderRadius,
       'background: ' + (isActive ? 'rgba(245,242,235,0.06)' : 'transparent'),
+      'margin-right: -1px',
       'transition: color 0.2s, border-color 0.2s, background 0.2s',
       'cursor: pointer',
       '-webkit-font-smoothing: antialiased',
