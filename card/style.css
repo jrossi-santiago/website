@@ -29,7 +29,6 @@
   --font-display:  'Cormorant Garamond', Georgia, serif;
   --font-body:     'Karla', system-ui, sans-serif;
 
-  /* Contribution dot colors */
   --contrib-empty:   rgba(245, 242, 235, 0.06);
   --contrib-missed:  rgba(160, 80, 60, 0.22);
   --contrib-s1:      rgba(210, 185, 150, 0.35);
@@ -40,9 +39,7 @@
   --contrib-future:  rgba(245, 242, 235, 0.04);
 }
 
-html, body {
-  height: 100%;
-}
+html, body { height: 100%; }
 
 body {
   min-height: 100vh;
@@ -148,16 +145,18 @@ body::before {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 0;
 }
 
 /* ============================================================
-   SIDEBAR CARDS
+   SIDEBARS
    ============================================================ */
 
 .sidebar {
   position: sticky;
   top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .sidebar-card-inner {
@@ -165,13 +164,8 @@ body::before {
   padding: 0;
 }
 
-.business-card-bg {
-  background: var(--card-business);
-}
-
-.wb-card-bg {
-  background: var(--card-wb);
-}
+.business-card-bg { background: var(--card-business); }
+.wb-card-bg       { background: var(--card-wb); }
 
 .sidebar-card-header {
   padding: 16px 18px 12px;
@@ -220,9 +214,7 @@ body::before {
   border-bottom: 1px solid var(--line-rule);
 }
 
-.sidebar-task-row:last-child {
-  border-bottom: none;
-}
+.sidebar-task-row:last-child { border-bottom: none; }
 
 .sidebar-circle-btn {
   width: 18px;
@@ -242,24 +234,16 @@ body::before {
   flex-shrink: 0;
 }
 
-.sidebar-circle-btn svg {
-  width: 14px;
-  height: 14px;
-}
-
-.sidebar-circle-btn.checked {
-  color: var(--text-dark);
-}
-
-.sidebar-circle-btn.checked .sidebar-circle-inner {
-  transform: scale(1);
-}
+.sidebar-circle-btn svg { width: 14px; height: 14px; }
+.sidebar-circle-btn.checked { color: var(--text-dark); }
 
 .sidebar-circle-inner {
   transform-origin: center;
   transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   transform: scale(0);
 }
+
+.sidebar-circle-btn.checked .sidebar-circle-inner { transform: scale(1); }
 
 .sidebar-task-text {
   font-family: var(--font-body);
@@ -290,7 +274,6 @@ body::before {
   border-color: var(--text-mid);
 }
 
-/* Weekend rest message */
 .sidebar-rest {
   padding: 18px 18px 20px;
   text-align: center;
@@ -374,9 +357,7 @@ body::before {
   gap: 3.5px;
 }
 
-.card-dots-sm {
-  gap: 2.5px;
-}
+.card-dots-sm { gap: 2.5px; }
 
 .dot {
   width: 5px;
@@ -407,9 +388,7 @@ body::before {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.task-list {
-  padding: 4px 0 6px;
-}
+.task-list { padding: 4px 0 6px; }
 
 .task-row {
   display: flex;
@@ -421,13 +400,8 @@ body::before {
   transition: background 0.15s;
 }
 
-.task-row:last-child {
-  border-bottom: none;
-}
-
-.task-row:focus-within {
-  background: rgba(42, 40, 37, 0.025);
-}
+.task-row:last-child { border-bottom: none; }
+.task-row:focus-within { background: rgba(42, 40, 37, 0.025); }
 
 .task-circle {
   width: 24px;
@@ -447,11 +421,7 @@ body::before {
 
 .task-circle:hover { color: var(--text-mid); }
 .task-circle.completed { color: var(--text-dark); }
-
-.task-circle svg {
-  width: 20px;
-  height: 20px;
-}
+.task-circle svg { width: 20px; height: 20px; }
 
 .circle-inner {
   transform-origin: 10px 10px;
@@ -475,15 +445,8 @@ body::before {
   transition: color 0.18s;
 }
 
-.task-input::placeholder {
-  color: var(--text-light);
-  font-style: italic;
-}
-
-.task-input.completed {
-  text-decoration: line-through;
-  color: var(--text-light);
-}
+.task-input::placeholder { color: var(--text-light); font-style: italic; }
+.task-input.completed { text-decoration: line-through; color: var(--text-light); }
 
 /* ============================================================
    MINI CARDS
@@ -619,10 +582,7 @@ body::before {
   caret-color: var(--text-dark);
 }
 
-.backlog-input::placeholder {
-  color: var(--text-light);
-  font-style: italic;
-}
+.backlog-input::placeholder { color: var(--text-light); font-style: italic; }
 
 .add-btn {
   background: none;
@@ -645,13 +605,15 @@ body::before {
 .add-btn:hover { color: var(--text-dark); }
 
 /* ============================================================
-   CONTRIBUTION GRID
+   CONTRIBUTION GRID — sits inside right sidebar
    ============================================================ */
 
 .contribution-section {
   width: 100%;
-  margin-top: 4px;
-  animation: cardRise 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.14s both;
+  padding: 14px 12px 16px;
+  background: rgba(255,255,255,0.03);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255,255,255,0.06);
 }
 
 .contrib-header {
@@ -659,12 +621,11 @@ body::before {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
-  padding: 0 2px;
 }
 
 .contrib-title {
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 400;
   color: rgba(255,255,255,0.28);
   letter-spacing: 0.08em;
@@ -674,19 +635,18 @@ body::before {
 .contrib-legend {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
 }
 
 .contrib-legend-label {
   font-family: var(--font-body);
-  font-size: 10px;
+  font-size: 9px;
   color: rgba(255,255,255,0.2);
-  letter-spacing: 0.04em;
 }
 
 .contrib-dot {
-  width: 9px;
-  height: 9px;
+  width: 7px;
+  height: 7px;
   border-radius: 2px;
 }
 
@@ -698,61 +658,56 @@ body::before {
 
 .contrib-wrapper {
   display: flex;
-  gap: 6px;
+  gap: 5px;
   align-items: flex-start;
+  overflow-x: auto;
+  padding-bottom: 2px;
 }
 
 .contrib-day-labels {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  padding-top: 0;
+  gap: 2px;
+  flex-shrink: 0;
 }
 
 .contrib-day-labels span {
   font-family: var(--font-body);
-  font-size: 9px;
+  font-size: 8px;
   color: rgba(255,255,255,0.2);
-  height: 11px;
+  height: 10px;
   display: flex;
   align-items: center;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
 }
 
-/* The grid itself is columns of 7 dots (Mon–Sun) */
 .contribution-grid {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  gap: 3px;
-  overflow-x: auto;
-  padding-bottom: 4px;
+  gap: 2px;
 }
 
-/* Each week is a column */
 .contrib-week {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
   flex-shrink: 0;
 }
 
-/* Each day dot */
 .contrib-cell {
-  width: 11px;
-  height: 11px;
+  width: 10px;
+  height: 10px;
   border-radius: 2px;
   background: var(--contrib-empty);
   border: 1px solid rgba(255,255,255,0.05);
   transition: transform 0.15s;
   cursor: default;
   position: relative;
+  flex-shrink: 0;
 }
 
-.contrib-cell:hover {
-  transform: scale(1.4);
-  z-index: 10;
-}
+.contrib-cell:hover { transform: scale(1.5); z-index: 10; }
 
 .contrib-cell[data-score="missed"]  { background: var(--contrib-missed);  border-color: transparent; }
 .contrib-cell[data-score="s1"]      { background: var(--contrib-s1);      border-color: transparent; }
@@ -800,7 +755,6 @@ body::before {
   font-size: 26px;
   font-weight: 500;
   color: rgba(255,255,255,0.55);
-  letter-spacing: 0.01em;
 }
 
 .archive-grid {
@@ -861,7 +815,6 @@ body::before {
   font-family: var(--font-body);
   font-size: 10px;
   color: var(--text-mid);
-  letter-spacing: 0.04em;
   margin-bottom: 6px;
 }
 
@@ -879,7 +832,6 @@ body::before {
 }
 
 .archive-task.done { color: var(--text-light); }
-
 .archive-task-text { word-break: break-word; min-width: 0; }
 
 .archive-dot {
@@ -907,7 +859,6 @@ body::before {
   font-style: italic;
 }
 
-/* Full archive modal card */
 .archive-full-card {
   background: var(--card-today);
   border-radius: var(--radius-lg);
@@ -985,7 +936,6 @@ body::before {
   font-family: var(--font-body);
   font-size: 12px;
   color: var(--text-mid);
-  letter-spacing: 0.03em;
 }
 
 /* ============================================================
@@ -1079,11 +1029,7 @@ body::before {
 
 .rollover-body strong { color: var(--text-dark); font-weight: 500; }
 
-.rollover-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-}
+.rollover-actions { display: flex; gap: 10px; justify-content: flex-end; }
 
 .btn-primary {
   background: var(--text-dark);
@@ -1175,7 +1121,7 @@ body::before {
 ::-webkit-scrollbar-thumb { background: rgba(42,40,37,0.18); border-radius: 4px; }
 
 /* ============================================================
-   RESPONSIVE — MOBILE (hide sidebars into column stack)
+   RESPONSIVE — MOBILE
    ============================================================ */
 
 @media (max-width: 860px) {
@@ -1184,7 +1130,6 @@ body::before {
     gap: 16px;
   }
 
-  /* On mobile: business sidebar goes below center, wb goes after that */
   .sidebar-left  { order: 2; }
   #center-column { order: 1; }
   .sidebar-right { order: 3; }
@@ -1194,18 +1139,12 @@ body::before {
     width: 100%;
   }
 
-  .sidebar-card-inner {
-    width: 100%;
-  }
-
-  .archive-grid {
-    grid-template-columns: 1fr 1fr;
-  }
+  .archive-grid { grid-template-columns: 1fr 1fr; }
 }
 
 @media (max-width: 380px) {
-  .mini-cards-row    { grid-template-columns: 1fr; }
-  .archive-grid      { grid-template-columns: 1fr; }
-  .card-label        { font-size: 20px; }
-  .task-input        { font-size: 14px; }
+  .mini-cards-row  { grid-template-columns: 1fr; }
+  .archive-grid    { grid-template-columns: 1fr; }
+  .card-label      { font-size: 20px; }
+  .task-input      { font-size: 14px; }
 }
