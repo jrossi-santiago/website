@@ -32,24 +32,50 @@
       'text-decoration: none',
     ].join(';');
 
+  var circle = document.createElement('div');
+    circle.style.cssText = [
+      'width: 40px',
+      'height: 40px',
+      'border-radius: 50%',
+      'border: 1px solid rgba(245,242,235,0.15)',
+      'background: rgba(245,242,235,0.06)',
+      'display: flex',
+      'align-items: center',
+      'justify-content: center',
+      'overflow: hidden',
+      'transition: border-color 0.2s, background 0.2s',
+      'flex-shrink: 0',
+    ].join(';');
+
     var img = document.createElement('img');
     img.src = '/sketch.png';
     img.alt = '';
-    img.width  = 28;
-    img.height = 28;
+    img.width  = 36;
+    img.height = 36;
     img.style.cssText = [
-      'width: 28px',
-      'height: 28px',
+      'width: 36px',
+      'height: 36px',
       'object-fit: contain',
       'filter: invert(1)',
       'mix-blend-mode: screen',
-      'opacity: 0.55',
+      'opacity: 0.65',
       'transition: opacity 0.2s',
       'display: block',
     ].join(';');
 
-    a.addEventListener('mouseenter', function () { img.style.opacity = '0.85'; });
-    a.addEventListener('mouseleave', function () { img.style.opacity = '0.55'; });
+    circle.appendChild(img);
+    a.appendChild(circle);
+
+    a.addEventListener('mouseenter', function () {
+      img.style.opacity = '0.9';
+      circle.style.borderColor = 'rgba(245,242,235,0.3)';
+      circle.style.background  = 'rgba(245,242,235,0.1)';
+    });
+    a.addEventListener('mouseleave', function () {
+      img.style.opacity = '0.65';
+      circle.style.borderColor = 'rgba(245,242,235,0.15)';
+      circle.style.background  = 'rgba(245,242,235,0.06)';
+    });
 
     a.appendChild(img);
     return a;
