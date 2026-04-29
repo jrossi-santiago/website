@@ -17,10 +17,7 @@
   document.head.appendChild(style);
 
 
-  // ── Shared logo builder ──
-  // The sketch.png has a white background, so we invert it to get a
-  // white figure, then use mix-blend-mode: screen to make the white
-  // background disappear into the dark page background
+  // ── Logo builder ──
   function buildLogo() {
     var a = document.createElement('a');
     a.href = '/';
@@ -32,7 +29,7 @@
       'text-decoration: none',
     ].join(';');
 
-  var circle = document.createElement('div');
+    var circle = document.createElement('div');
     circle.style.cssText = [
       'width: 40px',
       'height: 40px',
@@ -43,8 +40,8 @@
       'align-items: center',
       'justify-content: center',
       'overflow: hidden',
-      'transition: border-color 0.2s, background 0.2s',
       'flex-shrink: 0',
+      'transition: border-color 0.2s, background 0.2s',
     ].join(';');
 
     var img = document.createElement('img');
@@ -67,17 +64,16 @@
     a.appendChild(circle);
 
     a.addEventListener('mouseenter', function () {
-      img.style.opacity = '0.9';
+      img.style.opacity        = '0.9';
       circle.style.borderColor = 'rgba(245,242,235,0.3)';
       circle.style.background  = 'rgba(245,242,235,0.1)';
     });
     a.addEventListener('mouseleave', function () {
-      img.style.opacity = '0.65';
+      img.style.opacity        = '0.65';
       circle.style.borderColor = 'rgba(245,242,235,0.15)';
       circle.style.background  = 'rgba(245,242,235,0.06)';
     });
 
-    a.appendChild(img);
     return a;
   }
 
@@ -86,8 +82,6 @@
   // DESKTOP NAV — logo left, pills centered
   // ══════════════════════════════════════════
   function buildDesktopNav() {
-    // Outer wrapper is position:relative so we can absolutely-center the pills
-    // while the logo sits naturally on the left
     var wrapper = document.createElement('div');
     wrapper.id = 'site-nav-desktop';
     wrapper.style.cssText = [
@@ -99,11 +93,8 @@
       'padding: 18px 24px 0',
     ].join(';');
 
-    // Logo on the left
     wrapper.appendChild(buildLogo());
 
-    // Pills absolutely centered in the wrapper so they sit in the
-    // true middle of the screen regardless of logo width
     var nav = document.createElement('nav');
     nav.setAttribute('aria-label', 'Site navigation');
     nav.style.cssText = [
@@ -183,7 +174,6 @@
       'padding: 14px 20px 0',
     ].join(';');
 
-    // Logo on the left
     wrapper.appendChild(buildLogo());
 
     // ── Hamburger button ──
