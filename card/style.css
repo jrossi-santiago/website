@@ -30,12 +30,12 @@
   --font-body:     'Karla', system-ui, sans-serif;
 
   --contrib-empty:   rgba(245, 242, 235, 0.06);
-  --contrib-missed:  rgba(160, 80, 60, 0.22);
-  --contrib-s1:      rgba(210, 185, 150, 0.35);
-  --contrib-s2:      rgba(196, 160, 102, 0.55);
-  --contrib-s3:      rgba(175, 130, 70, 0.72);
-  --contrib-s4:      rgba(148, 100, 42, 0.88);
-  --contrib-s5:      rgba(110, 72, 20, 1);
+  --contrib-missed:  rgba(155, 40, 22, 0.88);
+  --contrib-s1:      rgba(232, 212, 178, 0.58);
+  --contrib-s2:      rgba(218, 192, 146, 0.74);
+  --contrib-s3:      rgba(200, 166, 106, 0.87);
+  --contrib-s4:      rgba(178, 136, 66, 0.96);
+  --contrib-s5:      rgba(148, 104, 36, 1);
   --contrib-future:  rgba(245, 242, 235, 0.04);
 }
 
