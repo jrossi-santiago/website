@@ -88,9 +88,7 @@
 
     @media (max-width: 480px) {
       #page {
-        padding: 32px 24px 64px;
-        align-items: flex-start;
-        padding-top: 56px;
+        padding: 24px 24px 64px;
       }
 
       .statement-line {
@@ -104,6 +102,9 @@
 
   <div id="site-header"></div>
 
+  <!-- Script moved here, right after site-header, matching every other page -->
+  <script src="/header.js"></script>
+
   <main id="page">
     <div class="statement">
       <span class="statement-line">Don't give up &amp; work really hard.</span>
@@ -111,8 +112,6 @@
       <span class="statement-line">Make it fun.</span>
     </div>
   </main>
-
-  <script src="/header.js"></script>
 
 </body>
 </html>
