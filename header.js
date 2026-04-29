@@ -10,9 +10,6 @@
     { label: 'Human Text', href: '/humantext'  },
   ];
 
-  // Inject a <style> tag to handle the mobile/desktop switch via CSS.
-  // This is cleaner than JavaScript resize listeners — the browser
-  // handles it automatically as the screen size changes.
   var style = document.createElement('style');
   style.textContent =
     '@media (min-width: 640px) { #site-nav-mobile  { display: none !important; } }' +
@@ -20,21 +17,75 @@
   document.head.appendChild(style);
 
 
+  // ── Shared logo builder ──
+  // The sketch.png has a white background, so we invert it to get a
+  // white figure, then use mix-blend-mode: screen to make the white
+  // background disappear into the dark page background
+  function buildLogo() {
+    var a = document.createElement('a');
+    a.href = '/';
+    a.setAttribute('aria-label', 'Home');
+    a.style.cssText = [
+      'display: flex',
+      'align-items: center',
+      'flex-shrink: 0',
+      'text-decoration: none',
+    ].join(';');
+
+    var img = document.createElement('img');
+    img.src = '/sketch.png';
+    img.alt = '';
+    img.width  = 28;
+    img.height = 28;
+    img.style.cssText = [
+      'width: 28px',
+      'height: 28px',
+      'object-fit: contain',
+      'filter: invert(1)',
+      'mix-blend-mode: screen',
+      'opacity: 0.55',
+      'transition: opacity 0.2s',
+      'display: block',
+    ].join(';');
+
+    a.addEventListener('mouseenter', function () { img.style.opacity = '0.85'; });
+    a.addEventListener('mouseleave', function () { img.style.opacity = '0.55'; });
+
+    a.appendChild(img);
+    return a;
+  }
+
+
   // ══════════════════════════════════════════
-  // DESKTOP NAV — unchanged pill style
+  // DESKTOP NAV — logo left, pills centered
   // ══════════════════════════════════════════
   function buildDesktopNav() {
-    var nav = document.createElement('nav');
-    nav.id = 'site-nav-desktop';
-    nav.setAttribute('aria-label', 'Site navigation');
-    nav.style.cssText = [
+    // Outer wrapper is position:relative so we can absolutely-center the pills
+    // while the logo sits naturally on the left
+    var wrapper = document.createElement('div');
+    wrapper.id = 'site-nav-desktop';
+    wrapper.style.cssText = [
       'position: relative',
       'z-index: 10',
       'width: 100%',
       'display: flex',
-      'justify-content: center',
-      'gap: 0',
+      'align-items: center',
       'padding: 18px 24px 0',
+    ].join(';');
+
+    // Logo on the left
+    wrapper.appendChild(buildLogo());
+
+    // Pills absolutely centered in the wrapper so they sit in the
+    // true middle of the screen regardless of logo width
+    var nav = document.createElement('nav');
+    nav.setAttribute('aria-label', 'Site navigation');
+    nav.style.cssText = [
+      'position: absolute',
+      'left: 50%',
+      'transform: translateX(-50%)',
+      'display: flex',
+      'gap: 0',
       'font-family: "Karla", system-ui, sans-serif',
     ].join(';');
 
@@ -85,16 +136,15 @@
       nav.appendChild(a);
     });
 
-    return nav;
+    wrapper.appendChild(nav);
+    return wrapper;
   }
 
 
   // ══════════════════════════════════════════
-  // MOBILE NAV — hamburger + dropdown
+  // MOBILE NAV — logo left, hamburger right
   // ══════════════════════════════════════════
   function buildMobileNav() {
-
-    // Full-width wrapper, flexbox so the button sits top-right
     var wrapper = document.createElement('div');
     wrapper.id = 'site-nav-mobile';
     wrapper.style.cssText = [
@@ -102,9 +152,13 @@
       'z-index: 100',
       'width: 100%',
       'display: flex',
-      'justify-content: flex-end',
+      'justify-content: space-between',
+      'align-items: center',
       'padding: 14px 20px 0',
     ].join(';');
+
+    // Logo on the left
+    wrapper.appendChild(buildLogo());
 
     // ── Hamburger button ──
     var btn = document.createElement('button');
@@ -127,7 +181,6 @@
       'transition: border-color 0.2s',
     ].join(';');
 
-    // The three lines of the hamburger icon
     function makeLine() {
       var line = document.createElement('span');
       line.style.cssText = [
@@ -169,7 +222,6 @@
       'transition: opacity 0.2s cubic-bezier(0.22,1,0.36,1), transform 0.2s cubic-bezier(0.22,1,0.36,1)',
     ].join(';');
 
-    // Add each nav link to the dropdown
     links.forEach(function (item) {
       var isActive = currentPath === item.href || currentPath === item.href + '/';
 
@@ -194,9 +246,7 @@
         'cursor: pointer',
       ].join(';');
 
-      // This empty touchstart listener makes iOS respect hover/active styles
       a.addEventListener('touchstart', function () {}, { passive: true });
-
       a.addEventListener('mouseenter', function () {
         if (!isActive) {
           a.style.color      = 'rgba(245,242,235,0.7)';
@@ -213,7 +263,7 @@
       dropdown.appendChild(a);
     });
 
-    // ── Open / close logic ──
+    // ── Open / close ──
     var isOpen = false;
 
     function openMenu() {
@@ -224,7 +274,6 @@
       dropdown.style.transform     = 'translateY(0) scale(1)';
       dropdown.style.pointerEvents = 'auto';
       btn.style.borderColor        = 'rgba(245,242,235,0.28)';
-      // Animate the three lines into an X
       line1.style.transform = 'translateY(6px) rotate(45deg)';
       line2.style.opacity   = '0';
       line3.style.transform = 'translateY(-6px) rotate(-45deg)';
@@ -238,7 +287,6 @@
       dropdown.style.transform     = 'translateY(-8px) scale(0.97)';
       dropdown.style.pointerEvents = 'none';
       btn.style.borderColor        = 'rgba(245,242,235,0.12)';
-      // Return lines to hamburger
       line1.style.transform = 'none';
       line2.style.opacity   = '1';
       line3.style.transform = 'none';
@@ -249,12 +297,10 @@
       if (isOpen) closeMenu(); else openMenu();
     });
 
-    // Clicking anywhere outside the menu closes it
     document.addEventListener('click', function () {
       if (isOpen) closeMenu();
     });
 
-    // Clicking inside the dropdown doesn't close it
     dropdown.addEventListener('click', function (e) {
       e.stopPropagation();
     });
@@ -266,7 +312,7 @@
 
 
   // ══════════════════════════════════════════
-  // MOUNT — add both navs, CSS handles which shows
+  // MOUNT
   // ══════════════════════════════════════════
   var target     = document.getElementById('site-header');
   var mobileNav  = buildMobileNav();
