@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Journal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Karla:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #2B2D22;
+      --card:         #F5F2EB;
+      --card-footer:  #EDE8DF;
+      --text-dark:    #2A2825;
+      --text-mid:     #76706A;
+      --text-light:   #B3ADA5;
+      --stroke:       #C5BFB7;
+      --line-rule:    rgba(42, 40, 37, 0.07);
+      --shadow:       0 6px 32px rgba(0,0,0,0.28), 0 1px 6px rgba(0,0,0,0.14);
+      --radius-lg:    14px;
+      --radius-md:    10px;
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body:    'Karla', system-ui, sans-serif;
+    }
+
+    html, body { height: 100%; }
+
+    body {
+      min-height: 100vh;
+      background-color: var(--bg);
+      font-family: var(--font-body);
+      color: var(--text-dark);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Same noise texture as the rest of your site */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-size: 180px 180px;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.5;
+    }
+
+    #site-header {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+    }
+
+    #page {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 80px;
+    }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 24px;
+    }
+
+    .page-title {
+      font-family: var(--font-display);
+      font-size: clamp(22px, 3vw, 32px);
+      font-weight: 500;
+      color: rgba(245, 242, 235, 0.55);
+      letter-spacing: 0.01em;
+      line-height: 1;
+    }
+
+    .page-slogan {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 300;
+      color: rgba(245, 242, 235, 0.2);
+      font-style: italic;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── JOURNAL CARD ── */
+    .journal-card {
+      width: 100%;
+      max-width: 680px;
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      animation: cardRise 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    /* Subtle inner border glow — matches your other cards */
+    .journal-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    @keyframes cardRise {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── CARD TOP — shows live date + time ── */
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 22px 26px 18px;
+      border-bottom: 1px solid var(--line-rule);
+    }
+
+    .card-date {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--text-dark);
+      letter-spacing: 0.01em;
+      line-height: 1;
+    }
+
+    .card-time {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 300;
+      color: var(--text-light);
+      font-style: italic;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── TOOLBAR — Bold + Italic only ── */
+    .toolbar {
+      display: flex;
+      gap: 4px;
+      padding: 16px 26px 0;
+    }
+
+    .toolbar-btn {
+      background: transparent;
+      border: 1px solid var(--stroke);
+      color: var(--text-light);
+      font-family: var(--font-body);
+      font-size: 12px;
+      width: 30px;
+      height: 28px;
+      border-radius: 5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+      touch-action: manipulation;
+    }
+
+    .toolbar-btn:hover {
+      border-color: var(--text-mid);
+      color: var(--text-dark);
+      background: rgba(42, 40, 37, 0.05);
+    }
+
+    /* ── WRITING AREA ── */
+    .card-body {
+      padding: 16px 26px 20px;
+      flex: 1;
+    }
+
+    .editor {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-dark);
+      font-family: var(--font-body);
+      font-weight: 300;
+      font-size: 15px;
+      line-height: 1.95;
+      min-height: 340px;
+      caret-color: var(--text-dark);
+    }
+
+    .editor:empty::before {
+      content: attr(data-placeholder);
+      color: var(--text-light);
+      font-style: italic;
+      pointer-events: none;
+    }
+
+    .editor b, .editor strong { font-weight: 700; }
+    .editor i, .editor em     { font-style: italic; }
+
+    /* ── CARD FOOTER ── */
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 26px 20px;
+      border-top: 1px solid var(--line-rule);
+      background: var(--card-footer);
+    }
+
+    .char-count {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 300;
+      color: var(--text-light);
+      font-style: italic;
+      min-height: 14px; /* prevents layout shift when empty */
+    }
+
+    .save-btn {
+      font-family: var(--font-body);
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-size: 11px;
+      background: var(--text-dark);
+      color: var(--card);
+      border: 1px solid var(--text-dark);
+      border-radius: var(--radius-md);
+      padding: 10px 28px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      touch-action: manipulation;
+    }
+
+    .save-btn:hover    { opacity: 0.8; }
+    .save-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    /* ── STATUS TOAST ── */
+    .status-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: #E8E4DA;
+      border-top: 1px solid var(--stroke);
+      padding: 14px 24px;
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text-mid);
+      text-align: center;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+      z-index: 200;
+    }
+
+    .status-bar.show    { transform: translateY(0); }
+    .status-bar.success { color: var(--text-dark); }
+    .status-bar.error   { color: var(--text-mid); }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(42,40,37,0.18); border-radius: 4px; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 480px) {
+      #page        { padding: 16px 12px 72px; }
+      .card-top    { padding: 18px 20px 14px; }
+      .card-date   { font-size: 18px; }
+      .toolbar     { padding: 14px 20px 0; }
+      .card-body   { padding: 14px 20px 16px; }
+      .card-footer { padding: 12px 20px 16px; }
+      .editor      { font-size: 15px; min-height: 280px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="site-header"></div>
+<script src="/header.js"></script>
+
+<div id="page">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Journal</h1>
+      <p class="page-slogan">Write it down. Every day.</p>
+    </div>
+  </div>
+
+  <div class="journal-card">
+
+    <!-- Live date and time at the top of the card -->
+    <div class="card-top">
+      <span class="card-date" id="card-date"></span>
+      <span class="card-time" id="card-time"></span>
+    </div>
+
+    <!-- Bold and Italic formatting buttons -->
+    <div class="toolbar">
+      <button class="toolbar-btn" title="Bold"   onclick="fmt('bold')"><b>B</b></button>
+      <button class="toolbar-btn" title="Italic" onclick="fmt('italic')"><i>I</i></button>
+    </div>
+
+    <!-- The writing area -->
+    <div class="card-body">
+      <div
+        class="editor"
+        id="entry-body"
+        contenteditable="true"
+        data-placeholder="What's on your mind today..."
+      ></div>
+    </div>
+
+    <!-- Character count + save button -->
+    <div class="card-footer">
+      <span class="char-count" id="char-count"></span>
+      <button class="save-btn" id="save-btn" onclick="handleSubmit()">Save to Journal</button>
+    </div>
+
+  </div>
+</div>
+
+<div class="status-bar" id="status-bar"></div>
+
+<!-- Google sign-in libraries -->
+<script src="https://apis.google.com/js/api.js"></script>
+<script src="https://accounts.google.com/gsi/client"></script>
+
+<script>
+  // ═══════════════════════════════════════════════
+  // STEP 1 — Paste your Google Client ID below
+  // (same one you use in your Notebook page)
+  var CLIENT_ID = '1014290983612-sg3a714jt49n6k8i77thbk3q065016dp.apps.googleusercontent.com';
+
+  // STEP 2 — Paste your Google Doc ID below
+  // Get it from the URL of your Google Doc:
+  // docs.google.com/document/d/THIS_PART_HERE/edit
+  var DOC_ID = '1E8OfgvgK_1iWChSMA1Cy58QCvA2dIhvIL-PyPcE7ti8';
+  // ═══════════════════════════════════════════════
+
+  var SCOPE       = 'https://www.googleapis.com/auth/documents';
+  var TOKEN_KEY   = 'journal_google_token';
+  var EXPIRY_KEY  = 'journal_google_expiry';
+  var gapiReady   = false;
+  var tokenClient;
+
+  // ── LIVE CLOCK ──
+  // Updates the date and time displayed at the top of the card
+  function updateClock() {
+    var now     = new Date();
+    var dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    var timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    document.getElementById('card-date').textContent = dateStr;
+    document.getElementById('card-time').textContent = timeStr;
+  }
+  updateClock();
+  setInterval(updateClock, 30000); // refresh every 30 seconds
+
+  // ── CHARACTER COUNT ──
+  var editor = document.getElementById('entry-body');
+  editor.addEventListener('input', function () {
+    var count   = editor.innerText.trim().length;
+    var countEl = document.getElementById('char-count');
+    countEl.textContent = count > 0 ? count + ' characters' : '';
+  });
+
+  // ── TOKEN STORAGE ──
+  // Saves your Google sign-in token in the browser so you don't
+  // have to approve Google sign-in every single time
+  function saveToken(token, expiresIn) {
+    var expiry = Date.now() + (expiresIn - 120) * 1000; // subtract 2-min buffer
+    localStorage.setItem(TOKEN_KEY, token);
+    localStorage.setItem(EXPIRY_KEY, String(expiry));
+  }
+
+  function getSavedToken() {
+    var token  = localStorage.getItem(TOKEN_KEY);
+    var expiry = localStorage.getItem(EXPIRY_KEY);
+    if (!token || !expiry) return null;
+    if (Date.now() > parseInt(expiry)) {
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(EXPIRY_KEY);
+      return null;
+    }
+    return token;
+  }
+
+  function applyToken(token) {
+    gapi.client.setToken({ access_token: token });
+  }
+
+  // ── GOOGLE API INIT ──
+  gapi.load('client', function () {
+    gapi.client.init({}).then(function () {
+      gapiReady = true;
+      var saved = getSavedToken();
+      if (saved) applyToken(saved);
+    });
+  });
+
+  window.addEventListener('load', function () {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: CLIENT_ID,
+      scope: SCOPE,
+      callback: function (response) {
+        if (response.error) {
+          showStatus('Sign-in cancelled or failed.', 'error');
+          document.getElementById('save-btn').disabled = false;
+          return;
+        }
+        saveToken(response.access_token, response.expires_in || 3600);
+        applyToken(response.access_token);
+        saveEntry(); // continue saving after sign-in
+      }
+    });
+  });
+
+  function ensureToken(onReady) {
+    if (!gapiReady) {
+      showStatus('Still loading — try again in a moment.', 'error');
+      document.getElementById('save-btn').disabled = false;
+      return;
+    }
+    var saved = getSavedToken();
+    if (saved) {
+      applyToken(saved);
+      onReady();
+      return;
+    }
+    // No saved token — ask Google to sign in
+    tokenClient.requestAccessToken({ prompt: '' });
+    // After sign-in, the callback above will call saveEntry()
+  }
+
+  // ── FORMATTING ──
+  function fmt(command) {
+    document.execCommand(command, false, null);
+    editor.focus();
+  }
+
+  // ── PARSE HTML TO TEXT RUNS ──
+  // The writing area uses HTML under the hood (so bold/italic work).
+  // This function converts that HTML into a list of text chunks,
+  // each tagged with whether it's bold or italic.
+  // We need this so Google Docs can apply the same formatting.
+  function parseHtmlToRuns(html) {
+    var div = document.createElement('div');
+    div.innerHTML = html;
+    var runs = [];
+
+    function traverse(node, style) {
+      // Plain text node — just add it
+      if (node.nodeType === 3) {
+        if (node.textContent) {
+          runs.push({ text: node.textContent, bold: style.bold, italic: style.italic });
+        }
+        return;
+      }
+      if (node.nodeType !== 1) return;
+
+      var tag      = node.tagName.toLowerCase();
+      var newStyle = { bold: style.bold, italic: style.italic };
+
+      // Check for bold/italic tags
+      if (tag === 'b' || tag === 'strong')                         newStyle.bold   = true;
+      if (tag === 'i' || tag === 'em')                             newStyle.italic = true;
+      if (node.style && node.style.fontWeight === 'bold')          newStyle.bold   = true;
+      if (node.style && node.style.fontStyle  === 'italic')        newStyle.italic = true;
+
+      // <br> becomes a newline
+      if (tag === 'br') {
+        runs.push({ text: '\n', bold: false, italic: false });
+        return;
+      }
+
+      // Block elements (div, p) get a newline before them
+      // but only if there's already content (not the very first line)
+      if ((tag === 'div' || tag === 'p') && runs.length > 0) {
+        runs.push({ text: '\n', bold: false, italic: false });
+      }
+
+      node.childNodes.forEach(function (child) {
+        traverse(child, newStyle);
+      });
+    }
+
+    traverse(div, { bold: false, italic: false });
+
+    // Remove any trailing newlines
+    while (runs.length > 0 && runs[runs.length - 1].text === '\n') {
+      runs.pop();
+    }
+
+    return runs;
+  }
+
+  // ── SUBMIT ──
+  function handleSubmit() {
+    var text = editor.innerText.trim();
+    if (!text) {
+      showStatus('Nothing to save — write something first.', 'error');
+      return;
+    }
+    document.getElementById('save-btn').disabled = true;
+    showStatus('Saving to your journal\u2026', '');
+    ensureToken(saveEntry);
+  }
+
+  // ── SAVE TO GOOGLE DOC ──
+  // This is the main function. It:
+  // 1. Reads the current end of your Google Doc
+  // 2. Builds an entry with date heading + time subheading + your text
+  // 3. Appends it all to the doc with correct formatting
+  async function saveEntry() {
+    var now     = new Date();
+    var dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    var timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+    var html      = editor.innerHTML;
+    var runs      = parseHtmlToRuns(html);
+    var plainBody = runs.map(function (r) { return r.text; }).join('');
+
+    var token = gapi.client.getToken();
+    if (!token || !token.access_token) {
+      showStatus('Not signed in. Try saving again.', 'error');
+      document.getElementById('save-btn').disabled = false;
+      return;
+    }
+    var accessToken = token.access_token;
+
+    try {
+      // ── STEP 1: Read the document to find where it ends ──
+      var docRes = await fetch(
+        'https://docs.googleapis.com/v1/documents/' + DOC_ID,
+        { headers: { 'Authorization': 'Bearer ' + accessToken } }
+      );
+
+      if (!docRes.ok) {
+        var errText = await docRes.text();
+        throw new Error('Could not read doc (' + docRes.status + '): ' + errText);
+      }
+
+      var doc       = await docRes.json();
+      var content   = doc.body.content;
+      var lastEl    = content[content.length - 1];
+      // endIdx is the position just before the document's final newline
+      // This is where we'll insert new content
+      var endIdx    = lastEl.endIndex - 1;
+
+      // If the doc is essentially empty (brand new), don't add a separator
+      var docIsEmpty = endIdx <= 1;
+
+      // ── STEP 2: Build the text to insert ──
+      // Structure in the Google Doc will be:
+      //   [blank line separator — except for the very first entry]
+      //   Wednesday, April 29, 2026        ← Heading 1 style
+      //   9:14 AM                          ← Heading 2 style
+      //                                    ← blank line
+      //   Your journal text here...        ← Normal text
+
+      var separator  = docIsEmpty ? '' : '\n';
+      var fullText   = separator + dateStr + '\n' + timeStr + '\n\n' + plainBody + '\n';
+
+      // ── STEP 3: Calculate character positions for styling ──
+      // We need exact positions so Google Docs knows which text to make
+      // a heading vs. normal text
+      var base      = endIdx + separator.length;
+      var dateStart = base;
+      var dateEnd   = dateStart + dateStr.length;      // exclusive
+      var timeStart = dateEnd + 1;                     // +1 skips the \n after date
+      var timeEnd   = timeStart + timeStr.length;      // exclusive
+      var bodyStart = timeEnd + 1 + 1;                 // +1 for \n after time, +1 for blank line
+
+      // ── STEP 4: Build the list of changes to make ──
+      var requests = [
+
+        // Insert all the text at the end of the document
+        {
+          insertText: {
+            location: { index: endIdx },
+            text: fullText
+          }
+        },
+
+        // Make the date line a Heading 1
+        {
+          updateParagraphStyle: {
+            range: { startIndex: dateStart, endIndex: dateEnd + 1 },
+            paragraphStyle: { namedStyleType: 'HEADING_1' },
+            fields: 'namedStyleType'
+          }
+        },
+
+        // Make the time line a Heading 2
+        {
+          updateParagraphStyle: {
+            range: { startIndex: timeStart, endIndex: timeEnd + 1 },
+            paragraphStyle: { namedStyleType: 'HEADING_2' },
+            fields: 'namedStyleType'
+          }
+        }
+
+      ];
+
+      // Apply bold/italic to any formatted text in the body
+      var runIdx = bodyStart;
+      for (var i = 0; i < runs.length; i++) {
+        var run = runs[i];
+        if (run.text === '\n') {
+          runIdx += 1;
+          continue;
+        }
+        if (run.bold || run.italic) {
+          var textStyle = {};
+          var fields    = [];
+          if (run.bold)   { textStyle.bold   = true; fields.push('bold'); }
+          if (run.italic) { textStyle.italic = true; fields.push('italic'); }
+          requests.push({
+            updateTextStyle: {
+              range: {
+                startIndex: runIdx,
+                endIndex:   runIdx + run.text.length
+              },
+              textStyle: textStyle,
+              fields: fields.join(',')
+            }
+          });
+        }
+        runIdx += run.text.length;
+      }
+
+      // ── STEP 5: Send everything to Google Docs in one go ──
+      var updateRes = await fetch(
+        'https://docs.googleapis.com/v1/documents/' + DOC_ID + ':batchUpdate',
+        {
+          method:  'POST',
+          headers: {
+            'Authorization': 'Bearer ' + accessToken,
+            'Content-Type':  'application/json'
+          },
+          body: JSON.stringify({ requests: requests })
+        }
+      );
+
+      if (!updateRes.ok) {
+        var errBody = await updateRes.json();
+        throw new Error('Could not update doc: ' + JSON.stringify(errBody));
+      }
+
+      // ── SUCCESS ──
+      editor.innerHTML = '';
+      document.getElementById('char-count').textContent = '';
+      showStatus('Saved to your journal.', 'success');
+
+    } catch (err) {
+      console.error('Journal save error:', err);
+      // If it's an auth error, clear the saved token so next attempt re-authenticates
+      if (err.message && (err.message.includes('401') || err.message.includes('403'))) {
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(EXPIRY_KEY);
+        showStatus('Sign-in expired. Try saving again.', 'error');
+      } else {
+        showStatus('Something went wrong. Try again.', 'error');
+      }
+    }
+
+    document.getElementById('save-btn').disabled = false;
+  }
+
+  // ── STATUS TOAST ──
+  var statusTimer;
+  function showStatus(msg, type) {
+    clearTimeout(statusTimer);
+    var bar       = document.getElementById('status-bar');
+    bar.textContent = msg;
+    bar.className = 'status-bar show ' + (type || '');
+    if (type === 'success' || type === 'error') {
+      statusTimer = setTimeout(function () {
+        bar.className = 'status-bar';
+      }, 3500);
+    }
+  }
+</script>
+</body>
+</html>
