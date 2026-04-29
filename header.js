@@ -18,6 +18,7 @@
     { label: 'Daily',      href: '/daily'      },
     { label: 'Bookmarks',  href: '/bookmarks'  },
     { label: 'Notebook',   href: '/notebook'   },
+    { label: 'Journal',    href: '/journal'    },
     { label: 'Human Text', href: '/humantext'  },
   ];
 
@@ -54,13 +55,13 @@
 
     a.addEventListener('mouseenter', function () {
       if (!isActive) {
-        a.style.color = 'rgba(245,242,235,0.55)';
+        a.style.color       = 'rgba(245,242,235,0.55)';
         a.style.borderColor = 'rgba(245,242,235,0.16)';
       }
     });
     a.addEventListener('mouseleave', function () {
       if (!isActive) {
-        a.style.color = 'rgba(245,242,235,0.28)';
+        a.style.color       = 'rgba(245,242,235,0.28)';
         a.style.borderColor = 'rgba(245,242,235,0.07)';
       }
     });
