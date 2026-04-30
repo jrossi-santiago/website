@@ -4,6 +4,7 @@
   var links = [
     { label: 'Card',       href: '/card'       },
     { label: 'Daily',      href: '/daily'      },
+    { label: 'Weekly',     href: '/weekly'     },
     { label: 'Bookmarks',  href: '/bookmarks'  },
     { label: 'Notebook',   href: '/notebook'   },
     { label: 'Journal',    href: '/journal'    },
