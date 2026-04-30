@@ -61,7 +61,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 22px;
+      margin-bottom: 18px;
     }
 
     .page-title {
@@ -70,6 +70,7 @@
       font-weight: 500;
       color: rgba(245,242,235,0.32);
       letter-spacing: 0.03em;
+      transition: opacity 0.2s;
     }
 
     .page-week {
@@ -81,7 +82,442 @@
       text-transform: uppercase;
     }
 
-    /* ── ACCORDION CARD ── */
+    /* ── TAB BAR ── */
+    .tab-bar {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      gap: 5px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: 18px;
+      flex-shrink: 0;
+    }
+
+    .tab-bar::-webkit-scrollbar { display: none; }
+
+    .tab-btn {
+      flex-shrink: 0;
+      padding: 7px 18px;
+      border-radius: 20px;
+      font-family: var(--fb);
+      font-size: 10.5px;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: rgba(245,242,235,0.28);
+      background: transparent;
+      border: 1px solid rgba(245,242,235,0.09);
+      cursor: pointer;
+      transition: color 0.18s, background 0.18s, border-color 0.18s;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tab-btn:hover {
+      color: rgba(245,242,235,0.52);
+      border-color: rgba(245,242,235,0.18);
+    }
+
+    .tab-btn.active {
+      color: var(--text-dark);
+      background: var(--card);
+      border-color: transparent;
+    }
+
+    /* ── TAB PANELS ── */
+    .tab-panel {
+      display: none;
+      width: 100%;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .tab-panel.active {
+      display: flex;
+      animation: rise 0.38s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── SECTION CARD (all tabs share this) ── */
+    .section-card {
+      width: 100%;
+      max-width: 680px;
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .section-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,0.55);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .section-head {
+      padding: 22px 24px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-label {
+      font-family: var(--fb);
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-lt);
+      margin-bottom: 5px;
+    }
+
+    .section-title {
+      font-family: var(--fd);
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--text-dark);
+      letter-spacing: 0.02em;
+      line-height: 1.1;
+    }
+
+    .section-due {
+      font-family: var(--fb);
+      font-size: 11px;
+      font-weight: 300;
+      color: var(--text-mid);
+      margin-top: 7px;
+      letter-spacing: 0.03em;
+    }
+
+    .section-body {
+      padding: 20px 24px 24px;
+    }
+
+    /* ── GOAL TEXTAREA ── */
+    .goal-area {
+      width: 100%;
+      min-height: 130px;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(42,40,37,0.1);
+      resize: none;
+      font-family: var(--fb);
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text-dark);
+      line-height: 1.7;
+      outline: none;
+      padding: 8px 0 12px;
+      transition: border-color 0.14s;
+    }
+
+    .goal-area::placeholder { color: #C5BFB7; font-style: italic; }
+    .goal-area:focus { border-color: rgba(42,40,37,0.22); }
+
+    .save-hint {
+      font-family: var(--fb);
+      font-size: 10px;
+      font-weight: 300;
+      color: var(--text-lt);
+      margin-top: 10px;
+      font-style: italic;
+    }
+
+    /* ── ROADMAP ROWS ── */
+    .roadmap-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .roadmap-row:last-child { border-bottom: none; }
+
+    .rm-num {
+      font-family: var(--fd);
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-lt);
+      min-width: 34px;
+      letter-spacing: 0.02em;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .rm-num.is-cur { color: var(--text-dark); }
+
+    .rm-dates {
+      font-family: var(--fb);
+      font-size: 10px;
+      font-weight: 300;
+      color: var(--text-lt);
+      min-width: 96px;
+      letter-spacing: 0.03em;
+      flex-shrink: 0;
+    }
+
+    .rm-note {
+      flex: 1;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid transparent;
+      font-family: var(--fb);
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--text-dark);
+      outline: none;
+      padding: 3px 0;
+      transition: border-color 0.12s;
+    }
+
+    .rm-note::placeholder { color: #C5BFB7; font-style: italic; }
+    .rm-note:focus { border-color: rgba(42,40,37,0.15); }
+
+    /* ── PEERS PLACEHOLDER ── */
+    .peers-placeholder {
+      font-family: var(--fb);
+      font-size: 13px;
+      font-style: italic;
+      color: var(--text-lt);
+      padding: 10px 0 6px;
+      line-height: 1.65;
+    }
+
+    /* ── SCORE KEEPING ── */
+    .score-add-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .wl-toggle {
+      display: flex;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid rgba(42,40,37,0.12);
+      flex-shrink: 0;
+    }
+
+    .wl-btn {
+      padding: 6px 13px;
+      font-family: var(--fb);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--text-lt);
+      transition: background 0.14s, color 0.14s;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .wl-btn.win.active  { background: rgba(74,126,96,0.12); color: #4A7E60; }
+    .wl-btn.loss.active { background: rgba(154,84,84,0.12); color: #9A5454; }
+
+    .score-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(42,40,37,0.1);
+      font-family: var(--fb);
+      font-size: 13px;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text-dark);
+      outline: none;
+      padding: 5px 0;
+      transition: border-color 0.12s, font-style 0.12s;
+    }
+
+    .score-input::placeholder { color: #C5BFB7; }
+    .score-input:focus { font-style: normal; border-color: rgba(42,40,37,0.22); }
+
+    .score-add-btn {
+      width: 26px; height: 26px;
+      background: transparent;
+      border: 1px solid rgba(42,40,37,0.15);
+      border-radius: 50%;
+      cursor: pointer;
+      color: var(--text-lt);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: border-color 0.12s, color 0.12s, background 0.12s;
+      touch-action: manipulation;
+      padding: 0;
+    }
+
+    .score-add-btn:hover {
+      border-color: rgba(42,40,37,0.35);
+      color: var(--text-dark);
+      background: rgba(42,40,37,0.04);
+    }
+
+    .score-add-btn svg { width: 11px; height: 11px; }
+
+    .score-empty {
+      font-family: var(--fb);
+      font-size: 12px;
+      font-style: italic;
+      color: var(--text-lt);
+      padding: 6px 0 8px;
+    }
+
+    .score-list { list-style: none; }
+
+    .score-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid rgba(42,40,37,0.05);
+    }
+
+    .score-item:last-child { border-bottom: none; }
+
+    .score-badge {
+      font-family: var(--fb);
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      padding: 3px 8px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
+
+    .score-badge.win  { color: #4A7E60; background: rgba(74,126,96,0.1); }
+    .score-badge.loss { color: #9A5454; background: rgba(154,84,84,0.1); }
+
+    .score-txt {
+      flex: 1;
+      font-family: var(--fb);
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--text-dark);
+      line-height: 1.4;
+    }
+
+    .score-date {
+      font-family: var(--fb);
+      font-size: 10px;
+      font-weight: 300;
+      color: var(--text-lt);
+      flex-shrink: 0;
+    }
+
+    .score-del {
+      width: 24px; height: 24px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--text-lt);
+      opacity: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.12s, color 0.12s;
+      padding: 0;
+      touch-action: manipulation;
+      flex-shrink: 0;
+    }
+
+    @media (hover: none) { .score-del { opacity: 0.35; } }
+    .score-item:hover .score-del { opacity: 0.55; }
+    .score-del:hover { opacity: 1 !important; color: var(--text-dark); }
+    .score-del svg { width: 11px; height: 11px; }
+
+    /* ── GRID (inside cream card — inverted color scheme) ── */
+    .grid-card .grid-labels {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+      margin-bottom: 4px;
+    }
+
+    .grid-card .grid-lbl {
+      font-family: var(--fb);
+      font-size: 9px;
+      font-weight: 400;
+      color: var(--text-lt);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .grid-card .grid-body {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .grid-card .grid-row {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+    }
+
+    .grid-card .cell {
+      aspect-ratio: 1;
+      border-radius: 2px;
+      position: relative;
+      transition: transform 0.12s;
+      cursor: default;
+    }
+
+    .grid-card .cell:hover { transform: scale(1.2); z-index: 10; }
+
+    /* Dark-on-cream completion levels */
+    .grid-card .lv0     { background: rgba(42,40,37,0.07); }
+    .grid-card .lv1     { background: rgba(42,40,37,0.18); }
+    .grid-card .lv2     { background: rgba(42,40,37,0.32); }
+    .grid-card .lv3     { background: rgba(42,40,37,0.48); }
+    .grid-card .lv4     { background: rgba(42,40,37,0.65); }
+    .grid-card .lv5     { background: rgba(42,40,37,0.82); }
+    .grid-card .future  { background: rgba(42,40,37,0.04); }
+    .grid-card .today-r { box-shadow: 0 0 0 1.5px rgba(42,40,37,0.45); }
+
+    /* Tooltip */
+    .grid-card .cell .tip {
+      position: absolute;
+      bottom: calc(100% + 7px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(42,40,37,0.92);
+      color: rgba(245,242,235,0.88);
+      font-family: var(--fb);
+      font-size: 10px;
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      padding: 5px 9px;
+      border-radius: 6px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.12s;
+      z-index: 50;
+    }
+
+    .grid-card .cell:hover .tip { opacity: 1; }
+
+    /* ── ACCORDION CARD (tactical tab — existing weekly) ── */
     .week-card {
       width: 100%;
       max-width: 680px;
@@ -89,7 +525,6 @@
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow: hidden;
-      animation: rise 0.45s cubic-bezier(0.22,1,0.36,1) both;
       position: relative;
     }
 
@@ -101,11 +536,6 @@
       border: 1px solid rgba(255,255,255,0.55);
       pointer-events: none;
       z-index: 2;
-    }
-
-    @keyframes rise {
-      from { opacity: 0; transform: translateY(14px); }
-      to   { opacity: 1; transform: translateY(0); }
     }
 
     /* ── DAY SECTIONS ── */
@@ -326,110 +756,6 @@
 
     .add-btn svg { width: 11px; height: 11px; }
 
-    /* ── GRID SECTION ── */
-    .grid-section {
-      width: 100%;
-      max-width: 680px;
-      margin-top: 44px;
-      animation: rise 0.5s 0.08s cubic-bezier(0.22,1,0.36,1) both;
-    }
-
-    .grid-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 14px;
-    }
-
-    .grid-title {
-      font-family: var(--fd);
-      font-size: 16px;
-      font-weight: 500;
-      color: rgba(245,242,235,0.3);
-      letter-spacing: 0.04em;
-    }
-
-    .grid-sub {
-      font-family: var(--fb);
-      font-size: 9px;
-      font-weight: 300;
-      color: rgba(245,242,235,0.15);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-
-    .grid-labels {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 4px;
-      margin-bottom: 5px;
-    }
-
-    .grid-lbl {
-      font-family: var(--fb);
-      font-size: 9px;
-      font-weight: 400;
-      color: rgba(245,242,235,0.2);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      text-align: center;
-    }
-
-    .grid-body {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .grid-row {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 4px;
-    }
-
-    .cell {
-      aspect-ratio: 1;
-      border-radius: 3px;
-      position: relative;
-      transition: transform 0.12s;
-      cursor: default;
-    }
-
-    .cell:hover { transform: scale(1.2); z-index: 10; }
-
-    /* Completion levels — cream fading in on dark olive */
-    .lv0     { background: rgba(245,242,235,0.07); }
-    .lv1     { background: rgba(245,242,235,0.20); }
-    .lv2     { background: rgba(245,242,235,0.36); }
-    .lv3     { background: rgba(245,242,235,0.52); }
-    .lv4     { background: rgba(245,242,235,0.72); }
-    .lv5     { background: rgba(245,242,235,0.92); }
-    .future  { background: rgba(245,242,235,0.03); }
-    .today-r { box-shadow: 0 0 0 1.5px rgba(245,242,235,0.4); }
-
-    /* Tooltip */
-    .cell .tip {
-      position: absolute;
-      bottom: calc(100% + 7px);
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(18,20,13,0.95);
-      color: rgba(245,242,235,0.88);
-      font-family: var(--fb);
-      font-size: 10px;
-      font-weight: 300;
-      letter-spacing: 0.05em;
-      padding: 5px 9px;
-      border-radius: 6px;
-      white-space: nowrap;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.12s;
-      z-index: 50;
-    }
-
-    .cell:hover .tip { opacity: 1; }
-
     /* ── SAVE TOAST ── */
     .toast {
       position: fixed;
@@ -464,6 +790,8 @@
       .day-name { font-size: 19px; }
       .day-header { padding: 14px 18px; }
       .day-body { padding: 0 18px 18px; }
+      .section-head { padding: 18px 18px 14px; }
+      .section-body { padding: 16px 18px 20px; }
     }
   </style>
 </head>
@@ -475,30 +803,151 @@
 <div id="page">
 
   <header class="page-header">
-    <span class="page-title">Weekly</span>
+    <span class="page-title" id="page-title">Weekly</span>
     <span class="page-week" id="week-range"></span>
   </header>
 
-  <div class="week-card" id="week-card">
-    <div style="padding:44px 24px;font-family:var(--fb);font-size:13px;font-style:italic;color:#B3ADA5;text-align:center;">Loading…</div>
-  </div>
+  <!-- ══ TAB BAR ══ -->
+  <nav class="tab-bar" role="tablist" aria-label="Planner sections">
+    <button class="tab-btn" data-tab="year"     role="tab" aria-selected="false">Year</button>
+    <button class="tab-btn" data-tab="sprint"   role="tab" aria-selected="false">Sprint</button>
+    <button class="tab-btn" data-tab="roadmap"  role="tab" aria-selected="false">Roadmap</button>
+    <button class="tab-btn active" data-tab="tactical" role="tab" aria-selected="true">Weekly</button>
+    <button class="tab-btn" data-tab="peers"    role="tab" aria-selected="false">Peers</button>
+    <button class="tab-btn" data-tab="scores"   role="tab" aria-selected="false">Scores</button>
+  </nav>
 
-  <div class="grid-section">
-    <div class="grid-top">
-      <span class="grid-title">Last 12 weeks</span>
-      <span class="grid-sub">task completion</span>
+  <!-- ══════════════════════════════════════════ -->
+  <!-- TAB 1 — YEAR (12 Month Goal)              -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-year" role="tabpanel">
+    <div class="section-card">
+      <div class="section-head">
+        <div class="section-label">Section 1 · 12 Month Goal</div>
+        <div class="section-title">The Year Ahead</div>
+        <div class="section-due" id="year-due"></div>
+      </div>
+      <div class="section-body">
+        <textarea class="goal-area" id="year-goal" rows="6"
+          placeholder="What do you want to accomplish within the next 12 months?"></textarea>
+        <div class="save-hint">Saves automatically as you type</div>
+      </div>
     </div>
-    <div class="grid-labels" id="grid-labels"></div>
-    <div class="grid-body" id="grid-body"></div>
   </div>
 
-</div>
+  <!-- ══════════════════════════════════════════ -->
+  <!-- TAB 2 — SPRINT (12 Week Goal)             -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-sprint" role="tabpanel">
+    <div class="section-card">
+      <div class="section-head">
+        <div class="section-label">Section 2 · 12 Week Goal</div>
+        <div class="section-title">The Sprint</div>
+        <div class="section-due" id="sprint-due"></div>
+      </div>
+      <div class="section-body">
+        <textarea class="goal-area" id="sprint-goal" rows="6"
+          placeholder="What do you want to accomplish in the next 12 weeks?"></textarea>
+        <div class="save-hint">Saves automatically as you type</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- TAB 3 — ROADMAP (Week by Week Plans)      -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-roadmap" role="tabpanel">
+    <div class="section-card">
+      <div class="section-head">
+        <div class="section-label">Section 3a · Week by Week Plans</div>
+        <div class="section-title">Roadmap</div>
+      </div>
+      <div class="section-body" style="padding-top: 8px; padding-bottom: 16px;">
+        <div id="roadmap-rows"></div>
+        <div class="save-hint" style="margin-top: 14px;">Notes save as you type</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- TAB 4 — TACTICAL (existing weekly planner)-->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="tab-panel active" id="tab-tactical" role="tabpanel">
+    <div class="week-card" id="week-card">
+      <div style="padding:44px 24px;font-family:var(--fb);font-size:13px;font-style:italic;color:#B3ADA5;text-align:center;">Loading…</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- TAB 5 — PEERS (Peer Support)              -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-peers" role="tabpanel">
+    <div class="section-card">
+      <div class="section-head">
+        <div class="section-label">Section 4 · Peer Support</div>
+        <div class="section-title">Accountability</div>
+      </div>
+      <div class="section-body">
+        <p class="peers-placeholder">
+          How you're being held accountable — accountability partners,
+          check-in schedules, and commitments will live here.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- TAB 6 — SCORES (Score Keeping + Grid)     -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-scores" role="tabpanel">
+
+    <!-- Wins & Losses log -->
+    <div class="section-card">
+      <div class="section-head">
+        <div class="section-label">Section 5 · Score Keeping</div>
+        <div class="section-title">Wins &amp; Losses</div>
+      </div>
+      <div class="section-body">
+        <div class="score-add-row">
+          <div class="wl-toggle" role="group" aria-label="Entry type">
+            <button class="wl-btn win active" data-wl="win"  aria-pressed="true">W</button>
+            <button class="wl-btn loss"       data-wl="loss" aria-pressed="false">L</button>
+          </div>
+          <input class="score-input" id="score-input" type="text"
+            placeholder="Log an entry…" autocomplete="off" aria-label="Score entry" />
+          <button class="score-add-btn" id="score-add-btn" aria-label="Add entry">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+            </svg>
+          </button>
+        </div>
+        <p class="score-empty" id="score-empty">No entries yet — log a win or a loss above</p>
+        <ul class="score-list" id="score-list"></ul>
+      </div>
+    </div>
+
+    <!-- 12-week completion grid (inside cream card, inverted colors) -->
+    <div class="section-card grid-card">
+      <div class="section-head">
+        <div class="section-label">Task Completion</div>
+        <div class="section-title">Last 12 Weeks</div>
+      </div>
+      <div class="section-body" style="padding-top: 14px; padding-bottom: 20px;">
+        <div class="grid-labels" id="grid-labels"></div>
+        <div class="grid-body"   id="grid-body"></div>
+      </div>
+    </div>
+
+  </div>
+  <!-- end Scores tab -->
+
+</div><!-- end #page -->
 
 <div class="toast" id="toast">Saved</div>
 
 <script>
 // ============================================================
-//  CONFIG — your existing motivation Supabase project
+//  CONFIG — Supabase (your existing project)
 // ============================================================
 var DB  = 'https://urfsijczxmngbixprdkq.supabase.co';
 var KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZnNpamN6eG1uZ2JpeHByZGtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTU1NzIsImV4cCI6MjA5MTA3MTU3Mn0.KxNLu5Rg0A0IdxQbaAapDa-vmTkVmeUlub689o0ZOaM';
@@ -510,13 +959,24 @@ var DAYS   = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sun
 var DAYS_S = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
+var TAB_TITLES = {
+  year:     '12 Month',
+  sprint:   '12 Week',
+  roadmap:  'Roadmap',
+  tactical: 'Weekly',
+  peers:    'Peers',
+  scores:   'Scores'
+};
+
 // ============================================================
 //  STATE
 // ============================================================
-var weekData = {};   // { 'YYYY-MM-DD': [ {id,text,completed}, ... ] }
-var histData = {};   // { 'YYYY-MM-DD': completion_pct }
-var openDay  = null;
-var toastTmr = null;
+var weekData  = {};
+var histData  = {};
+var openDay   = null;
+var toastTmr  = null;
+var scores    = [];
+var currentWL = 'win';
 
 // ============================================================
 //  DATE HELPERS
@@ -565,13 +1025,23 @@ function esc(s) {
   return el.innerHTML;
 }
 
+function addDays(d, n) {
+  var r = new Date(d);
+  r.setDate(r.getDate() + n);
+  return r;
+}
+
+function fmtDisplay(d) {
+  return MONTHS[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+}
+
 // ============================================================
-//  API HELPERS
+//  API HELPERS (Supabase)
 // ============================================================
 function hdrs(extra) {
   return Object.assign({
-    'Content-Type': 'application/json',
-    'apikey': KEY,
+    'Content-Type':  'application/json',
+    'apikey':        KEY,
     'Authorization': 'Bearer ' + KEY
   }, extra || {});
 }
@@ -592,7 +1062,210 @@ function showSaved() {
 }
 
 // ============================================================
-//  SAVE TASKS
+//  TAB SWITCHING
+// ============================================================
+function switchTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b) {
+    b.classList.remove('active');
+    b.setAttribute('aria-selected', 'false');
+  });
+
+  var panel = document.getElementById('tab-' + id);
+  var btn   = document.querySelector('.tab-btn[data-tab="' + id + '"]');
+
+  if (panel) panel.classList.add('active');
+  if (btn) {
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
+  }
+
+  var titleEl = document.getElementById('page-title');
+  if (titleEl && TAB_TITLES[id]) titleEl.textContent = TAB_TITLES[id];
+
+  localStorage.setItem('wk-active-tab', id);
+}
+
+document.querySelectorAll('.tab-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() { switchTab(btn.dataset.tab); });
+});
+
+// ============================================================
+//  GOAL SECTIONS (Year + Sprint) — localStorage
+// ============================================================
+(function initGoals() {
+  var today = new Date();
+
+  // Year — due in 365 days
+  var yearDue   = addDays(today, 365);
+  var yearDueEl = document.getElementById('year-due');
+  if (yearDueEl) yearDueEl.textContent = 'Due · ' + fmtDisplay(yearDue);
+
+  // Sprint — due in 84 days (12 weeks)
+  var sprintDue   = addDays(today, 84);
+  var sprintDueEl = document.getElementById('sprint-due');
+  if (sprintDueEl) sprintDueEl.textContent = 'Due · ' + fmtDisplay(sprintDue);
+
+  var yearEl = document.getElementById('year-goal');
+  if (yearEl) {
+    yearEl.value = localStorage.getItem('wk-year-goal') || '';
+    yearEl.addEventListener('input', function() {
+      localStorage.setItem('wk-year-goal', yearEl.value);
+    });
+  }
+
+  var sprintEl = document.getElementById('sprint-goal');
+  if (sprintEl) {
+    sprintEl.value = localStorage.getItem('wk-sprint-goal') || '';
+    sprintEl.addEventListener('input', function() {
+      localStorage.setItem('wk-sprint-goal', sprintEl.value);
+    });
+  }
+})();
+
+// ============================================================
+//  ROADMAP — 12 weeks, each note saved to localStorage
+// ============================================================
+function renderRoadmap() {
+  var container = document.getElementById('roadmap-rows');
+  if (!container) return;
+
+  container.innerHTML = '';
+  var mon = getMonday(new Date());
+
+  for (var i = 0; i < 12; i++) {
+    var weekStart = new Date(mon);
+    weekStart.setDate(mon.getDate() + i * 7);
+    var weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
+
+    var key       = 'wk-roadmap-' + fmt(weekStart);
+    var savedNote = localStorage.getItem(key) || '';
+    var isCur     = (i === 0);
+
+    var row = document.createElement('div');
+    row.className = 'roadmap-row';
+
+    var num = document.createElement('span');
+    num.className   = 'rm-num' + (isCur ? ' is-cur' : '');
+    num.textContent = 'W' + (i + 1);
+
+    var dates = document.createElement('span');
+    dates.className   = 'rm-dates';
+    dates.textContent =
+      MONTHS[weekStart.getMonth()] + ' ' + weekStart.getDate() +
+      ' – ' +
+      MONTHS[weekEnd.getMonth()] + ' ' + weekEnd.getDate();
+
+    var note = document.createElement('input');
+    note.type        = 'text';
+    note.className   = 'rm-note';
+    note.placeholder = 'Focus for this week…';
+    note.value       = savedNote;
+    note.setAttribute('aria-label', 'Week ' + (i + 1) + ' plan');
+
+    note.addEventListener('input', (function(k) {
+      return function(e) { localStorage.setItem(k, e.target.value); };
+    })(key));
+
+    row.appendChild(num);
+    row.appendChild(dates);
+    row.appendChild(note);
+    container.appendChild(row);
+  }
+}
+
+// ============================================================
+//  SCORE KEEPING — localStorage
+// ============================================================
+function loadScores() {
+  try { scores = JSON.parse(localStorage.getItem('wk-scores') || '[]'); }
+  catch(e) { scores = []; }
+}
+
+function saveScoresData() {
+  localStorage.setItem('wk-scores', JSON.stringify(scores));
+}
+
+function scoreItemHTML(s) {
+  return '<li class="score-item" data-id="' + s.id + '">' +
+    '<span class="score-badge ' + s.type + '">' + (s.type === 'win' ? 'W' : 'L') + '</span>' +
+    '<span class="score-txt">' + esc(s.text) + '</span>' +
+    '<span class="score-date">' + s.date + '</span>' +
+    '<button class="score-del" aria-label="Delete entry">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">' +
+        '<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>' +
+      '</svg>' +
+    '</button>' +
+  '</li>';
+}
+
+function renderScores() {
+  var list  = document.getElementById('score-list');
+  var empty = document.getElementById('score-empty');
+  if (!list) return;
+
+  if (scores.length === 0) {
+    list.innerHTML = '';
+    if (empty) empty.style.display = '';
+  } else {
+    if (empty) empty.style.display = 'none';
+    list.innerHTML = scores.slice().reverse().map(scoreItemHTML).join('');
+
+    list.querySelectorAll('.score-del').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var id = btn.closest('.score-item').dataset.id;
+        scores = scores.filter(function(s) { return s.id !== id; });
+        saveScoresData();
+        renderScores();
+      });
+    });
+  }
+}
+
+function addScore(input) {
+  var text = (input.value || '').trim();
+  if (!text) return;
+  var today = new Date();
+  scores.push({
+    id:   uid(),
+    type: currentWL,
+    text: text,
+    date: MONTHS[today.getMonth()] + ' ' + today.getDate()
+  });
+  saveScoresData();
+  renderScores();
+  input.value = '';
+  input.focus();
+}
+
+// WL toggle
+document.querySelectorAll('.wl-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    currentWL = btn.dataset.wl;
+    document.querySelectorAll('.wl-btn').forEach(function(b) {
+      b.classList.remove('active');
+      b.setAttribute('aria-pressed', 'false');
+    });
+    btn.classList.add('active');
+    btn.setAttribute('aria-pressed', 'true');
+  });
+});
+
+var scoreInput  = document.getElementById('score-input');
+var scoreAddBtn = document.getElementById('score-add-btn');
+
+if (scoreAddBtn) {
+  scoreAddBtn.addEventListener('click', function() { if (scoreInput) addScore(scoreInput); });
+}
+if (scoreInput) {
+  scoreInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); addScore(scoreInput); }
+  });
+}
+
+// ============================================================
+//  SAVE TASKS (Supabase)
 // ============================================================
 function saveTasks(dk) {
   fetch(DB + '/rest/v1/weekly_tasks', {
@@ -736,7 +1409,6 @@ function renderWeek(weekDays) {
     body.className = 'day-body';
     body.innerHTML = bodyHTML(dk);
 
-    // Accordion toggle
     header.addEventListener('click', function() {
       var wasOpen = section.classList.contains('is-open');
       document.querySelectorAll('.day-section.is-open').forEach(function(s) {
@@ -752,7 +1424,6 @@ function renderWeek(weekDays) {
       }
     });
 
-    // Event delegation for task interactions
     body.addEventListener('click', function(e) {
       var cb  = e.target.closest('.cb');
       if (cb)  { toggleTask(dk, cb.closest('.task-item').dataset.id); return; }
@@ -780,11 +1451,13 @@ function renderWeek(weekDays) {
 }
 
 // ============================================================
-//  RENDER GRID
+//  RENDER GRID (now lives inside .grid-card on cream background)
 // ============================================================
 function renderGrid() {
   var labelsEl = document.getElementById('grid-labels');
   var bodyEl   = document.getElementById('grid-body');
+  if (!labelsEl || !bodyEl) return;
+
   labelsEl.innerHTML = '';
   bodyEl.innerHTML   = '';
 
@@ -798,7 +1471,7 @@ function renderGrid() {
   var today    = new Date(); today.setHours(0,0,0,0);
   var todayStr = fmt(today);
   var start    = new Date(getMonday(today));
-  start.setDate(start.getDate() - 11 * 7); // 11 weeks back from current Monday = 12 weeks total
+  start.setDate(start.getDate() - 11 * 7);
 
   for (var w = 0; w < 12; w++) {
     var row = document.createElement('div');
@@ -850,17 +1523,22 @@ function archivePast(pastRows, histRows) {
     if (done[r.id]) return false;
     return (r.tasks || []).length > 0;
   }).map(function(r) {
-    var t  = r.tasks || [];
-    var c  = t.filter(function(x) { return x.completed; }).length;
-    return { task_date: r.id, completion_pct: Math.round((c / t.length) * 100), total_tasks: t.length, completed_tasks: c };
+    var t = r.tasks || [];
+    var c = t.filter(function(x) { return x.completed; }).length;
+    return {
+      task_date:       r.id,
+      completion_pct:  Math.round((c / t.length) * 100),
+      total_tasks:     t.length,
+      completed_tasks: c
+    };
   });
 
   if (!toInsert.length) return Promise.resolve();
 
   return fetch(DB + '/rest/v1/task_history', {
-    method: 'POST',
+    method:  'POST',
     headers: hdrs({ 'Prefer': 'resolution=ignore-duplicates' }),
-    body: JSON.stringify(toInsert)
+    body:    JSON.stringify(toInsert)
   }).catch(function(e) { console.warn('Archive warn:', e); });
 }
 
@@ -868,25 +1546,35 @@ function archivePast(pastRows, histRows) {
 //  BOOT
 // ============================================================
 (function init() {
+  // Restore saved tab — default to tactical (weekly) tab
+  var savedTab = localStorage.getItem('wk-active-tab') || 'tactical';
+  switchTab(savedTab);
+
   var weekDays = getWeekDays();
   var today    = new Date(); today.setHours(0,0,0,0);
   var todayStr = fmt(today);
-  openDay = todayStr;
+  openDay      = todayStr;
 
-  // Week range label in header
+  // Week range label in page header
   var mon = weekDays[0], sun = weekDays[6];
   document.getElementById('week-range').textContent =
     MONTHS[mon.getMonth()] + ' ' + mon.getDate() + ' – ' +
     MONTHS[sun.getMonth()] + ' ' + sun.getDate();
 
   // Grid window: 12 weeks back from current Monday
-  var gridMon   = getMonday(today);
-  var gridStart = new Date(gridMon);
+  var gridMon      = getMonday(today);
+  var gridStart    = new Date(gridMon);
   gridStart.setDate(gridMon.getDate() - 11 * 7);
   var gridStartStr = fmt(gridStart);
 
   var weekParam = '(' + weekDays.map(fmt).join(',') + ')';
 
+  // Load localStorage sections immediately (no waiting)
+  loadScores();
+  renderScores();
+  renderRoadmap();
+
+  // Load weekly tasks + history from Supabase
   Promise.all([
     api('/rest/v1/weekly_tasks?id=in.' + weekParam),
     api('/rest/v1/weekly_tasks?id=gte.' + gridStartStr + '&id=lt.' + todayStr + '&order=id.asc'),
@@ -902,7 +1590,7 @@ function archivePast(pastRows, histRows) {
     renderWeek(weekDays);
     renderGrid();
 
-    // Archive silently in background, then refresh grid
+    // Archive past days silently, then refresh grid
     archivePast(pastRows, histRows).then(function() {
       return api('/rest/v1/task_history?task_date=gte.' + gridStartStr + '&order=task_date.asc');
     }).then(function(fresh) {
@@ -911,7 +1599,7 @@ function archivePast(pastRows, histRows) {
         fresh.forEach(function(h) { histData[h.task_date] = h.completion_pct; });
         renderGrid();
       }
-    }).catch(function() { /* grid already rendered, this is fine */ });
+    }).catch(function() {});
 
   }).catch(function(err) {
     console.error('Load error:', err);
