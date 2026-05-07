@@ -1,21 +1,6 @@
 {
   "outputDirectory": ".",
   "buildCommand": "",
-  "rewrites": [
-    {
-      "source": "/personal",
-      "destination": "/personal/index.html"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/personal/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
-      ]
-    }
-  ]
+  "cleanUrls": true,
+  "trailingSlash": false
 }
