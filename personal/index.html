@@ -3,125 +3,187 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DAILY BRIEFING</title>
+  <title>Daily Report</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <main class="report">
+  <div class="receipt-wrap">
+  <div class="receipt">
 
     <!-- ░░ HEADER ░░ -->
-    <section class="section" id="header">
-      <p class="greeting" id="greeting">GOOD MORNING, JOE</p>
-      <p class="date-display" id="date-display">LOADING DATE...</p>
-    </section>
-
-    <div class="divider">────────────────────────────────────────</div>
-
-    <!-- ░░ WEATHER ░░ -->
-    <section class="section" id="weather-section">
-      <h2 class="section-title">WEATHER</h2>
-      <p class="section-sub">CLARKS SUMMIT, PA</p>
-      <div id="weather-grid" class="weather-grid">
-        <p class="loading-text">FETCHING WEATHER DATA...</p>
+    <div class="receipt-header">
+      <div class="header-name" id="greeting-name">JOE</div>
+      <div class="header-meta">
+        <span id="date-display">LOADING...</span>
       </div>
-    </section>
+    </div>
 
-    <div class="divider">────────────────────────────────────────</div>
+    <!-- ░░ 01 MESSAGE ░░ -->
+    <div class="block">
+      <div class="block-title-row">
+        <span class="block-num">01</span>
+        <span class="block-label">MESSAGE</span>
+        <span class="block-code" id="code-01"></span>
+      </div>
+      <div class="block-body">
+        <p class="message-text" id="greeting-msg">HERE'S YOUR DAILY BRIEFING.</p>
+      </div>
+    </div>
 
-    <!-- ░░ TOP 5 TODAY ░░ -->
-    <section class="section" id="intentions-section">
-      <h2 class="section-title">TOP 5 TODAY</h2>
-      <div class="intentions-list">
+    <!-- ░░ 02 TODAY ░░ -->
+    <div class="block">
+      <div class="block-title-row">
+        <span class="block-num">02</span>
+        <span class="block-label">TODAY</span>
+        <span class="block-code" id="code-02"></span>
+      </div>
+      <div class="block-body intentions-body">
         <div class="intention-row">
-          <span class="intention-num">01.</span>
-          <input class="intention-input" id="intention-1" type="text" placeholder="ADD INTENTION..." maxlength="120" autocomplete="off" />
+          <span class="intention-dash">-</span>
+          <input class="intention-input" id="intention-1" type="text" placeholder="add intention..." maxlength="80" autocomplete="off" />
         </div>
         <div class="intention-row">
-          <span class="intention-num">02.</span>
-          <input class="intention-input" id="intention-2" type="text" placeholder="ADD INTENTION..." maxlength="120" autocomplete="off" />
+          <span class="intention-dash">-</span>
+          <input class="intention-input" id="intention-2" type="text" placeholder="add intention..." maxlength="80" autocomplete="off" />
         </div>
         <div class="intention-row">
-          <span class="intention-num">03.</span>
-          <input class="intention-input" id="intention-3" type="text" placeholder="ADD INTENTION..." maxlength="120" autocomplete="off" />
+          <span class="intention-dash">-</span>
+          <input class="intention-input" id="intention-3" type="text" placeholder="add intention..." maxlength="80" autocomplete="off" />
         </div>
         <div class="intention-row">
-          <span class="intention-num">04.</span>
-          <input class="intention-input" id="intention-4" type="text" placeholder="ADD INTENTION..." maxlength="120" autocomplete="off" />
+          <span class="intention-dash">-</span>
+          <input class="intention-input" id="intention-4" type="text" placeholder="add intention..." maxlength="80" autocomplete="off" />
         </div>
         <div class="intention-row">
-          <span class="intention-num">05.</span>
-          <input class="intention-input" id="intention-5" type="text" placeholder="ADD INTENTION..." maxlength="120" autocomplete="off" />
+          <span class="intention-dash">-</span>
+          <input class="intention-input" id="intention-5" type="text" placeholder="add intention..." maxlength="80" autocomplete="off" />
+        </div>
+        <p class="save-status" id="save-status"></p>
+      </div>
+    </div>
+
+    <!-- ░░ 03 WEATHER ░░ -->
+    <div class="block">
+      <div class="block-title-row">
+        <span class="block-num">03</span>
+        <span class="block-label">WEATHER</span>
+        <span class="block-code" id="code-03"></span>
+      </div>
+      <div class="block-body weather-body">
+        <!-- Big condition display — filled by JS -->
+        <div class="weather-headline" id="weather-headline">
+          <span class="weather-bracket-label" id="weather-condition-big">[ LOADING ]</span>
+          <div class="weather-dot-grid" id="weather-dot-grid"></div>
+        </div>
+        <div class="weather-meta-row">
+          <div class="weather-meta-col">
+            <div class="weather-meta-line">SUNRISE</div>
+            <div class="weather-meta-line">SUNSET</div>
+            <div class="weather-meta-line">PRECIP</div>
+          </div>
+          <div class="weather-meta-col weather-meta-values" id="weather-meta-values">
+            <div>--</div>
+            <div>--</div>
+            <div>--</div>
+          </div>
+          <div class="weather-meta-right">
+            <div class="weather-circle-icon" id="weather-icon-big">☀</div>
+          </div>
+        </div>
+        <div class="weather-temp-row" id="weather-temp-row">
+          TEMP: --°F
+        </div>
+        <!-- Hourly strip -->
+        <div class="weather-hourly" id="weather-hourly">
+          <p class="receipt-small-text">FETCHING...</p>
         </div>
       </div>
-      <p class="save-status" id="save-status"></p>
-    </section>
+    </div>
 
-    <div class="divider">────────────────────────────────────────</div>
-
-    <!-- ░░ MOTIVATION ░░ -->
-    <section class="section" id="motivation-section">
-      <h2 class="section-title">MOTIVATION</h2>
-      <p class="quote-text" id="quote-text">LOADING QUOTE...</p>
-    </section>
-
-    <div class="divider">────────────────────────────────────────</div>
-
-    <!-- ░░ PRAYER ░░ -->
-    <section class="section" id="prayer-section">
-      <h2 class="section-title">PRAYER</h2>
-      <div class="image-frame" id="prayer-frame">
-        <p class="loading-text">LOADING PRAYER...</p>
+    <!-- ░░ 04 MOTIVATION ░░ -->
+    <div class="block">
+      <div class="block-title-row">
+        <span class="block-num">04</span>
+        <span class="block-label">MOTIVATION</span>
+        <span class="block-code" id="code-04"></span>
       </div>
-    </section>
-
-    <div class="divider">────────────────────────────────────────</div>
-
-    <!-- ░░ INSPIRATION ░░ -->
-    <section class="section" id="inspiration-section">
-      <h2 class="section-title">INSPIRATION</h2>
-      <div class="image-frame" id="inspiration-frame">
-        <p class="loading-text">LOADING INSPIRATION...</p>
+      <div class="block-body">
+        <p class="quote-text" id="quote-text">LOADING QUOTE...</p>
       </div>
-    </section>
+    </div>
 
-    <div class="divider">────────────────────────────────────────</div>
-
-    <!-- ░░ REMINDERS ░░ -->
-    <section class="section" id="reminders-section">
-      <h2 class="section-title">REMINDERS</h2>
-      <ul class="reminders-list">
-        <li>[PHRASE_1]</li>
-        <li>[PHRASE_2]</li>
-        <li>[PHRASE_3]</li>
-        <li>[PHRASE_4]</li>
-      </ul>
-    </section>
-
-    <div class="divider">────────────────────────────────────────</div>
-
-    <!-- ░░ ARCHIVE ░░ -->
-    <section class="section" id="archive-section">
-      <h2 class="section-title">ARCHIVE</h2>
-      <button class="archive-btn" id="archive-btn">[ ARCHIVE TODAY'S REPORT ]</button>
-      <p class="archive-status" id="archive-status"></p>
-      <div id="archive-list" class="archive-list">
-        <p class="loading-text" id="archive-loading">LOADING ARCHIVE...</p>
+    <!-- ░░ 05 PRAYER ░░ -->
+    <div class="block">
+      <div class="block-title-row">
+        <span class="block-num">05</span>
+        <span class="block-label">PRAYER</span>
+        <span class="block-code" id="code-05"></span>
       </div>
-    </section>
+      <div class="block-body image-body" id="prayer-frame">
+        <p class="receipt-small-text">LOADING...</p>
+      </div>
+    </div>
 
-    <div class="divider">────────────────────────────────────────</div>
+    <!-- ░░ 06 INSPIRATION ░░ -->
+    <div class="block">
+      <div class="block-title-row">
+        <span class="block-num">06</span>
+        <span class="block-label">INSPIRATION</span>
+        <span class="block-code" id="code-06"></span>
+      </div>
+      <div class="block-body image-body" id="inspiration-frame">
+        <p class="receipt-small-text">LOADING...</p>
+      </div>
+    </div>
 
-    <footer class="footer">
-      <p>END OF REPORT // <span id="footer-date"></span></p>
-    </footer>
+    <!-- ░░ 07 REMINDERS ░░ -->
+    <div class="block">
+      <div class="block-title-row">
+        <span class="block-num">07</span>
+        <span class="block-label">REMINDERS</span>
+        <span class="block-code" id="code-07"></span>
+      </div>
+      <div class="block-body">
+        <ul class="reminders-list">
+          <li>[PHRASE_1]</li>
+          <li>[PHRASE_2]</li>
+          <li>[PHRASE_3]</li>
+          <li>[PHRASE_4]</li>
+        </ul>
+      </div>
+    </div>
 
-  </main>
+    <!-- ░░ 08 ARCHIVE ░░ -->
+    <div class="block">
+      <div class="block-title-row">
+        <span class="block-num">08</span>
+        <span class="block-label">ARCHIVE</span>
+        <span class="block-code" id="code-08"></span>
+      </div>
+      <div class="block-body">
+        <button class="receipt-btn" id="archive-btn">[ ARCHIVE TODAY ]</button>
+        <p class="save-status" id="archive-status"></p>
+        <div id="archive-list" class="archive-list">
+          <p class="receipt-small-text">LOADING ARCHIVE...</p>
+        </div>
+      </div>
+    </div>
 
-  <!-- Supabase CDN — this is the free library that lets the page talk to your database -->
+    <!-- ░░ FOOTER ░░ -->
+    <div class="receipt-footer">
+      <div class="footer-dashes">- - - - - - - - - - - - - - - - - - - - - -</div>
+      <p class="footer-text">END OF REPORT</p>
+      <p class="footer-text" id="footer-date"></p>
+      <div class="footer-dashes">- - - - - - - - - - - - - - - - - - - - - -</div>
+    </div>
+
+  </div><!-- end .receipt -->
+  </div><!-- end .receipt-wrap -->
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script.js"></script>
 </body>
