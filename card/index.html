@@ -3,20 +3,782 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Analog</title>
+  <title>Analog — Cards</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Karla:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/card/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    /* ============================================================
+       ANALOG CARD — Consolidated Style
+       ============================================================ */
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-white:      #ffffff;
+      --bg-light:      #f5f2eb;
+      --card-today:    #F5F2EB;
+      --card-someday:  #EDE8DF;
+      --card-future:   #E3DAC9;
+      --text-dark:     #2A2825;
+      --text-mid:      #76706A;
+      --text-light:    #B3ADA5;
+      --circle-stroke: #C5BFB7;
+      --line-rule:     rgba(42, 40, 37, 0.07);
+      --streak-gold:   #C4A066;
+      --shadow-card:   0 6px 32px rgba(0,0,0,0.08), 0 1px 6px rgba(0,0,0,0.04);
+      --shadow-mini:   0 3px 18px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.03);
+      --radius-lg:     14px;
+      --radius-md:     10px;
+      --font-display:  'Cormorant Garamond', Georgia, serif;
+      --font-body:     'Karla', system-ui, sans-serif;
+      --font-mono:     'Space Mono', monospace;
+    }
+
+    html, body { height: 100%; }
+
+    body {
+      min-height: 100vh;
+      background-color: var(--bg-white);
+      font-family: var(--font-body);
+      color: var(--text-dark);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    #app {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px 56px;
+    }
+
+    /* ============================================================
+       HEADER — Greeting + Date
+       ============================================================ */
+
+    .app-header {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+      padding: 0 8px;
+    }
+
+    .greeting-section {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .greeting-title {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--text-dark);
+      line-height: 1;
+    }
+
+    .greeting-date {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-mid);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .streak-display {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--streak-gold);
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    .streak-icon {
+      width: 13px;
+      height: 15px;
+      flex-shrink: 0;
+    }
+
+    .streak-label {
+      color: rgba(196, 160, 102, 0.6);
+      font-weight: 300;
+      font-size: 12px;
+    }
+
+    /* ============================================================
+       CONTENT LAYOUT
+       ============================================================ */
+
+    #content-layout {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* ============================================================
+       CARDS — BASE
+       ============================================================ */
+
+    .card {
+      background: var(--card-today);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255,255,255,0.55);
+      pointer-events: none;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 20px 22px 14px;
+      border-bottom: 1px solid var(--line-rule);
+    }
+
+    .card-top-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 7px;
+    }
+
+    .card-label {
+      font-family: var(--font-display);
+      font-size: 23px;
+      font-weight: 500;
+      color: var(--text-dark);
+      letter-spacing: 0.01em;
+      line-height: 1;
+    }
+
+    .card-date {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--text-mid);
+      letter-spacing: 0.08em;
+    }
+
+    .card-dots {
+      display: flex;
+      flex-direction: column;
+      gap: 3.5px;
+    }
+
+    .card-dots-sm { gap: 2.5px; }
+
+    .dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      border: 1px solid var(--circle-stroke);
+      display: block;
+    }
+
+    .dot-filled { background: var(--text-dark); border-color: var(--text-dark); }
+
+    /* ============================================================
+       TODAY CARD
+       ============================================================ */
+
+    .today-card {
+      background: var(--card-today);
+    }
+
+    .task-list {
+      padding: 4px 0 6px;
+    }
+
+    .task-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 0 22px;
+      height: 46px;
+      border-bottom: 1px solid var(--line-rule);
+      transition: background-color 0.15s;
+    }
+
+    .task-row:last-child { border-bottom: none; }
+    .task-row:hover { background-color: rgba(42, 40, 37, 0.03); }
+
+    .task-circle {
+      width: 20px;
+      height: 20px;
+      min-width: 20px;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      color: var(--circle-stroke);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+      transition: color 0.15s;
+      touch-action: manipulation;
+      flex-shrink: 0;
+    }
+
+    .task-circle svg { width: 20px; height: 20px; }
+    .task-circle.checked { color: var(--text-dark); }
+
+    .task-circle-inner {
+      transform-origin: center;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform: scale(0);
+    }
+
+    .task-circle.checked .task-circle-inner { transform: scale(1); }
+
+    .task-text {
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--text-dark);
+      flex: 1;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-top: 2px;
+    }
+
+    .task-text.completed {
+      text-decoration: line-through;
+      color: var(--text-light);
+    }
+
+    .task-text a {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px solid var(--circle-stroke);
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .task-text a:hover {
+      color: var(--text-mid);
+      border-color: var(--text-mid);
+    }
+
+    .task-text.completed a {
+      border-color: var(--text-light);
+    }
+
+    /* ============================================================
+       MINI CARDS — Someday / Future
+       ============================================================ */
+
+    .mini-cards-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .mini-card {
+      background: var(--card-someday);
+    }
+
+    .mini-card.future-card {
+      background: var(--card-future);
+    }
+
+    .mini-card-header {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .mini-card-header:hover {
+      opacity: 0.8;
+    }
+
+    .item-count {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--text-mid);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .backlog-content {
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .backlog-content.collapsed {
+      display: none;
+    }
+
+    .backlog-list {
+      padding: 0;
+    }
+
+    .backlog-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 22px;
+      border-bottom: 1px solid var(--line-rule);
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--text-dark);
+      line-height: 1.5;
+      word-break: break-word;
+      transition: background-color 0.15s;
+    }
+
+    .backlog-item:hover { background-color: rgba(42, 40, 37, 0.03); }
+
+    .backlog-item-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .backlog-delete {
+      background: none;
+      border: none;
+      color: var(--text-light);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 0;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: color 0.15s;
+    }
+
+    .backlog-delete:hover { color: var(--text-mid); }
+
+    .backlog-add {
+      display: flex;
+      gap: 8px;
+      padding: 10px 22px;
+      border-top: 1px solid var(--line-rule);
+    }
+
+    .backlog-input {
+      flex: 1;
+      background: transparent;
+      border: 1px solid var(--circle-stroke);
+      border-radius: 6px;
+      padding: 6px 8px;
+      font-family: var(--font-body);
+      font-size: 11px;
+      color: var(--text-dark);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .backlog-input::placeholder { color: var(--text-light); }
+    .backlog-input:focus { border-color: var(--text-mid); }
+
+    .add-btn {
+      background: transparent;
+      border: 1px solid var(--circle-stroke);
+      color: var(--text-mid);
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .add-btn:hover {
+      border-color: var(--text-dark);
+      color: var(--text-dark);
+    }
+
+    /* ============================================================
+       ARCHIVE
+       ============================================================ */
+
+    #main-view { width: 100%; }
+    #archive-view { width: 100%; }
+
+    .archive-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      padding: 0 8px;
+    }
+
+    .back-btn {
+      background: none;
+      border: none;
+      color: var(--text-dark);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 400;
+      cursor: pointer;
+      padding: 0;
+      transition: opacity 0.15s;
+    }
+
+    .back-btn:hover { opacity: 0.7; }
+
+    .archive-title {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 500;
+      color: var(--text-dark);
+    }
+
+    .archive-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      width: 100%;
+    }
+
+    .archive-card {
+      background: var(--card-today);
+      border-radius: var(--radius-lg);
+      padding: 16px 18px;
+      box-shadow: var(--shadow-mini);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .archive-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255,255,255,0.55);
+      pointer-events: none;
+    }
+
+    .archive-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    .archive-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+      padding-bottom: 7px;
+      border-bottom: 1px solid var(--line-rule);
+    }
+
+    .archive-label {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-dark);
+    }
+
+    .archive-date {
+      font-family: var(--font-body);
+      font-size: 9.5px;
+      color: var(--text-mid);
+      letter-spacing: 0.06em;
+    }
+
+    .archive-score {
+      font-family: var(--font-body);
+      font-size: 10px;
+      color: var(--text-mid);
+      margin-bottom: 6px;
+    }
+
+    .archive-tasks { display: flex; flex-direction: column; gap: 3px; }
+
+    .archive-task {
+      display: flex;
+      align-items: flex-start;
+      gap: 5px;
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 300;
+      color: var(--text-dark);
+      line-height: 1.35;
+    }
+
+    .archive-task.done { color: var(--text-light); }
+    .archive-task-text { word-break: break-word; min-width: 0; }
+
+    .archive-dot {
+      width: 7px;
+      height: 7px;
+      min-width: 7px;
+      border-radius: 50%;
+      border: 1px solid var(--circle-stroke);
+      display: block;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .archive-dot.filled { background: var(--text-dark); border-color: var(--text-dark); }
+    .archive-task.done .archive-dot.filled { background: var(--text-light); border-color: var(--text-light); }
+
+    .empty-archive {
+      color: var(--text-light);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 300;
+      text-align: center;
+      padding: 48px 0;
+      grid-column: 1 / -1;
+      font-style: italic;
+    }
+
+    .archive-full-card {
+      background: var(--card-today);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.12);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .archive-full-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255,255,255,0.55);
+      pointer-events: none;
+    }
+
+    .archive-full-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 20px 22px 14px;
+      border-bottom: 1px solid var(--line-rule);
+    }
+
+    .archive-full-tasks { padding: 4px 0 6px; }
+
+    .archive-static-row {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 0 22px;
+      height: 46px;
+      border-bottom: 1px solid var(--line-rule);
+    }
+
+    .archive-static-row:last-child { border-bottom: none; }
+    .archive-static-row.empty-row { opacity: 0.35; }
+
+    .static-circle {
+      width: 20px;
+      height: 20px;
+      min-width: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--circle-stroke);
+      flex-shrink: 0;
+    }
+
+    .static-circle.completed { color: var(--text-dark); }
+    .static-circle svg { width: 20px; height: 20px; }
+
+    .static-text {
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--text-dark);
+      flex: 1;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .static-text.completed { text-decoration: line-through; color: var(--text-light); }
+    .static-text.empty { color: var(--text-light); font-style: italic; }
+
+    .archive-full-footer {
+      padding: 12px 22px 16px;
+      border-top: 1px solid var(--line-rule);
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: var(--text-mid);
+    }
+
+    /* ============================================================
+       MODALS
+       ============================================================ */
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(245, 242, 235, 0.88);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      z-index: 100;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .modal-scroll-area {
+      width: 100%;
+      max-height: 88vh;
+      overflow-y: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 16px 16px;
+    }
+
+    .modal-inner { width: 100%; }
+
+    .modal-close {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      background: rgba(42,40,37,0.12);
+      border: none;
+      color: var(--text-dark);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      font-size: 22px;
+      font-weight: 300;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+      touch-action: manipulation;
+      z-index: 101;
+    }
+
+    .modal-close:hover { background: rgba(42,40,37,0.22); }
+
+    /* ============================================================
+       LOADING
+       ============================================================ */
+
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      transition: opacity 0.4s;
+    }
+
+    .loading-overlay.fade-out { opacity: 0; pointer-events: none; }
+
+    .loading-card {
+      width: 52px;
+      height: 70px;
+      background: var(--card-today);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-card);
+    }
+
+    .loading-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--text-light);
+      animation: blink 1.1s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 0.25; transform: scale(0.9); }
+      50%       { opacity: 1;    transform: scale(1.15); }
+    }
+
+    /* ============================================================
+       UTILITY
+       ============================================================ */
+
+    .hidden { display: none !important; }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+
+    @media (max-width: 480px) {
+      #app { padding: 24px 12px 48px; }
+
+      .app-header { margin-bottom: 20px; }
+
+      .greeting-title { font-size: 24px; }
+
+      .card-label { font-size: 20px; }
+
+      .mini-cards-row { grid-template-columns: 1fr; }
+
+      .archive-grid { grid-template-columns: 1fr; }
+
+      .task-text { font-size: 13px; }
+    }
+
+    @media (max-width: 380px) {
+      .streak-display { font-size: 12px; gap: 5px; }
+      .streak-icon { width: 11px; height: 13px; }
+    }
+  </style>
 </head>
 <body>
-<div id="site-header"></div>
-<script src="/header.js"></script>
+
 <div id="app">
 
   <!-- ============ HEADER ============ -->
   <header class="app-header" id="app-header">
+    <div class="greeting-section">
+      <div class="greeting-title" id="greeting-title">Good morning, Joe</div>
+      <div class="greeting-date" id="greeting-date">LOADING...</div>
+    </div>
     <div class="streak-display" id="streak-display">
       <svg class="streak-icon" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path d="M10 1C10 1 4 8.5 4 13.5C4 16.99 6.69 19.8 10 19.8C13.31 19.8 16 16.99 16 13.5C16 8.5 10 1 10 1Z" fill="currentColor"/>
@@ -25,136 +787,87 @@
       <span id="streak-number">0</span>
       <span class="streak-label">day streak</span>
     </div>
-    <button class="archive-btn" id="archive-btn">Archive</button>
   </header>
 
-  <!-- ============ THREE-COLUMN LAYOUT ============ -->
+  <!-- ============ CONTENT ============ -->
   <div id="content-layout">
 
-    <!-- LEFT: Business Sidebar -->
-    <aside class="sidebar sidebar-left" id="business-sidebar">
-      <div class="card sidebar-card-inner business-card-bg" id="business-card-inner">
-        <!-- Rendered by JavaScript -->
+    <!-- MAIN VIEW -->
+    <div id="main-view">
+
+      <!-- Today Card -->
+      <div class="card today-card" id="today-card">
+        <div class="card-top">
+          <span class="card-label">Today</span>
+          <div class="card-top-right">
+            <span class="card-date" id="today-date"></span>
+            <div class="card-dots">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot dot-filled"></span>
+            </div>
+          </div>
+        </div>
+        <div class="task-list" id="task-list"></div>
       </div>
-    </aside>
 
-    <!-- CENTER: Today card + mini cards -->
-    <div id="center-column">
+      <!-- Mini Cards Row -->
+      <div class="mini-cards-row">
 
-      <main id="main-view">
-
-        <!-- Today Card -->
-        <div class="card today-card" id="today-card">
-          <div class="card-top">
-            <span class="card-label">Today</span>
+        <div class="card mini-card someday-card" id="someday-card">
+          <div class="card-top mini-card-header" id="someday-header">
+            <span class="card-label">Someday</span>
             <div class="card-top-right">
-              <span class="card-date" id="today-date"></span>
-              <div class="card-dots">
+              <span class="item-count" id="someday-count">0 items</span>
+              <div class="card-dots card-dots-sm">
                 <span class="dot"></span>
                 <span class="dot"></span>
                 <span class="dot dot-filled"></span>
               </div>
             </div>
           </div>
-          <div class="task-list" id="task-list"></div>
+          <div class="backlog-content" id="someday-content">
+            <div class="backlog-list" id="someday-list"></div>
+            <div class="backlog-add">
+              <input type="text" class="backlog-input" id="someday-input" placeholder="Add to someday..." maxlength="120" aria-label="Add someday item">
+              <button class="add-btn" id="someday-add-btn">+</button>
+            </div>
+          </div>
         </div>
 
-        <!-- Mini Cards Row -->
-        <div class="mini-cards-row">
-
-          <div class="card mini-card someday-card" id="someday-card">
-            <div class="card-top mini-card-header" id="someday-header">
-              <span class="card-label">Someday</span>
-              <div class="card-top-right">
-                <span class="item-count" id="someday-count">0 items</span>
-                <div class="card-dots card-dots-sm">
-                  <span class="dot"></span>
-                  <span class="dot"></span>
-                  <span class="dot dot-filled"></span>
-                </div>
-              </div>
-            </div>
-            <div class="backlog-content" id="someday-content">
-              <div class="backlog-list" id="someday-list"></div>
-              <div class="backlog-add">
-                <input type="text" class="backlog-input" id="someday-input" placeholder="Add to someday..." maxlength="120" aria-label="Add someday item">
-                <button class="add-btn" id="someday-add-btn">+</button>
+        <div class="card mini-card future-card" id="future-card">
+          <div class="card-top mini-card-header" id="future-header">
+            <span class="card-label">Future</span>
+            <div class="card-top-right">
+              <span class="item-count" id="future-count">0 items</span>
+              <div class="card-dots card-dots-sm">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot dot-filled"></span>
               </div>
             </div>
           </div>
-
-          <div class="card mini-card future-card" id="future-card">
-            <div class="card-top mini-card-header" id="future-header">
-              <span class="card-label">Future</span>
-              <div class="card-top-right">
-                <span class="item-count" id="future-count">0 items</span>
-                <div class="card-dots card-dots-sm">
-                  <span class="dot"></span>
-                  <span class="dot"></span>
-                  <span class="dot dot-filled"></span>
-                </div>
-              </div>
-            </div>
-            <div class="backlog-content" id="future-content">
-              <div class="backlog-list" id="future-list"></div>
-              <div class="backlog-add">
-                <input type="text" class="backlog-input" id="future-input" placeholder="Add to future..." maxlength="120" aria-label="Add future item">
-                <button class="add-btn" id="future-add-btn">+</button>
-              </div>
+          <div class="backlog-content" id="future-content">
+            <div class="backlog-list" id="future-list"></div>
+            <div class="backlog-add">
+              <input type="text" class="backlog-input" id="future-input" placeholder="Add to future..." maxlength="120" aria-label="Add future item">
+              <button class="add-btn" id="future-add-btn">+</button>
             </div>
           </div>
-
         </div>
 
-      </main>
-
-      <!-- Archive View (replaces main-view) -->
-      <div id="archive-view" class="hidden">
-        <div class="archive-header">
-          <button class="back-btn" id="back-btn">← Back</button>
-          <h1 class="archive-title">Archive</h1>
-        </div>
-        <div class="archive-grid" id="archive-grid"></div>
       </div>
 
-    </div><!-- /center-column -->
+    </div><!-- /main-view -->
 
-    <!-- RIGHT: Why Buildings Sidebar + Contribution Grid -->
-    <aside class="sidebar sidebar-right" id="wb-sidebar">
-
-      <div class="card sidebar-card-inner wb-card-bg" id="wb-card-inner">
-        <!-- Rendered by JavaScript -->
+    <!-- ARCHIVE VIEW -->
+    <div id="archive-view" class="hidden">
+      <div class="archive-header">
+        <button class="back-btn" id="back-btn">← Back</button>
+        <h1 class="archive-title">Archive</h1>
       </div>
-
-      <!-- Contribution Grid lives here, below Why Buildings -->
-      <div class="contribution-section" id="contribution-section">
-        <div class="contrib-header">
-          <span class="contrib-title">12 weeks</span>
-          <div class="contrib-legend">
-            <span class="contrib-legend-label">Less</span>
-            <div class="contrib-dot contrib-s1"></div>
-            <div class="contrib-dot contrib-s2"></div>
-            <div class="contrib-dot contrib-s3"></div>
-            <div class="contrib-dot contrib-s4"></div>
-            <div class="contrib-dot contrib-s5"></div>
-            <span class="contrib-legend-label">More</span>
-          </div>
-        </div>
-        <div class="contrib-wrapper">
-          <div class="contrib-day-labels" aria-hidden="true">
-            <span>M</span>
-            <span>T</span>
-            <span>W</span>
-            <span>T</span>
-            <span>F</span>
-            <span>S</span>
-            <span>S</span>
-          </div>
-          <div class="contribution-grid" id="contribution-grid" role="img" aria-label="12-week contribution history"></div>
-        </div>
-      </div>
-
-    </aside>
+      <div class="archive-grid" id="archive-grid"></div>
+    </div>
 
   </div><!-- /content-layout -->
 
@@ -167,19 +880,6 @@
     <button class="modal-close" id="modal-close" aria-label="Close">×</button>
   </div>
 
-  <div id="rollover-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="Rollover tasks">
-    <div class="rollover-card">
-      <p class="rollover-title">Yesterday's card</p>
-      <p class="rollover-body">
-        You have <strong id="rollover-count">0</strong> unfinished task<span id="rollover-plural">s</span> from yesterday. Roll them over to today?
-      </p>
-      <div class="rollover-actions">
-        <button class="btn-secondary" id="rollover-no">Start fresh</button>
-        <button class="btn-primary" id="rollover-yes">Roll over</button>
-      </div>
-    </div>
-  </div>
-
   <div id="loading" class="loading-overlay" aria-label="Loading">
     <div class="loading-card">
       <span class="loading-dot"></span>
@@ -188,6 +888,471 @@
 
 </div><!-- /app -->
 
-<script src="/card/script.js"></script>
+<script>
+/* ============================================================
+   ANALOG CARD — script.js (consolidated)
+   ============================================================ */
+
+// --- SUPABASE SETUP ---
+const SUPABASE_URL      = 'https://rvwyjipseusvqjqbwken.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ2d3lqaXBzZXVzdnFqcWJ3a2VuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NDA4MDAsImV4cCI6MjA5MjAxNjgwMH0.UFYPZndWuY3uDOWovjxa7qreidWM9sacUlIS9iteMXc';
+
+const { createClient } = window.supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// --- APP STATE ---
+let todayCard    = null;
+let somedayItems = [];
+let futureItems  = [];
+
+/* ============================================================
+   DATE HELPERS
+   ============================================================ */
+
+function getLocalDate() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function getYesterdayDate() {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function formatDateDisplay(dateStr) {
+  if (!dateStr) return '';
+  const [y, m, d] = dateStr.split('-');
+  return `${m}.${d}.${y.slice(2)}`;
+}
+
+function formatGreetingDate(dateStr) {
+  if (!dateStr) return '';
+  const [year, month, day] = dateStr.split('-').map(Number);
+  const date = new Date(year, month - 1, day, 12, 0, 0);
+  return date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  }).toUpperCase();
+}
+
+function makeFreshTasks(prefill = []) {
+  return Array.from({ length: 10 }, (_, i) => ({
+    id: i,
+    text: prefill[i] ? prefill[i].text : '',
+    completed: false,
+  }));
+}
+
+/* ============================================================
+   INITIALIZATION
+   ============================================================ */
+
+async function init() {
+  try {
+    renderGreetingDate();
+    renderTodayDate();
+    await loadTodayCard();
+    await loadBacklogItems();
+    await updateStreak();
+    setupEventListeners();
+    scheduleMidnightReload();
+  } catch (err) {
+    console.error('Init error:', err);
+  } finally {
+    hideLoading();
+  }
+}
+
+function renderGreetingDate() {
+  const today = getLocalDate();
+  document.getElementById('greeting-date').textContent = formatGreetingDate(today);
+}
+
+function renderTodayDate() {
+  document.getElementById('today-date').textContent = formatDateDisplay(getLocalDate());
+}
+
+/* ============================================================
+   TODAY CARD
+   ============================================================ */
+
+async function loadTodayCard() {
+  const today = getLocalDate();
+  const { data, error } = await db
+    .from('today_cards')
+    .select('*')
+    .eq('date', today)
+    .single();
+
+  if (error && error.code !== 'PGRST116') {
+    console.error('Load error:', error);
+  }
+
+  if (data) {
+    todayCard = data;
+  } else {
+    const newCard = { date: today, tasks: makeFreshTasks() };
+    const { data: inserted } = await db
+      .from('today_cards')
+      .insert([newCard])
+      .select()
+      .single();
+    if (inserted) todayCard = inserted;
+  }
+
+  renderTodayTasks();
+}
+
+function renderTodayTasks() {
+  const container = document.getElementById('task-list');
+  if (!todayCard || !todayCard.tasks) {
+    container.innerHTML = '';
+    return;
+  }
+
+  container.innerHTML = '';
+
+  todayCard.tasks.forEach((task, i) => {
+    const row = document.createElement('div');
+    row.className = 'task-row';
+
+    row.innerHTML = `
+      <button class="task-circle ${task.completed ? 'checked' : ''}" data-idx="${i}" aria-label="Toggle task">
+        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.5"/>
+          ${task.completed ? '<circle class="task-circle-inner" cx="10" cy="10" r="6" fill="currentColor"/>' : '<circle class="task-circle-inner" cx="10" cy="10" r="6" fill="currentColor"/>'}
+        </svg>
+      </button>
+      <span class="task-text ${task.completed ? 'completed' : ''}">${task.text || '—'}</span>
+    `;
+
+    const btn = row.querySelector('.task-circle');
+    btn.addEventListener('click', () => onTaskToggle(i));
+
+    container.appendChild(row);
+  });
+}
+
+function onTaskToggle(idx) {
+  if (!todayCard || !todayCard.tasks[idx]) return;
+  todayCard.tasks[idx].completed = !todayCard.tasks[idx].completed;
+  saveTodayCard();
+  renderTodayTasks();
+}
+
+async function saveTodayCard() {
+  if (!todayCard) return;
+  const { error } = await db
+    .from('today_cards')
+    .update({ tasks: todayCard.tasks })
+    .eq('date', todayCard.date);
+  if (error) console.error('Save error:', error);
+}
+
+/* ============================================================
+   BACKLOG (Someday / Future)
+   ============================================================ */
+
+async function loadBacklogItems() {
+  const { data, error } = await db
+    .from('backlog_items')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Load backlog error:', error);
+    return;
+  }
+
+  somedayItems = (data || []).filter(i => i.type === 'someday');
+  futureItems = (data || []).filter(i => i.type === 'future');
+
+  renderBacklog('someday');
+  renderBacklog('future');
+}
+
+function renderBacklog(type) {
+  const items = type === 'someday' ? somedayItems : futureItems;
+  const container = document.getElementById(`${type}-list`);
+  const countEl = document.getElementById(`${type}-count`);
+
+  countEl.textContent = `${items.length} item${items.length !== 1 ? 's' : ''}`;
+
+  container.innerHTML = '';
+
+  items.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'backlog-item';
+    el.innerHTML = `
+      <span class="backlog-item-text">${escHtml(item.text)}</span>
+      <button class="backlog-delete" data-id="${item.id}" data-type="${type}" aria-label="Delete">×</button>
+    `;
+    el.querySelector('.backlog-delete').addEventListener('click', onDeleteBacklogItem);
+    container.appendChild(el);
+  });
+}
+
+async function addBacklogItem(type) {
+  const input = document.getElementById(`${type}-input`);
+  const text = input.value.trim();
+  if (!text) return;
+
+  const { error } = await db
+    .from('backlog_items')
+    .insert([{ text, type, created_at: new Date().toISOString() }]);
+
+  if (error) {
+    console.error('Add error:', error);
+    return;
+  }
+
+  input.value = '';
+  await loadBacklogItems();
+}
+
+async function onDeleteBacklogItem(e) {
+  const id   = e.currentTarget.dataset.id;
+  const type = e.currentTarget.dataset.type;
+  await db.from('backlog_items').delete().eq('id', id);
+  if (type === 'someday') somedayItems = somedayItems.filter(i => i.id !== id);
+  else futureItems = futureItems.filter(i => i.id !== id);
+  renderBacklog(type);
+}
+
+/* ============================================================
+   ARCHIVE
+   ============================================================ */
+
+async function loadArchive() {
+  const today = getLocalDate();
+  const grid  = document.getElementById('archive-grid');
+  grid.innerHTML = '<p class="empty-archive">Loading...</p>';
+
+  const { data, error } = await db
+    .from('today_cards')
+    .select('*')
+    .neq('date', today)
+    .order('date', { ascending: false });
+
+  if (error || !data || data.length === 0) {
+    grid.innerHTML = '<p class="empty-archive">No past cards yet.</p>';
+    return;
+  }
+
+  grid.innerHTML = '';
+
+  data.forEach(card => {
+    const allTasks  = card.tasks || [];
+    const filled    = allTasks.filter(t => t.text);
+    const completed = filled.filter(t => t.completed).length;
+    const total     = filled.length;
+    const pct       = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+    const preview = filled.slice(0, 5).map(t => `
+      <div class="archive-task${t.completed ? ' done' : ''}">
+        <span class="archive-dot${t.completed ? ' filled' : ''}"></span>
+        <span class="archive-task-text">${escHtml(t.text)}</span>
+      </div>
+    `).join('');
+
+    const el = document.createElement('div');
+    el.className = 'archive-card';
+    el.innerHTML = `
+      <div class="archive-card-header">
+        <span class="archive-label">Today</span>
+        <span class="archive-date">${formatDateDisplay(card.date)}</span>
+      </div>
+      <div class="archive-score">${completed}/${total} &nbsp;&middot;&nbsp; ${pct}%</div>
+      <div class="archive-tasks">
+        ${preview || '<span style="color:var(--text-light);font-size:10px;font-style:italic">Empty card</span>'}
+      </div>
+    `;
+
+    el.addEventListener('click', () => openArchiveCardModal(card));
+    grid.appendChild(el);
+  });
+}
+
+function openArchiveCardModal(card) {
+  const allTasks  = card.tasks || [];
+  const filled    = allTasks.filter(t => t.text);
+  const completed = filled.filter(t => t.completed).length;
+  const total     = filled.length;
+
+  const taskRows = allTasks.map(t => `
+    <div class="archive-static-row${!t.text ? ' empty-row' : ''}">
+      <span class="static-circle${t.completed ? ' completed' : ''}">
+        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.5"/>
+          ${t.completed ? '<circle cx="10" cy="10" r="6" fill="currentColor"/>' : ''}
+        </svg>
+      </span>
+      <span class="static-text${t.completed ? ' completed' : ''}${!t.text ? ' empty' : ''}">
+        ${t.text ? escHtml(t.text) : '—'}
+      </span>
+    </div>
+  `).join('');
+
+  document.getElementById('modal-inner').innerHTML = `
+    <div class="archive-full-card">
+      <div class="archive-full-top">
+        <span class="card-label">Today</span>
+        <div class="card-top-right">
+          <span class="card-date">${formatDateDisplay(card.date)}</span>
+          <div class="card-dots">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot dot-filled"></span>
+          </div>
+        </div>
+      </div>
+      <div class="archive-full-tasks">${taskRows}</div>
+      <div class="archive-full-footer">${completed} of ${total} completed</div>
+    </div>
+  `;
+
+  document.getElementById('card-modal').classList.remove('hidden');
+}
+
+/* ============================================================
+   STREAK COUNTER
+   ============================================================ */
+
+async function updateStreak() {
+  const { data } = await db
+    .from('today_cards')
+    .select('date, tasks')
+    .order('date', { ascending: false })
+    .limit(90);
+
+  let streak = 0;
+
+  if (data && data.length > 0) {
+    const activeDates = new Set(
+      data
+        .filter(card => (card.tasks || []).some(t => t.text))
+        .map(card => card.date)
+    );
+
+    let checkDate = new Date();
+    for (let i = 0; i < 90; i++) {
+      const y   = checkDate.getFullYear();
+      const m   = String(checkDate.getMonth()+1).padStart(2,'0');
+      const d   = String(checkDate.getDate()).padStart(2,'0');
+      const str = `${y}-${m}-${d}`;
+
+      if (activeDates.has(str)) {
+        streak++;
+        checkDate.setDate(checkDate.getDate() - 1);
+      } else {
+        break;
+      }
+    }
+  }
+
+  document.getElementById('streak-number').textContent = streak;
+}
+
+/* ============================================================
+   MIDNIGHT RELOAD
+   ============================================================ */
+
+function scheduleMidnightReload() {
+  const now      = new Date();
+  const midnight = new Date();
+  midnight.setHours(24, 0, 10, 0);
+  setTimeout(() => window.location.reload(), midnight - now);
+}
+
+/* ============================================================
+   LOADING
+   ============================================================ */
+
+function hideLoading() {
+  const overlay = document.getElementById('loading');
+  overlay.classList.add('fade-out');
+  setTimeout(() => overlay.classList.add('hidden'), 420);
+}
+
+/* ============================================================
+   EVENT LISTENERS
+   ============================================================ */
+
+function setupEventListeners() {
+  // Archive button placeholder — if you need one, uncomment
+  // document.getElementById('archive-btn').addEventListener('click', () => {
+  //   document.getElementById('main-view').classList.add('hidden');
+  //   document.getElementById('archive-view').classList.remove('hidden');
+  //   loadArchive();
+  // });
+
+  document.getElementById('back-btn').addEventListener('click', () => {
+    document.getElementById('archive-view').classList.add('hidden');
+    document.getElementById('main-view').classList.remove('hidden');
+  });
+
+  document.getElementById('modal-close').addEventListener('click', () => {
+    document.getElementById('card-modal').classList.add('hidden');
+  });
+
+  document.getElementById('card-modal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('card-modal')) {
+      document.getElementById('card-modal').classList.add('hidden');
+    }
+  });
+
+  ['someday', 'future'].forEach(type => {
+    document.getElementById(`${type}-header`).addEventListener('click', () => {
+      document.getElementById(`${type}-card`).classList.toggle('expanded');
+      document.getElementById(`${type}-content`).classList.toggle('collapsed');
+    });
+
+    document.getElementById(`${type}-add-btn`).addEventListener('click', (e) => {
+      e.stopPropagation();
+      addBacklogItem(type);
+    });
+
+    document.getElementById(`${type}-input`).addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') addBacklogItem(type);
+      e.stopPropagation();
+    });
+
+    document.getElementById(`${type}-input`).addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+  });
+}
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+
+function escHtml(str) {
+  if (!str) return '';
+  return str
+    .replace(/&/g,  '&amp;')
+    .replace(/</g,  '&lt;')
+    .replace(/>/g,  '&gt;')
+    .replace(/"/g,  '&quot;')
+    .replace(/'/g,  '&#039;');
+}
+
+function debounce(fn, delay) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
+/* ============================================================
+   START
+   ============================================================ */
+
+init();
+</script>
 </body>
 </html>
