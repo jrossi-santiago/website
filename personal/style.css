@@ -1,364 +1,488 @@
 /* ============================================
    DAILY BRIEFING — style.css
-   Dot-matrix printout aesthetic
-   Font: Space Mono (loaded in HTML)
+   Thermal receipt printer aesthetic
+   Space Mono font, black ink on white paper
    ============================================ */
 
-/* ── CSS Variables — edit these to change the whole look ── */
+/* ── CSS Variables ── */
 :root {
-  --bg: #f5f0e8;           /* cream paper background */
-  --ink: #1a1a1a;          /* near-black ink */
-  --ink-faded: #555555;    /* lighter ink for secondary text */
-  --ink-ghost: #999999;    /* very light ink for placeholders */
-  --accent: #1a1a1a;       /* same as ink — no color accents */
-  --max-width: 720px;      /* max page width — keeps it readable */
+  --paper: #ffffff;
+  --ink: #111111;
+  --ink-mid: #444444;
+  --ink-light: #888888;
+  --ink-ghost: #cccccc;
+  --bg: #ddd9d0;
+  --receipt-width: 420px;
   --font: 'Space Mono', monospace;
 }
 
-/* ── Reset — clear browser default styles ── */
+/* ── Reset ── */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-/* ── Base Page ── */
-html {
-  font-size: 16px;
-  background-color: var(--bg);
-  color: var(--ink);
-}
-
-body {
+html, body {
+  background: var(--bg);
   font-family: var(--font);
-  background-color: var(--bg);
+  font-size: 13px;
   color: var(--ink);
   min-height: 100vh;
-  padding: 0;
-  margin: 0;
 }
 
-/* ── Report Container ── */
-.report {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 48px 24px 64px 24px;
+/* ============================================
+   RECEIPT WRAPPER + PAPER
+   ============================================ */
+
+.receipt-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0 80px 0;
 }
 
-/* ── Sections ── */
-.section {
-  padding: 32px 0;
+.receipt {
+  background: var(--paper);
+  width: 100%;
+  max-width: var(--receipt-width);
+  /* Layered shadow gives the paper a lifted, physical feel */
+  box-shadow:
+    1px 1px 0 #bbb,
+    3px 3px 0 #aaa,
+    5px 5px 0 #999;
+  position: relative;
 }
 
-/* ── Divider — mimics dot-matrix tear line ── */
-.divider {
-  font-family: var(--font);
-  color: var(--ink-ghost);
+/* Subtle paper grain texture via repeating gradient */
+.receipt::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.012) 2px,
+    rgba(0,0,0,0.012) 4px
+  );
+  z-index: 0;
+}
+
+.receipt > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================
+   RECEIPT HEADER
+   ============================================ */
+
+.receipt-header {
+  text-align: center;
+  padding: 20px 16px 14px 16px;
+  border-bottom: 2px solid var(--ink);
+}
+
+/* Big stamped name — like "GUS" in the reference photo */
+.header-name {
+  font-size: 3.2rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  line-height: 1;
+  /* Multiple text-shadow layers mimic an inked stamp that pressed unevenly */
+  text-shadow:
+    0px 0px 0px rgba(0,0,0,1),
+    1px 1px 2px rgba(0,0,0,0.2),
+    -0.5px -0.5px 0px rgba(0,0,0,0.6);
+}
+
+.header-meta {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  color: var(--ink-mid);
+  margin-top: 8px;
+  text-transform: uppercase;
+}
+
+/* ============================================
+   BLOCKS — each section is a bordered receipt box
+   ============================================ */
+
+.block {
+  border-bottom: 1px solid var(--ink);
+}
+
+/* Title bar: "01 MESSAGE  MES-BB4F6B" */
+.block-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px 4px 8px;
+  border-bottom: 1px solid var(--ink);
+}
+
+.block-num {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.block-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  flex: 1;
+}
+
+/* Alphanumeric tracking code — right side of title bar */
+.block-code {
+  font-size: 0.58rem;
+  color: var(--ink-light);
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+}
+
+/* Body padding for each block */
+.block-body {
+  padding: 10px 12px 14px 12px;
+}
+
+/* ============================================
+   01 MESSAGE
+   ============================================ */
+
+.message-text {
+  font-size: 0.82rem;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+}
+
+/* ============================================
+   02 TODAY — INTENTIONS
+   ============================================ */
+
+.intentions-body {
+  padding-bottom: 6px;
+}
+
+.intention-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.intention-dash {
   font-size: 0.85rem;
-  letter-spacing: 0.05em;
-  overflow: hidden;
-  white-space: nowrap;
+  color: var(--ink);
+  padding-top: 10px;
+  flex-shrink: 0;
   user-select: none;
 }
 
-/* ── Section Titles ── */
-.section-title {
+.intention-input {
   font-family: var(--font);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: var(--ink-faded);
-  margin-bottom: 20px;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  border-bottom: 1px dashed var(--ink-ghost);
+  outline: none;
+  width: 100%;
+  /* Padding gives a minimum touch target height of ~44px */
+  padding: 11px 2px 10px 2px;
+  caret-color: var(--ink);
+  line-height: 1.4;
+  border-radius: 0;
+  -webkit-appearance: none;
 }
 
-/* ── Section Subtitle (e.g. location) ── */
-.section-sub {
-  font-size: 0.75rem;
-  color: var(--ink-faded);
-  letter-spacing: 0.1em;
-  margin-top: -12px;
-  margin-bottom: 20px;
-}
-
-/* ── Loading text ── */
-.loading-text {
-  font-size: 0.8rem;
+.intention-input::placeholder {
   color: var(--ink-ghost);
-  letter-spacing: 0.1em;
-  animation: blink 1.2s step-end infinite;
+  font-style: italic;
+  font-size: 0.78rem;
 }
 
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.2; }
+.intention-input:focus {
+  border-bottom: 1px solid var(--ink);
+  background: rgba(0,0,0,0.02);
+}
+
+.save-status {
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  color: var(--ink-light);
+  margin-top: 8px;
+  height: 14px;
+  text-transform: uppercase;
 }
 
 /* ============================================
-   HEADER SECTION
+   03 WEATHER
    ============================================ */
 
-.greeting {
-  font-size: 1.6rem;
+.weather-body {
+  padding: 8px 12px 12px 12px;
+}
+
+/* [ CLOUDY ] style big condition label */
+.weather-bracket-label {
+  font-size: 1.5rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  line-height: 1.2;
-  margin-bottom: 10px;
+  letter-spacing: 0.1em;
+  display: block;
+  line-height: 1.1;
 }
 
-.date-display {
-  font-size: 0.85rem;
-  letter-spacing: 0.18em;
-  color: var(--ink-faded);
+/* Top row: big condition label + dot grid side by side */
+.weather-headline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--ink-ghost);
+  margin-bottom: 8px;
+  gap: 12px;
 }
 
-/* ============================================
-   WEATHER SECTION
-   ============================================ */
+/* Dot matrix grid — mimics the receipt weather visualization */
+.weather-dot-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 5px);
+  gap: 2px;
+  padding-top: 4px;
+  flex-shrink: 0;
+}
 
-.weather-grid {
+.weather-dot-grid span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ink);
+  opacity: 0.1;
+}
+
+.weather-dot-grid span.active {
+  opacity: 1;
+}
+
+/* SUNRISE / SUNSET / PRECIP meta row */
+.weather-meta-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.65rem;
+  letter-spacing: 0.07em;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--ink-ghost);
+  margin-bottom: 8px;
+}
+
+.weather-meta-col {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-}
-
-.weather-row {
-  display: grid;
-  grid-template-columns: 72px 40px 1fr 100px;
-  align-items: center;
-  gap: 12px;
-  font-size: 0.82rem;
-  letter-spacing: 0.05em;
-  padding: 6px 0;
-  border-bottom: 1px dotted var(--ink-ghost);
-}
-
-.weather-row:last-child {
-  border-bottom: none;
-}
-
-.weather-time {
-  font-weight: 700;
-  color: var(--ink);
-}
-
-.weather-emoji {
-  font-size: 1.1rem;
-  text-align: center;
-}
-
-.weather-temp {
-  font-weight: 700;
-  color: var(--ink);
-  text-align: right;
-}
-
-.weather-condition {
-  color: var(--ink-faded);
+  gap: 3px;
+  color: var(--ink-mid);
   text-transform: uppercase;
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
 }
 
-/* Mobile: stack weather rows */
-@media (max-width: 480px) {
-  .weather-row {
-    grid-template-columns: 60px 32px 1fr 72px;
-    gap: 8px;
-    font-size: 0.75rem;
-  }
+.weather-meta-values {
+  color: var(--ink);
+  font-weight: 700;
 }
 
-/* ============================================
-   TOP 5 TODAY — INTENTIONS
-   ============================================ */
+.weather-meta-right {
+  margin-left: auto;
+  flex-shrink: 0;
+}
 
-.intentions-list {
+/* Circle with emoji — like the sun circle in the reference */
+.weather-circle-icon {
+  width: 38px;
+  height: 38px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+/* TEMP: 60°F line */
+.weather-temp-row {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--ink-ghost);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+/* Hourly rows */
+.weather-hourly {
   display: flex;
   flex-direction: column;
   gap: 0;
 }
 
-.intention-row {
-  display: flex;
+.weather-hour-row {
+  display: grid;
+  grid-template-columns: 56px 20px 1fr 48px;
   align-items: center;
-  gap: 12px;
-  border-bottom: 1px solid var(--ink-ghost);
+  gap: 8px;
+  font-size: 0.65rem;
+  letter-spacing: 0.03em;
   padding: 4px 0;
+  border-bottom: 1px dotted var(--ink-ghost);
 }
 
-.intention-row:first-child {
-  border-top: 1px solid var(--ink-ghost);
+.weather-hour-row:last-child {
+  border-bottom: none;
 }
 
-.intention-num {
-  font-size: 0.8rem;
+.wh-time {
   font-weight: 700;
-  color: var(--ink-faded);
-  letter-spacing: 0.05em;
-  flex-shrink: 0;
-  min-width: 28px;
-}
-
-.intention-input {
-  font-family: var(--font);
-  font-size: 0.9rem;
-  letter-spacing: 0.04em;
   color: var(--ink);
-  background: transparent;
-  border: none;
-  outline: none;
-  width: 100%;
-  padding: 14px 0;
-  caret-color: var(--ink);
-  /* minimum touch target height = 44px, padding handles it */
 }
 
-.intention-input::placeholder {
-  color: var(--ink-ghost);
-  font-family: var(--font);
+.wh-emoji {
+  text-align: center;
+  font-size: 0.78rem;
+  line-height: 1;
 }
 
-.intention-input:focus {
-  background: rgba(0,0,0,0.03);
-  padding-left: 6px;
-  transition: all 0.15s ease;
-}
-
-/* Save status feedback */
-.save-status {
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
-  color: var(--ink-ghost);
-  margin-top: 12px;
-  height: 16px;
+.wh-cond {
+  color: var(--ink-mid);
   text-transform: uppercase;
-  transition: opacity 0.3s ease;
+  font-size: 0.6rem;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wh-temp {
+  text-align: right;
+  font-weight: 700;
+  color: var(--ink);
 }
 
 /* ============================================
-   MOTIVATION — QUOTE
+   04 MOTIVATION
    ============================================ */
 
 .quote-text {
-  font-size: 1.05rem;
-  line-height: 1.75;
-  letter-spacing: 0.04em;
+  font-size: 0.82rem;
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+  font-style: italic;
   color: var(--ink);
-  max-width: 580px;
 }
 
 /* ============================================
-   PRAYER + INSPIRATION — IMAGES
+   05 PRAYER + 06 INSPIRATION — IMAGES
+   Images render in full color inside the receipt
    ============================================ */
 
-.image-frame {
-  width: 100%;
-  max-width: 580px;
+.image-body {
+  padding: 0;
+  overflow: hidden;
 }
 
-.image-frame img {
+.image-body img {
   width: 100%;
   height: auto;
   display: block;
-  /* Images render in color — intentional per design brief */
 }
 
 /* ============================================
-   REMINDERS
+   07 REMINDERS
    ============================================ */
 
 .reminders-list {
   list-style: none;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
 }
 
 .reminders-list li {
-  font-size: 0.9rem;
-  letter-spacing: 0.06em;
-  line-height: 1.6;
-  padding: 10px 0;
-  border-bottom: 1px dotted var(--ink-ghost);
-  text-transform: uppercase;
+  font-size: 0.82rem;
+  letter-spacing: 0.03em;
+  line-height: 1.55;
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--ink-ghost);
 }
 
-.reminders-list li:first-child {
-  border-top: 1px dotted var(--ink-ghost);
+.reminders-list li:last-child {
+  border-bottom: none;
 }
 
 .reminders-list li::before {
-  content: '» ';
-  color: var(--ink-faded);
+  content: '- ';
+  color: var(--ink-mid);
 }
 
 /* ============================================
-   ARCHIVE SECTION
+   08 ARCHIVE
    ============================================ */
 
-.archive-btn {
+.receipt-btn {
   font-family: var(--font);
-  font-size: 0.82rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   color: var(--ink);
   background: transparent;
-  border: 2px solid var(--ink);
-  padding: 14px 24px;
+  border: 1px solid var(--ink);
+  padding: 10px 18px;
   cursor: pointer;
-  text-transform: uppercase;
-  transition: background 0.15s ease, color 0.15s ease;
+  display: inline-block;
   touch-action: manipulation;
-  /* min 44px touch target */
-  min-height: 48px;
+  min-height: 44px;
+  text-transform: uppercase;
+  transition: background 0.1s ease, color 0.1s ease;
+  border-radius: 0;
+  -webkit-appearance: none;
 }
 
-.archive-btn:hover,
-.archive-btn:focus {
+.receipt-btn:hover,
+.receipt-btn:focus {
   background: var(--ink);
-  color: var(--bg);
+  color: var(--paper);
   outline: none;
 }
 
-.archive-status {
-  font-size: 0.75rem;
-  letter-spacing: 0.15em;
-  color: var(--ink-faded);
-  margin-top: 14px;
-  text-transform: uppercase;
-  height: 18px;
+.receipt-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
 }
 
-/* Archive list of past dates */
+/* Archive list */
 .archive-list {
-  margin-top: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+  margin-top: 14px;
 }
 
 .archive-entry {
-  border-bottom: 1px dotted var(--ink-ghost);
+  border-top: 1px dashed var(--ink-ghost);
 }
 
-.archive-entry:first-child {
-  border-top: 1px dotted var(--ink-ghost);
-}
-
-/* The clickable date row */
 .archive-date-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 0;
+  padding: 9px 0;
   cursor: pointer;
-  font-size: 0.82rem;
+  font-size: 0.68rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   touch-action: manipulation;
   user-select: none;
+  min-height: 44px;
 }
 
 .archive-date-row:hover .archive-date-label {
@@ -366,21 +490,21 @@ body {
 }
 
 .archive-toggle-icon {
-  font-size: 0.75rem;
-  color: var(--ink-faded);
-  transition: transform 0.2s ease;
+  font-size: 0.6rem;
+  color: var(--ink-mid);
+  transition: transform 0.15s ease;
+  flex-shrink: 0;
 }
 
 .archive-toggle-icon.open {
   transform: rotate(90deg);
 }
 
-/* Expanded archive content panel */
 .archive-content {
   display: none;
-  padding: 0 0 20px 16px;
+  padding: 4px 0 12px 10px;
   border-left: 2px solid var(--ink-ghost);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .archive-content.expanded {
@@ -388,48 +512,46 @@ body {
 }
 
 .archive-content-label {
-  font-size: 0.68rem;
-  letter-spacing: 0.18em;
-  color: var(--ink-faded);
+  font-size: 0.58rem;
+  letter-spacing: 0.2em;
+  color: var(--ink-light);
   text-transform: uppercase;
-  margin-top: 16px;
-  margin-bottom: 6px;
+  margin-top: 10px;
+  margin-bottom: 4px;
 }
 
 .archive-content-label:first-child {
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
 .archive-intention-item {
-  font-size: 0.82rem;
-  letter-spacing: 0.04em;
-  line-height: 1.6;
+  font-size: 0.72rem;
+  line-height: 1.55;
   color: var(--ink);
-  padding: 2px 0;
+  padding: 1px 0;
 }
 
 .archive-intention-item::before {
-  content: '— ';
+  content: '- ';
   color: var(--ink-ghost);
 }
 
 .archive-quote-text {
-  font-size: 0.82rem;
+  font-size: 0.72rem;
   line-height: 1.65;
-  letter-spacing: 0.04em;
   color: var(--ink);
   font-style: italic;
 }
 
 .archive-image-row {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   flex-wrap: wrap;
   margin-top: 8px;
 }
 
 .archive-image-thumb {
-  width: 120px;
+  width: 110px;
   height: auto;
   display: block;
 }
@@ -438,32 +560,67 @@ body {
    FOOTER
    ============================================ */
 
-.footer {
-  padding-top: 32px;
-  font-size: 0.72rem;
-  letter-spacing: 0.18em;
+.receipt-footer {
+  padding: 14px 12px 28px 12px;
+  text-align: center;
+}
+
+.footer-dashes {
+  font-size: 0.65rem;
   color: var(--ink-ghost);
+  letter-spacing: 0.04em;
+  margin: 4px 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.footer-text {
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  color: var(--ink-light);
+  text-transform: uppercase;
+  margin: 4px 0;
+}
+
+/* ============================================
+   UTILITY
+   ============================================ */
+
+.receipt-small-text {
+  font-size: 0.65rem;
+  color: var(--ink-light);
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
 /* ============================================
-   RESPONSIVE — phone adjustments
+   RESPONSIVE — phone
    ============================================ */
 
 @media (max-width: 480px) {
-  .report {
-    padding: 32px 16px 48px 16px;
+  .receipt-wrap {
+    padding: 0 0 60px 0;
   }
 
-  .greeting {
-    font-size: 1.25rem;
+  .receipt {
+    /* No offset shadow on mobile — saves horizontal space */
+    box-shadow: none;
   }
 
-  .quote-text {
-    font-size: 0.95rem;
+  .header-name {
+    font-size: 2.6rem;
+  }
+
+  .weather-bracket-label {
+    font-size: 1.2rem;
+  }
+
+  .weather-hour-row {
+    grid-template-columns: 50px 18px 1fr 44px;
+    gap: 5px;
   }
 
   .archive-image-thumb {
-    width: 100px;
+    width: 90px;
   }
 }
