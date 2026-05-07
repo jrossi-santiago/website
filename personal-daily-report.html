@@ -535,7 +535,7 @@
   <div class="receipt-section">
     <div class="section-row">
       <div class="label">Message</div>
-      <div class="value" id="greeting-msg">Make it a good day.</div>
+      <div class="value" id="greeting-msg">HERE'S YOUR DAILY BRIEFING.</div>
     </div>
   </div>
 
@@ -579,14 +579,9 @@
       <div class="value" id="weather-precip">--%</div>
     </div>
 
-    <!-- Dot grid -->
-    <div class="dot-grid-container">
-      <div class="dot-grid" id="dot-grid"></div>
-    </div>
-
     <!-- Hourly strip -->
     <div class="section-row" style="margin-top: 16px;">
-      <div class="label">Next 12 Hours</div>
+      <div class="label">Next 6 Hours</div>
     </div>
     <div id="weather-hourly"></div>
   </div>
@@ -832,22 +827,11 @@ async function initWeather() {
     document.getElementById('weather-sunset').textContent = fmtTime(sunset);
     document.getElementById('weather-precip').textContent = `${currentPrecip}%`;
 
-    // Dot grid — fill proportional to precip
-    const dotGrid = document.getElementById('dot-grid');
-    dotGrid.innerHTML = '';
-    const totalDots = 50;
-    const activeDots = Math.round((currentPrecip / 100) * totalDots);
-    for (let d = 0; d < totalDots; d++) {
-      const dot = document.createElement('span');
-      if (d < activeDots) dot.classList.add('active');
-      dotGrid.appendChild(dot);
-    }
-
     // Hourly rows
     const hourly = document.getElementById('weather-hourly');
     hourly.innerHTML = '';
 
-    for (let i = startIndex; i < startIndex + 12 && i < hours.length; i++) {
+    for (let i = startIndex; i < startIndex + 6 && i < hours.length; i++) {
       const hourNum = new Date(hours[i]).getHours();
       const { emoji: hEmoji, label: hLabel } = interpretWeatherCode(codes[i]);
       const hTemp = Math.round(temps[i]);
