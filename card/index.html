@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Analog — Cards</title>
+  <title>Analog</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Karla:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
@@ -139,7 +139,7 @@
       max-width: 600px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 24px;
     }
 
     /* ============================================================
@@ -308,7 +308,7 @@
     .mini-cards-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 14px;
+      gap: 18px;
     }
 
     .mini-card {
@@ -1288,13 +1288,6 @@ function hideLoading() {
    ============================================================ */
 
 function setupEventListeners() {
-  // Archive button placeholder — if you need one, uncomment
-  // document.getElementById('archive-btn').addEventListener('click', () => {
-  //   document.getElementById('main-view').classList.add('hidden');
-  //   document.getElementById('archive-view').classList.remove('hidden');
-  //   loadArchive();
-  // });
-
   document.getElementById('back-btn').addEventListener('click', () => {
     document.getElementById('archive-view').classList.add('hidden');
     document.getElementById('main-view').classList.remove('hidden');
