@@ -70,20 +70,16 @@ function formatHour(hour) {
   return `${h}:00${ampm}`;
 }
 
-// ── Generate random receipt codes ────────────
-function generateReceiptCodes() {
+// ── Generate random receipt token code ────────────
+function generateTokenCode() {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  function code() {
-    let c = '';
-    for (let i = 0; i < 3; i++) c += chars[Math.floor(Math.random() * chars.length)];
-    c += '-';
-    for (let i = 0; i < 6; i++) c += chars[Math.floor(Math.random() * chars.length)];
-    return c;
-  }
-  for (let n = 1; n <= 8; n++) {
-    const el = document.getElementById(`code-0${n}`);
-    if (el) el.textContent = code();
-  }
+  let code = '';
+  for (let i = 0; i < 3; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  code += '-';
+  for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  
+  const el = document.getElementById('token-code');
+  if (el) el.textContent = code;
 }
 
 // ═══════════════════════════════════════════════
@@ -144,24 +140,22 @@ async function initWeather() {
     // Update condition label
     document.getElementById('weather-condition').textContent = `[ ${label} ]`;
     document.getElementById('weather-icon').textContent = emoji;
-    document.getElementById('weather-temp').textContent = `TEMP: ${currentTemp}°F`;
+    document.getElementById('weather-temp').textContent = `${currentTemp}°F`;
 
     // Format times
     function fmtTime(dtStr) {
       if (!dtStr) return '--';
-      const t = new Date(dtStr + ':00');
+      const t = new Date(dtStr);
       const h = t.getHours() % 12 || 12;
       const m = String(t.getMinutes()).padStart(2, '0');
       const ap = t.getHours() < 12 ? 'AM' : 'PM';
       return `${h}:${m}${ap}`;
     }
 
-    // Update meta values
-    document.getElementById('meta-values').innerHTML = `
-      <div>${fmtTime(sunrise)}</div>
-      <div>${fmtTime(sunset)}</div>
-      <div>${currentPrecip}%</div>
-    `;
+    // Update sunrise, sunset, precip
+    document.getElementById('weather-sunrise').textContent = fmtTime(sunrise);
+    document.getElementById('weather-sunset').textContent = fmtTime(sunset);
+    document.getElementById('weather-precip').textContent = `${currentPrecip}%`;
 
     // Dot grid — fill proportional to precip
     const dotGrid = document.getElementById('dot-grid');
@@ -179,7 +173,7 @@ async function initWeather() {
     hourly.innerHTML = '';
 
     for (let i = startIndex; i < startIndex + 12 && i < hours.length; i++) {
-      const hourNum = new Date(hours[i] + ':00').getHours();
+      const hourNum = new Date(hours[i]).getHours();
       const { emoji: hEmoji, label: hLabel } = interpretWeatherCode(codes[i]);
       const hTemp = Math.round(temps[i]);
 
@@ -250,7 +244,6 @@ async function saveIntentions() {
     intention_3: document.getElementById('intention-3').value.trim(),
     intention_4: document.getElementById('intention-4').value.trim(),
     intention_5: document.getElementById('intention-5').value.trim(),
-    updated_at: new Date().toISOString(),
   };
 
   const { error } = await db
@@ -259,9 +252,9 @@ async function saveIntentions() {
 
   if (error) {
     console.error('Save error:', error);
-    status.textContent = 'ERROR SAVING.';
+    status.textContent = 'ERROR SAVING';
   } else {
-    status.textContent = 'SAVED.';
+    status.textContent = 'SAVED';
     setTimeout(() => { status.textContent = ''; }, 2000);
   }
 }
@@ -363,7 +356,7 @@ async function archiveToday() {
   const btn = document.getElementById('archive-btn');
 
   btn.disabled = true;
-  btn.textContent = '[ ARCHIVING... ]';
+  btn.textContent = 'ARCHIVING...';
 
   const intentionsData = {
     intention_1: document.getElementById('intention-1').value.trim(),
@@ -387,7 +380,7 @@ async function archiveToday() {
     .upsert(payload, { onConflict: 'date' });
 
   btn.disabled = false;
-  btn.textContent = '[ ARCHIVE TODAY ]';
+  btn.textContent = 'ARCHIVE TODAY';
 
   if (error) {
     console.error('Archive error:', error);
@@ -507,7 +500,7 @@ function escapeHTML(str) {
 
 async function init() {
   initHeader();
-  generateReceiptCodes();
+  generateTokenCode();
 
   await Promise.allSettled([
     initWeather(),
