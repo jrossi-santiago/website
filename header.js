@@ -7,6 +7,7 @@
   // Create navbar HTML
   const navHTML = `
     <nav class="shared-navbar">
+      <a href="https://josephrossi.co">Home</a>
       <a href="https://josephrossi.co/card">Analog</a>
       <a href="https://josephrossi.co/notebook">B-Journal</a>
       <a href="https://josephrossi.co/journal">P-Journal</a>
