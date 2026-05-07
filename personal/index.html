@@ -56,7 +56,7 @@
     }
 
     .header-title {
-      font-size: 48px;
+      font-size: 32px;
       font-weight: 700;
       letter-spacing: 0.12em;
       line-height: 1;
@@ -69,32 +69,6 @@
       letter-spacing: 0.15em;
       color: var(--ink-light);
       text-transform: uppercase;
-    }
-
-    .token-box {
-      text-align: center;
-      margin: 20px 0;
-      padding: 16px 20px;
-      border: 2px dashed var(--ink);
-      background: transparent;
-    }
-
-    .token-label {
-      font-size: 9px;
-      letter-spacing: 0.2em;
-      color: var(--ink-light);
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      font-weight: 400;
-    }
-
-    .token-code {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      word-break: break-all;
-      line-height: 1.6;
-      color: var(--ink);
     }
 
     .divider {
@@ -224,6 +198,7 @@
       color: var(--ink);
       padding: 6px 0;
       letter-spacing: 0.01em;
+      text-align: center;
     }
 
     .image-frame {
@@ -498,7 +473,7 @@
       }
 
       .header-title {
-        font-size: 36px;
+        font-size: 28px;
       }
 
       .section-row {
@@ -541,11 +516,7 @@
       }
 
       .header-title {
-        font-size: 32px;
-      }
-
-      .token-code {
-        font-size: 11px;
+        font-size: 24px;
       }
     }
   </style>
@@ -560,47 +531,12 @@
     <div class="header-subtitle" id="date-display">LOADING...</div>
   </div>
 
-  <!-- TOKEN BOX -->
-  <div class="token-box">
-    <div class="token-label">Token</div>
-    <div class="token-code" id="token-code">LOADING...</div>
-  </div>
-
   <!-- SECTION: MESSAGE -->
   <div class="receipt-section">
     <div class="section-row">
       <div class="label">Message</div>
       <div class="value" id="greeting-msg">HERE'S YOUR DAILY BRIEFING.</div>
     </div>
-  </div>
-
-  <!-- DIVIDER -->
-  <div class="divider"></div>
-
-  <!-- SECTION: TODAY -->
-  <div class="receipt-section">
-    <div class="section-title">TOP 5 TODAY</div>
-    <div class="intention-row">
-      <span class="dash">-</span>
-      <input class="intention-input" id="intention-1" type="text" placeholder="add intention..." maxlength="70" autocomplete="off" />
-    </div>
-    <div class="intention-row">
-      <span class="dash">-</span>
-      <input class="intention-input" id="intention-2" type="text" placeholder="add intention..." maxlength="70" autocomplete="off" />
-    </div>
-    <div class="intention-row">
-      <span class="dash">-</span>
-      <input class="intention-input" id="intention-3" type="text" placeholder="add intention..." maxlength="70" autocomplete="off" />
-    </div>
-    <div class="intention-row">
-      <span class="dash">-</span>
-      <input class="intention-input" id="intention-4" type="text" placeholder="add intention..." maxlength="70" autocomplete="off" />
-    </div>
-    <div class="intention-row">
-      <span class="dash">-</span>
-      <input class="intention-input" id="intention-5" type="text" placeholder="add intention..." maxlength="70" autocomplete="off" />
-    </div>
-    <div class="save-indicator" id="save-status"></div>
   </div>
 
   <!-- DIVIDER -->
@@ -653,6 +589,35 @@
       <div class="label">Next 12 Hours</div>
     </div>
     <div id="weather-hourly"></div>
+  </div>
+
+  <!-- DIVIDER -->
+  <div class="divider"></div>
+
+  <!-- SECTION: TODAY -->
+  <div class="receipt-section">
+    <div class="section-title">TOP 5 TODAY</div>
+    <div class="intention-row">
+      <span class="dash">-</span>
+      <input class="intention-input" id="intention-1" type="text" placeholder="add intention..." maxlength="70" autocomplete="off" />
+    </div>
+    <div class="intention-row">
+      <span class="dash">-</span>
+      <input class="intention-input" id="intention-2" type="text" placeholder="add intention..." maxlength="70" autocomplete="off" />
+    </div>
+    <div class="intention-row">
+      <span class="dash">-</span>
+      <input class="intention-input" id="intention-3" type="text" placeholder="add intention..." maxlength="70" autocomplete="off" />
+    </div>
+    <div class="intention-row">
+      <span class="dash">-</span>
+      <input class="intention-input" id="intention-4" type="text" placeholder="add intention..." maxlength="70" autocomplete="off" />
+    </div>
+    <div class="intention-row">
+      <span class="dash">-</span>
+      <input class="intention-input" id="intention-5" type="text" placeholder="add intention..." maxlength="70" autocomplete="off" />
+    </div>
+    <div class="save-indicator" id="save-status"></div>
   </div>
 
   <!-- DIVIDER -->
@@ -790,18 +755,6 @@ function formatHour(hour) {
   const h = hour % 12 === 0 ? 12 : hour % 12;
   const ampm = hour < 12 ? 'AM' : 'PM';
   return `${h}:00${ampm}`;
-}
-
-// ── Generate random receipt token code ────────────
-function generateTokenCode() {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let code = '';
-  for (let i = 0; i < 3; i++) code += chars[Math.floor(Math.random() * chars.length)];
-  code += '-';
-  for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
-  
-  const el = document.getElementById('token-code');
-  if (el) el.textContent = code;
 }
 
 // ═══════════════════════════════════════════════
@@ -1222,7 +1175,6 @@ function escapeHTML(str) {
 
 async function init() {
   initHeader();
-  generateTokenCode();
 
   await Promise.allSettled([
     initWeather(),
