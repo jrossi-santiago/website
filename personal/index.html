@@ -4,11 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DAILY BRIEFING</title>
-<!-- Updated May 7 2026 -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
- <link rel="stylesheet" href="style.css?v=2" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
@@ -85,19 +84,19 @@
       <div class="value" id="weather-temp">--°F</div>
     </div>
 
-    <!-- Sunrise / Sunset / Precip -->
+    <!-- Sunrise -->
     <div class="section-row">
       <div class="label">Sunrise</div>
-      <div id="meta-values">
-        <div class="value" id="weather-sunrise">--</div>
-      </div>
+      <div class="value" id="weather-sunrise">--</div>
     </div>
     
+    <!-- Sunset -->
     <div class="section-row">
       <div class="label">Sunset</div>
       <div class="value" id="weather-sunset">--</div>
     </div>
 
+    <!-- Precip -->
     <div class="section-row">
       <div class="label">Precip</div>
       <div class="value" id="weather-precip">--%</div>
@@ -179,6 +178,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="script.js?v=2"></script>
+<script src="script.js"></script>
 </body>
 </html>
