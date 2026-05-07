@@ -19,8 +19,46 @@
     }
 
     body {
-      padding: 20px;
+      padding: 0;
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .navbar {
+      background: #ffffff;
+      border-bottom: 1px solid #d0d0d0;
+      padding: 16px 20px;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .navbar a {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #1a1a1a;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .navbar a:hover {
+      color: #2563eb;
+    }
+
+    .navbar a::after {
+      content: '';
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 20px;
+      overflow: hidden;
     }
 
     .reports-container {
@@ -90,6 +128,15 @@
 </head>
 <body>
 
+<nav class="navbar">
+  <a href="https://josephrossi.co/card">Card</a>
+  <a href="https://josephrossi.co/notebook">Notebook</a>
+  <a href="https://josephrossi.co/journal">Journal</a>
+  <a href="https://josephrossi.co/bookmarks">Bookmarks</a>
+</nav>
+
+<div class="main-content">
+
 <div class="reports-container">
   <!-- Personal Daily Report -->
   <div class="report-frame">
@@ -102,6 +149,8 @@
     <div class="report-label">Business Daily Report</div>
     <iframe src="./business-daily-report.html" title="Business Daily Report"></iframe>
   </div>
+</div>
+
 </div>
 
 </body>
