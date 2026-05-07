@@ -686,7 +686,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* ============================================
-   DAILY BRIEFING — script.js
+   DAILY BRIEFING — script.js (with image caching)
    ============================================ */
 
 // ── Supabase setup ──────────────────────────
@@ -958,31 +958,61 @@ async function initQuote() {
 }
 
 // ═══════════════════════════════════════════════
-// SECTION 5: PRAYER IMAGE
+// SECTION 5: PRAYER IMAGE (CACHED BY DATE)
 // ═══════════════════════════════════════════════
 
 let loadedPrayerUrl = '';
 
 async function initPrayerImage() {
-  await loadRandomImageFromBucket('prayer_images', 'prayer-frame', 'Prayer image', (url) => {
-    loadedPrayerUrl = url;
-  });
+  const today = getTodayEST();
+  
+  // Check cache first
+  const { data: cache } = await db
+    .from('daily_media_cache')
+    .select('prayer_image_url')
+    .eq('date', today)
+    .single();
+
+  if (cache && cache.prayer_image_url) {
+    // Use cached image
+    loadedPrayerUrl = cache.prayer_image_url;
+    const frame = document.getElementById('prayer-frame');
+    frame.innerHTML = `<img src="${loadedPrayerUrl}" alt="Prayer image" loading="lazy" />`;
+  } else {
+    // Fetch new random image and cache it
+    await loadAndCacheImage('prayer_images', 'prayer-frame', 'Prayer image', today, 'prayer');
+  }
 }
 
 // ═══════════════════════════════════════════════
-// SECTION 6: INSPIRATIONAL IMAGE
+// SECTION 6: INSPIRATIONAL IMAGE (CACHED BY DATE)
 // ═══════════════════════════════════════════════
 
 let loadedInspirationUrl = '';
 
 async function initInspirationImage() {
-  await loadRandomImageFromBucket('inspirational_images', 'inspiration-frame', 'Inspiration image', (url) => {
-    loadedInspirationUrl = url;
-  });
+  const today = getTodayEST();
+  
+  // Check cache first
+  const { data: cache } = await db
+    .from('daily_media_cache')
+    .select('inspiration_image_url')
+    .eq('date', today)
+    .single();
+
+  if (cache && cache.inspiration_image_url) {
+    // Use cached image
+    loadedInspirationUrl = cache.inspiration_image_url;
+    const frame = document.getElementById('inspiration-frame');
+    frame.innerHTML = `<img src="${loadedInspirationUrl}" alt="Inspiration image" loading="lazy" />`;
+  } else {
+    // Fetch new random image and cache it
+    await loadAndCacheImage('inspirational_images', 'inspiration-frame', 'Inspiration image', today, 'inspiration');
+  }
 }
 
-// ── Shared helper: load random image from a bucket ──
-async function loadRandomImageFromBucket(bucketName, frameId, altText, onLoad) {
+// ── Shared helper: load random image and cache it ──
+async function loadAndCacheImage(bucketName, frameId, altText, today, imageType) {
   const frame = document.getElementById(frameId);
 
   const { data: files, error } = await db.storage
@@ -1011,7 +1041,23 @@ async function loadRandomImageFromBucket(bucketName, frameId, altText, onLoad) {
     .getPublicUrl(randomFile.name);
 
   const publicUrl = urlData.publicUrl;
-  if (onLoad) onLoad(publicUrl);
+
+  // Store image type specific URLs
+  if (imageType === 'prayer') {
+    loadedPrayerUrl = publicUrl;
+  } else if (imageType === 'inspiration') {
+    loadedInspirationUrl = publicUrl;
+  }
+
+  // Cache in database
+  const cachePayload = {
+    date: today,
+    [imageType === 'prayer' ? 'prayer_image_url' : 'inspiration_image_url']: publicUrl
+  };
+
+  await db
+    .from('daily_media_cache')
+    .upsert(cachePayload, { onConflict: 'date' });
 
   frame.innerHTML = `<img src="${publicUrl}" alt="${altText}" loading="lazy" />`;
 }
