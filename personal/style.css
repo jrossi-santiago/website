@@ -2,7 +2,7 @@
    DAILY BRIEFING — AXIS RECEIPT REDESIGN
    Corporate Transaction Aesthetic
    ============================================ */
-body { background: red !important; }
+
 :root {
   --paper: #ffffff;
   --ink: #1a1a1a;
@@ -20,26 +20,26 @@ body { background: red !important; }
 }
 
 html, body {
-  background: var(--bg);
-  font-family: var(--font);
-  color: var(--ink);
-  font-size: 12px;
-  line-height: 1.5;
+  background: var(--bg) !important;
+  font-family: var(--font) !important;
+  color: var(--ink) !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
 }
 
 body {
-  display: flex;
-  justify-content: center;
-  padding: 40px 20px 80px 20px;
-  min-height: 100vh;
+  display: flex !important;
+  justify-content: center !important;
+  padding: 40px 20px 80px 20px !important;
+  min-height: 100vh !important;
 }
 
 .receipt {
-  width: var(--receipt-width);
-  max-width: 100%;
-  background: var(--paper);
-  padding: 28px 32px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  width: var(--receipt-width) !important;
+  max-width: 100% !important;
+  background: var(--paper) !important;
+  padding: 28px 32px !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08) !important;
 }
 
 /* ============================================
