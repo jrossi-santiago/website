@@ -3,9 +3,6 @@
    ============================================ */
 
 // ── Supabase setup ──────────────────────────
-// Supabase = your free online database.
-// The URL and key below tell this page which database to talk to.
-// Replace these two values with your own from Supabase dashboard.
 const SUPABASE_URL = 'https://urfsijczxmngbixprdkq.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZnNpamN6eG1uZ2JpeHByZGtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTU1NzIsImV4cCI6MjA5MTA3MTU3Mn0.KxNLu5Rg0A0IdxQbaAapDa-vmTkVmeUlub689o0ZOaM';
 
@@ -13,8 +10,6 @@ const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ── Debounce helper ──────────────────────────
-// "Debounce" means: wait until the user stops typing for X milliseconds
-// before actually saving. This prevents a database call on every single keystroke.
 function debounce(fn, delay) {
   let timer;
   return function (...args) {
@@ -24,9 +19,6 @@ function debounce(fn, delay) {
 }
 
 // ── Get today's date in EST ──────────────────
-// EST = Eastern Standard Time (your timezone)
-// This function always returns today's date as "YYYY-MM-DD" in EST,
-// regardless of what timezone the browser is in.
 function getTodayEST() {
   const now = new Date();
   const estString = now.toLocaleString('en-US', { timeZone: 'America/New_York' });
@@ -38,10 +30,8 @@ function getTodayEST() {
 }
 
 // ── Format a date string nicely ─────────────
-// Turns "2026-05-07" into "WEDNESDAY, MAY 7, 2026"
 function formatDateDisplay(dateString) {
   const [year, month, day] = dateString.split('-').map(Number);
-  // Use noon to avoid any timezone edge case flipping the day
   const d = new Date(year, month - 1, day, 12, 0, 0);
   return d.toLocaleDateString('en-US', {
     weekday: 'long',
@@ -58,37 +48,42 @@ function getCurrentHourEST() {
   return new Date(estString).getHours();
 }
 
-// ── Get greeting based on time of day ───────
-function getGreeting() {
-  const hour = getCurrentHourEST();
-  if (hour < 12) return 'GOOD MORNING, JOE';
-  if (hour < 17) return 'GOOD AFTERNOON, JOE';
-  return 'GOOD EVENING, JOE';
-}
-
 // ── Map weather code to emoji + label ───────
-// Open-Meteo returns a "weathercode" number.
-// This function converts that number into a human-readable label and emoji.
 function interpretWeatherCode(code) {
-  if (code === 0)              return { emoji: '☀️',  label: 'CLEAR' };
+  if (code === 0)              return { emoji: '☀',  label: 'CLEAR' };
   if (code <= 2)               return { emoji: '⛅',  label: 'PARTLY CLOUDY' };
-  if (code === 3)              return { emoji: '☁️',  label: 'OVERCAST' };
-  if (code <= 49)              return { emoji: '🌫️', label: 'FOG' };
-  if (code <= 57)              return { emoji: '🌧️', label: 'DRIZZLE' };
-  if (code <= 65)              return { emoji: '🌧️', label: 'RAIN' };
-  if (code <= 77)              return { emoji: '❄️',  label: 'SNOW' };
-  if (code <= 82)              return { emoji: '🌦️', label: 'SHOWERS' };
-  if (code <= 86)              return { emoji: '🌨️', label: 'SNOW SHOWERS' };
-  if (code <= 99)              return { emoji: '⛈️',  label: 'THUNDERSTORM' };
-  return { emoji: '🌡️', label: 'UNKNOWN' };
+  if (code === 3)              return { emoji: '☁',  label: 'OVERCAST' };
+  if (code <= 49)              return { emoji: '🌫',  label: 'FOG' };
+  if (code <= 57)              return { emoji: '🌧',  label: 'DRIZZLE' };
+  if (code <= 65)              return { emoji: '🌧',  label: 'RAIN' };
+  if (code <= 77)              return { emoji: '❄',  label: 'SNOW' };
+  if (code <= 82)              return { emoji: '🌦',  label: 'SHOWERS' };
+  if (code <= 86)              return { emoji: '🌨',  label: 'SNOW SHOWERS' };
+  if (code <= 99)              return { emoji: '⛈',  label: 'THUNDERSTORM' };
+  return { emoji: '🌡',  label: 'UNKNOWN' };
 }
 
 // ── Format hour for display ──────────────────
-// Turns 14 into "2:00 PM", turns 9 into "9:00 AM"
 function formatHour(hour) {
   const h = hour % 12 === 0 ? 12 : hour % 12;
   const ampm = hour < 12 ? 'AM' : 'PM';
-  return `${h}:00 ${ampm}`;
+  return `${h}:00${ampm}`;
+}
+
+// ── Generate random receipt codes ────────────
+function generateReceiptCodes() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  function code() {
+    let c = '';
+    for (let i = 0; i < 3; i++) c += chars[Math.floor(Math.random() * chars.length)];
+    c += '-';
+    for (let i = 0; i < 6; i++) c += chars[Math.floor(Math.random() * chars.length)];
+    return c;
+  }
+  for (let n = 1; n <= 8; n++) {
+    const el = document.getElementById(`code-0${n}`);
+    if (el) el.textContent = code();
+  }
 }
 
 // ═══════════════════════════════════════════════
@@ -97,15 +92,12 @@ function formatHour(hour) {
 
 function initHeader() {
   const today = getTodayEST();
-  document.getElementById('greeting').textContent = getGreeting();
   document.getElementById('date-display').textContent = formatDateDisplay(today);
   document.getElementById('footer-date').textContent = formatDateDisplay(today);
 }
 
 // ═══════════════════════════════════════════════
 // SECTION 2: WEATHER
-// Open-Meteo is a free weather API — no account or API key needed.
-// Lat/lng below are for Clarks Summit, PA.
 // ═══════════════════════════════════════════════
 
 async function initWeather() {
@@ -115,7 +107,8 @@ async function initWeather() {
   const url =
     `https://api.open-meteo.com/v1/forecast` +
     `?latitude=${LAT}&longitude=${LNG}` +
-    `&hourly=temperature_2m,weathercode` +
+    `&hourly=temperature_2m,weathercode,precipitation_probability` +
+    `&daily=sunrise,sunset` +
     `&temperature_unit=fahrenheit` +
     `&timezone=America%2FNew_York` +
     `&forecast_days=2`;
@@ -125,63 +118,97 @@ async function initWeather() {
     if (!res.ok) throw new Error('Weather fetch failed');
     const data = await res.json();
 
-    const hours = data.hourly.time;          // array of datetime strings
-    const temps = data.hourly.temperature_2m; // array of temps
-    const codes = data.hourly.weathercode;    // array of weather codes
+    const hours = data.hourly.time;
+    const temps = data.hourly.temperature_2m;
+    const codes = data.hourly.weathercode;
+    const precip = data.hourly.precipitation_probability;
+    const sunrise = data.daily.sunrise[0];
+    const sunset = data.daily.sunset[0];
 
-    // Find the index of the current hour
     const currentHour = getCurrentHourEST();
     const todayEST = getTodayEST();
-
-    // Build the target datetime string for the current hour, e.g. "2026-05-07T14:00"
     const currentHourStr = `${todayEST}T${String(currentHour).padStart(2, '0')}:00`;
     const startIndex = hours.findIndex(h => h === currentHourStr);
 
     if (startIndex === -1) {
-      document.getElementById('weather-grid').innerHTML =
-        '<p class="loading-text">WEATHER DATA UNAVAILABLE.</p>';
+      document.getElementById('weather-condition').textContent = '[ NO DATA ]';
       return;
     }
 
-    // Show 12 hours starting from now
-    const grid = document.getElementById('weather-grid');
-    grid.innerHTML = '';
+    // Current conditions
+    const currentCode = codes[startIndex];
+    const currentTemp = Math.round(temps[startIndex]);
+    const currentPrecip = precip[startIndex];
+    const { emoji, label } = interpretWeatherCode(currentCode);
+
+    // Update condition label
+    document.getElementById('weather-condition').textContent = `[ ${label} ]`;
+    document.getElementById('weather-icon').textContent = emoji;
+    document.getElementById('weather-temp').textContent = `TEMP: ${currentTemp}°F`;
+
+    // Format times
+    function fmtTime(dtStr) {
+      if (!dtStr) return '--';
+      const t = new Date(dtStr + ':00');
+      const h = t.getHours() % 12 || 12;
+      const m = String(t.getMinutes()).padStart(2, '0');
+      const ap = t.getHours() < 12 ? 'AM' : 'PM';
+      return `${h}:${m}${ap}`;
+    }
+
+    // Update meta values
+    document.getElementById('meta-values').innerHTML = `
+      <div>${fmtTime(sunrise)}</div>
+      <div>${fmtTime(sunset)}</div>
+      <div>${currentPrecip}%</div>
+    `;
+
+    // Dot grid — fill proportional to precip
+    const dotGrid = document.getElementById('dot-grid');
+    dotGrid.innerHTML = '';
+    const totalDots = 50;
+    const activeDots = Math.round((currentPrecip / 100) * totalDots);
+    for (let d = 0; d < totalDots; d++) {
+      const dot = document.createElement('span');
+      if (d < activeDots) dot.classList.add('active');
+      dotGrid.appendChild(dot);
+    }
+
+    // Hourly rows
+    const hourly = document.getElementById('weather-hourly');
+    hourly.innerHTML = '';
 
     for (let i = startIndex; i < startIndex + 12 && i < hours.length; i++) {
       const hourNum = new Date(hours[i] + ':00').getHours();
-      const { emoji, label } = interpretWeatherCode(codes[i]);
-      const temp = Math.round(temps[i]);
+      const { emoji: hEmoji, label: hLabel } = interpretWeatherCode(codes[i]);
+      const hTemp = Math.round(temps[i]);
 
       const row = document.createElement('div');
-      row.className = 'weather-row';
+      row.className = 'weather-hour-row';
       row.innerHTML = `
-        <span class="weather-time">${formatHour(hourNum)}</span>
-        <span class="weather-emoji">${emoji}</span>
-        <span class="weather-condition">${label}</span>
-        <span class="weather-temp">${temp}°F</span>
+        <span class="wh-time">${formatHour(hourNum)}</span>
+        <span class="wh-emoji">${hEmoji}</span>
+        <span class="wh-cond">${hLabel}</span>
+        <span class="wh-temp">${hTemp}°F</span>
       `;
-      grid.appendChild(row);
+      hourly.appendChild(row);
     }
 
   } catch (err) {
-    document.getElementById('weather-grid').innerHTML =
-      '<p class="loading-text">COULD NOT LOAD WEATHER.</p>';
+    document.getElementById('weather-condition').textContent = '[ UNAVAILABLE ]';
     console.error('Weather error:', err);
   }
 }
 
 // ═══════════════════════════════════════════════
 // SECTION 3: DAILY INTENTIONS
-// Reads from and writes to the "daily_intentions" table in Supabase.
-// Each day gets its own row, identified by today's EST date.
 // ═══════════════════════════════════════════════
 
-let currentIntentionData = null; // holds what's currently saved for today
+let currentIntentionData = null;
 
 async function initIntentions() {
   const today = getTodayEST();
 
-  // Try to load today's row from the database
   const { data, error } = await db
     .from('daily_intentions')
     .select('*')
@@ -189,13 +216,11 @@ async function initIntentions() {
     .single();
 
   if (error && error.code !== 'PGRST116') {
-    // PGRST116 = "no rows found" — that's fine, it just means no entry yet today
     console.error('Error loading intentions:', error);
   }
 
   if (data) {
     currentIntentionData = data;
-    // Fill in the input fields with whatever was saved
     for (let i = 1; i <= 5; i++) {
       const input = document.getElementById(`intention-${i}`);
       if (input && data[`intention_${i}`]) {
@@ -204,7 +229,6 @@ async function initIntentions() {
     }
   }
 
-  // Attach save handler to each input field
   for (let i = 1; i <= 5; i++) {
     const input = document.getElementById(`intention-${i}`);
     if (input) {
@@ -213,8 +237,6 @@ async function initIntentions() {
   }
 }
 
-// This is the save function, wrapped in debounce so it waits
-// 800ms after the user stops typing before saving
 const debouncedSaveIntentions = debounce(saveIntentions, 800);
 
 async function saveIntentions() {
@@ -231,8 +253,6 @@ async function saveIntentions() {
     updated_at: new Date().toISOString(),
   };
 
-  // "upsert" means: insert a new row if today doesn't exist yet,
-  // or update the existing row if it does.
   const { error } = await db
     .from('daily_intentions')
     .upsert(payload, { onConflict: 'date' });
@@ -242,21 +262,17 @@ async function saveIntentions() {
     status.textContent = 'ERROR SAVING.';
   } else {
     status.textContent = 'SAVED.';
-    // Clear the "SAVED." message after 2 seconds
     setTimeout(() => { status.textContent = ''; }, 2000);
   }
 }
 
 // ═══════════════════════════════════════════════
 // SECTION 4: MOTIVATIONAL QUOTE
-// Reads from the "motivational_quotes" table.
-// Picks a random row each page load.
 // ═══════════════════════════════════════════════
 
-let loadedQuoteText = ''; // store for archive use
+let loadedQuoteText = '';
 
 async function initQuote() {
-  // Fetch all quotes, then pick one randomly
   const { data, error } = await db
     .from('motivational_quotes')
     .select('id, quote_text');
@@ -275,11 +291,9 @@ async function initQuote() {
 
 // ═══════════════════════════════════════════════
 // SECTION 5: PRAYER IMAGE
-// Reads a random image from the "prayer_images" storage bucket.
-// A "storage bucket" in Supabase is like a folder for storing files/images.
 // ═══════════════════════════════════════════════
 
-let loadedPrayerUrl = ''; // store for archive use
+let loadedPrayerUrl = '';
 
 async function initPrayerImage() {
   await loadRandomImageFromBucket('prayer_images', 'prayer-frame', 'Prayer image', (url) => {
@@ -289,10 +303,9 @@ async function initPrayerImage() {
 
 // ═══════════════════════════════════════════════
 // SECTION 6: INSPIRATIONAL IMAGE
-// Reads a random image from the "inspirational_images" storage bucket.
 // ═══════════════════════════════════════════════
 
-let loadedInspirationUrl = ''; // store for archive use
+let loadedInspirationUrl = '';
 
 async function initInspirationImage() {
   await loadRandomImageFromBucket('inspirational_images', 'inspiration-frame', 'Inspiration image', (url) => {
@@ -304,31 +317,27 @@ async function initInspirationImage() {
 async function loadRandomImageFromBucket(bucketName, frameId, altText, onLoad) {
   const frame = document.getElementById(frameId);
 
-  // List all files in the bucket
   const { data: files, error } = await db.storage
     .from(bucketName)
     .list('', { limit: 100, offset: 0 });
 
   if (error || !files || files.length === 0) {
-    frame.innerHTML = `<p class="loading-text">NO IMAGES FOUND IN "${bucketName.toUpperCase()}" BUCKET.</p>`;
+    frame.innerHTML = `<p class="placeholder">NO IMAGES FOUND.</p>`;
     console.error(`${bucketName} error:`, error);
     return;
   }
 
-  // Filter to only actual image files (skip any folder placeholders)
   const imageFiles = files.filter(f =>
     f.name && /\.(jpg|jpeg|png|gif|webp)$/i.test(f.name)
   );
 
   if (imageFiles.length === 0) {
-    frame.innerHTML = `<p class="loading-text">NO IMAGES FOUND.</p>`;
+    frame.innerHTML = `<p class="placeholder">NO IMAGES FOUND.</p>`;
     return;
   }
 
-  // Pick one at random
   const randomFile = imageFiles[Math.floor(Math.random() * imageFiles.length)];
 
-  // Get a public URL for that image
   const { data: urlData } = db.storage
     .from(bucketName)
     .getPublicUrl(randomFile.name);
@@ -336,21 +345,15 @@ async function loadRandomImageFromBucket(bucketName, frameId, altText, onLoad) {
   const publicUrl = urlData.publicUrl;
   if (onLoad) onLoad(publicUrl);
 
-  // Display the image
   frame.innerHTML = `<img src="${publicUrl}" alt="${altText}" loading="lazy" />`;
 }
 
 // ═══════════════════════════════════════════════
 // SECTION 7: ARCHIVE
-// Saves today's report snapshot to the "archived_reports" table.
-// Also loads and displays all past archived reports.
 // ═══════════════════════════════════════════════
 
 async function initArchive() {
-  // Wire up the archive button
   document.getElementById('archive-btn').addEventListener('click', archiveToday);
-
-  // Load the list of past archived days
   await loadArchiveList();
 }
 
@@ -362,7 +365,6 @@ async function archiveToday() {
   btn.disabled = true;
   btn.textContent = '[ ARCHIVING... ]';
 
-  // Gather current intentions from the input fields
   const intentionsData = {
     intention_1: document.getElementById('intention-1').value.trim(),
     intention_2: document.getElementById('intention-2').value.trim(),
@@ -374,19 +376,18 @@ async function archiveToday() {
   const payload = {
     date: today,
     archived_at: new Date().toISOString(),
-    intentions_data: intentionsData,           // stored as JSON
+    intentions_data: intentionsData,
     quote_text: loadedQuoteText,
     prayer_image_url: loadedPrayerUrl,
     inspiration_image_url: loadedInspirationUrl,
   };
 
-  // upsert = save, and if today already exists, overwrite it
   const { error } = await db
     .from('archived_reports')
     .upsert(payload, { onConflict: 'date' });
 
   btn.disabled = false;
-  btn.textContent = '[ ARCHIVE TODAY\'S REPORT ]';
+  btn.textContent = '[ ARCHIVE TODAY ]';
 
   if (error) {
     console.error('Archive error:', error);
@@ -394,7 +395,6 @@ async function archiveToday() {
   } else {
     status.textContent = `ARCHIVED — ${formatDateDisplay(today)}`;
     setTimeout(() => { status.textContent = ''; }, 4000);
-    // Refresh the archive list to show today
     await loadArchiveList();
   }
 }
@@ -405,16 +405,16 @@ async function loadArchiveList() {
   const { data, error } = await db
     .from('archived_reports')
     .select('*')
-    .order('date', { ascending: false }); // newest first
+    .order('date', { ascending: false });
 
   if (error) {
-    container.innerHTML = '<p class="loading-text">COULD NOT LOAD ARCHIVE.</p>';
+    container.innerHTML = '<div style="font-size:9px; color:#999;">COULD NOT LOAD ARCHIVE.</div>';
     console.error('Archive load error:', error);
     return;
   }
 
   if (!data || data.length === 0) {
-    container.innerHTML = '<p class="loading-text">NO ARCHIVED REPORTS YET.</p>';
+    container.innerHTML = '<div style="font-size:9px; color:#999;">NO ARCHIVED REPORTS YET.</div>';
     return;
   }
 
@@ -429,24 +429,23 @@ async function loadArchiveList() {
       .map(n => intentions[`intention_${n}`])
       .filter(Boolean);
 
-    // Build the expanded content HTML
     let contentHTML = '';
 
     if (intentionItems.length > 0) {
-      contentHTML += `<p class="archive-content-label">TOP 5</p>`;
+      contentHTML += `<div class="archive-label">INTENTIONS</div>`;
       intentionItems.forEach(item => {
-        contentHTML += `<p class="archive-intention-item">${escapeHTML(item)}</p>`;
+        contentHTML += `<div class="archive-intention">${escapeHTML(item)}</div>`;
       });
     }
 
     if (report.quote_text) {
-      contentHTML += `<p class="archive-content-label">MOTIVATION</p>`;
-      contentHTML += `<p class="archive-quote-text">${escapeHTML(report.quote_text)}</p>`;
+      contentHTML += `<div class="archive-label">QUOTE</div>`;
+      contentHTML += `<div class="archive-quote">${escapeHTML(report.quote_text)}</div>`;
     }
 
     if (report.prayer_image_url || report.inspiration_image_url) {
-      contentHTML += `<p class="archive-content-label">IMAGES</p>`;
-      contentHTML += `<div class="archive-image-row">`;
+      contentHTML += `<div class="archive-label">IMAGES</div>`;
+      contentHTML += `<div class="archive-images">`;
       if (report.prayer_image_url) {
         contentHTML += `<img class="archive-image-thumb" src="${report.prayer_image_url}" alt="Prayer" loading="lazy" />`;
       }
@@ -457,33 +456,30 @@ async function loadArchiveList() {
     }
 
     if (!contentHTML) {
-      contentHTML = '<p class="archive-intention-item">NO DATA SAVED.</p>';
+      contentHTML = '<div style="font-size:9px; color:#999;">NO DATA SAVED.</div>';
     }
 
     entry.innerHTML = `
-      <div class="archive-date-row" role="button" tabindex="0" aria-expanded="false">
+      <div class="archive-date-row">
         <span class="archive-date-label">${formatDateDisplay(report.date)}</span>
-        <span class="archive-toggle-icon">▶</span>
+        <span class="archive-toggle">▶</span>
       </div>
       <div class="archive-content">
         ${contentHTML}
       </div>
     `;
 
-    // Toggle expand/collapse when clicking a date row
     const dateRow = entry.querySelector('.archive-date-row');
     const contentPanel = entry.querySelector('.archive-content');
-    const icon = entry.querySelector('.archive-toggle-icon');
+    const icon = entry.querySelector('.archive-toggle');
 
     function toggleEntry() {
       const isOpen = contentPanel.classList.contains('expanded');
       contentPanel.classList.toggle('expanded', !isOpen);
       icon.classList.toggle('open', !isOpen);
-      dateRow.setAttribute('aria-expanded', String(!isOpen));
     }
 
     dateRow.addEventListener('click', toggleEntry);
-    // Also allow keyboard activation (Enter or Space)
     dateRow.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
@@ -496,8 +492,6 @@ async function loadArchiveList() {
 }
 
 // ── Safety helper: escapeHTML ────────────────
-// Prevents any text from being accidentally treated as HTML code.
-// This protects against a security issue called XSS (cross-site scripting).
 function escapeHTML(str) {
   return String(str)
     .replace(/&/g, '&amp;')
@@ -513,9 +507,8 @@ function escapeHTML(str) {
 
 async function init() {
   initHeader();
+  generateReceiptCodes();
 
-  // Run weather and database calls in parallel for speed
-  // "parallel" means all these start at the same time instead of waiting one by one
   await Promise.allSettled([
     initWeather(),
     initIntentions(),
@@ -526,5 +519,4 @@ async function init() {
   ]);
 }
 
-// Start everything once the page HTML is fully loaded
 document.addEventListener('DOMContentLoaded', init);
