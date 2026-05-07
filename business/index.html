@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Business Daily Report</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  
+  <style>
+    :root {
+      --paper: #ffffff;
+      --ink: #1a1a1a;
+      --ink-light: #666666;
+      --ink-ghost: #d0d0d0;
+      --bg: #f0f0f0;
+      --receipt-width: 440px;
+      --font: 'Space Mono', monospace;
+      --accent: #2563eb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      background: var(--bg) !important;
+      font-family: var(--font) !important;
+      color: var(--ink) !important;
+      font-size: 12px !important;
+      line-height: 1.5 !important;
+    }
+
+    body {
+      display: flex !important;
+      justify-content: center !important;
+      padding: 40px 20px 80px 20px !important;
+      min-height: 100vh !important;
+    }
+
+    .receipt {
+      width: var(--receipt-width) !important;
+      max-width: 100% !important;
+      background: var(--paper) !important;
+      padding: 28px 32px !important;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .receipt-header {
+      text-align: center;
+      padding-bottom: 20px;
+      border-bottom: 2px solid var(--ink);
+      margin-bottom: 20px;
+    }
+
+    .header-title {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      line-height: 1;
+      margin-bottom: 6px;
+      color: var(--ink);
+    }
+
+    .header-subtitle {
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      color: var(--ink-light);
+      text-transform: uppercase;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px dashed var(--ink-ghost);
+      margin: 16px 0;
+    }
+
+    .receipt-section {
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ink-light);
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--ink-ghost);
+    }
+
+    .section-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: baseline;
+      padding: 6px 0;
+      font-size: 11px;
+    }
+
+    .label {
+      color: var(--ink-light);
+      text-align: left;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+    }
+
+    .value {
+      color: var(--ink);
+      text-align: right;
+      font-weight: 600;
+      word-break: break-word;
+      letter-spacing: 0.01em;
+    }
+
+    /* Daily To-Do List */
+    .todo-item {
+      display: flex;
+      gap: 10px;
+      padding: 8px 0;
+      align-items: flex-start;
+      font-size: 10px;
+    }
+
+    .todo-checkbox {
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      margin-top: 2px;
+      cursor: pointer;
+      accent-color: var(--accent);
+      border-radius: 50%;
+    }
+
+    .todo-text {
+      flex: 1;
+      color: var(--ink);
+      letter-spacing: 0.01em;
+      line-height: 1.4;
+    }
+
+    .todo-item input:checked + .todo-text {
+      color: var(--ink-light);
+      text-decoration: line-through;
+    }
+
+    /* Intentions */
+    .intention-row {
+      display: flex;
+      gap: 10px;
+      padding: 6px 0;
+      align-items: center;
+    }
+
+    .dash {
+      color: var(--ink);
+      flex-shrink: 0;
+      font-weight: 700;
+      font-size: 11px;
+    }
+
+    .intention-input {
+      font-family: var(--font);
+      font-size: 11px;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--ink-ghost);
+      outline: none;
+      width: 100%;
+      padding: 4px 0;
+      color: var(--ink);
+      caret-color: var(--ink);
+      -webkit-appearance: none;
+      letter-spacing: 0.01em;
+    }
+
+    .intention-input::placeholder {
+      color: var(--ink-ghost);
+      font-style: normal;
+      letter-spacing: 0.01em;
+    }
+
+    .intention-input:focus {
+      border-bottom: 1px solid var(--ink);
+      background: rgba(0, 0, 0, 0.015);
+    }
+
+    .save-indicator {
+      font-size: 8px;
+      color: var(--ink-light);
+      letter-spacing: 0.12em;
+      margin-top: 8px;
+      min-height: 12px;
+      text-transform: uppercase;
+    }
+
+    /* Year Heatmap */
+    .year-progress {
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .year-progress-percent {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+    }
+
+    .heatmap-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2px;
+      justify-content: center;
+      margin: 12px 0;
+    }
+
+    .heatmap-day {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      border: 0.5px solid var(--ink-ghost);
+      background: var(--paper);
+      cursor: default;
+    }
+
+    .heatmap-day.past {
+      background: var(--ink);
+      border-color: var(--ink);
+    }
+
+    /* Expandable Intentions */
+    .expand-btn {
+      font-family: var(--font);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      background: transparent;
+      border: none;
+      padding: 8px 0;
+      cursor: pointer;
+      text-transform: uppercase;
+      -webkit-appearance: none;
+      width: 100%;
+      text-align: left;
+      user-select: none;
+    }
+
+    .expand-btn:hover {
+      text-decoration: underline;
+    }
+
+    .expand-btn::before {
+      content: '▶ ';
+      display: inline-block;
+      transform: rotate(0deg);
+      transition: transform 0.2s;
+      margin-right: 4px;
+    }
+
+    .expand-btn.expanded::before {
+      transform: rotate(90deg);
+    }
+
+    .hidden-intentions {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .hidden-intentions.expanded {
+      max-height: 500px;
+    }
+
+    /* Archive */
+    .archive-btn {
+      font-family: var(--font);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: var(--ink);
+      background: transparent;
+      border: 1px solid var(--ink);
+      padding: 10px 20px;
+      cursor: pointer;
+      text-transform: uppercase;
+      -webkit-appearance: none;
+      width: 100%;
+      transition: background 0.2s, color 0.2s;
+      min-height: 38px;
+    }
+
+    .archive-btn:hover {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .archive-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .archive-list {
+      margin-top: 16px;
+    }
+
+    .archive-entry {
+      border-top: 1px solid var(--ink-ghost);
+      padding-top: 0;
+      margin-top: 12px;
+    }
+
+    .archive-entry:first-child {
+      margin-top: 0;
+    }
+
+    .archive-date-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      padding: 10px 0;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      user-select: none;
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .archive-date-row:hover {
+      text-decoration: underline;
+    }
+
+    .archive-toggle {
+      font-size: 8px;
+      color: var(--ink-light);
+      transition: transform 0.2s;
+      font-weight: 700;
+    }
+
+    .archive-toggle.open {
+      transform: rotate(90deg);
+    }
+
+    .archive-content {
+      display: none;
+      padding: 12px 0 8px 16px;
+      margin-top: 0;
+      border-left: 2px solid var(--ink-ghost);
+    }
+
+    .archive-content.expanded {
+      display: block;
+    }
+
+    .archive-label {
+      font-size: 8px;
+      letter-spacing: 0.18em;
+      color: var(--ink-light);
+      text-transform: uppercase;
+      margin-top: 10px;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .archive-label:first-child {
+      margin-top: 0;
+    }
+
+    .archive-intention {
+      font-size: 10px;
+      padding: 3px 0;
+      line-height: 1.6;
+      color: var(--ink);
+      letter-spacing: 0.01em;
+    }
+
+    .archive-intention::before {
+      content: '- ';
+      color: var(--ink-light);
+      font-weight: 700;
+      margin-right: 4px;
+    }
+
+    .archive-todo {
+      font-size: 10px;
+      padding: 3px 0;
+      line-height: 1.6;
+      color: var(--ink);
+      letter-spacing: 0.01em;
+    }
+
+    .archive-todo.completed {
+      color: var(--ink-light);
+      text-decoration: line-through;
+    }
+
+    .archive-todo::before {
+      content: '☑ ';
+      color: var(--accent);
+      font-weight: 700;
+      margin-right: 4px;
+    }
+
+    .archive-todo.uncompleted::before {
+      content: '☐ ';
+      color: var(--ink-light);
+    }
+
+    .receipt-footer {
+      text-align: center;
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 2px solid var(--ink);
+    }
+
+    .perforated {
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: var(--ink-ghost);
+      margin-bottom: 10px;
+      user-select: none;
+      font-weight: 400;
+    }
+
+    .footer-text {
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      color: var(--ink-light);
+      text-transform: uppercase;
+      margin: 6px 0;
+      font-weight: 700;
+    }
+
+    .footer-date {
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      color: var(--ink-light);
+      text-transform: uppercase;
+      font-weight: 400;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 20px 12px 60px 12px;
+      }
+
+      .receipt {
+        width: 100%;
+        padding: 20px 20px;
+      }
+
+      .header-title {
+        font-size: 28px;
+      }
+
+      .section-row {
+        grid-template-columns: 1fr;
+        gap: 3px;
+      }
+
+      .value {
+        text-align: left;
+      }
+
+      .heatmap-day {
+        width: 10px;
+        height: 10px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .receipt {
+        padding: 16px 16px;
+      }
+
+      .header-title {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="receipt">
+
+  <!-- HEADER -->
+  <div class="receipt-header">
+    <div class="header-title">Good morning, Joe</div>
+    <div class="header-subtitle" id="date-display">LOADING...</div>
+  </div>
+
+  <!-- SECTION: MESSAGE -->
+  <div class="receipt-section">
+    <div class="section-row">
+      <div class="label">Message</div>
+      <div class="value">HERE'S YOUR DAILY REPORT.</div>
+    </div>
+  </div>
+
+  <!-- DIVIDER -->
+  <div class="divider"></div>
+
+  <!-- SECTION: YEAR PROGRESS -->
+  <div class="receipt-section">
+    <div class="section-title">YEAR PROGRESS</div>
+    <div class="year-progress">
+      <div class="year-progress-percent" id="year-percent">0%</div>
+    </div>
+    <div id="heatmap" class="heatmap-container"></div>
+  </div>
+
+  <!-- DIVIDER -->
+  <div class="divider"></div>
+
+  <!-- SECTION: DAILY TO-DO -->
+  <div class="receipt-section">
+    <div class="section-title" id="todo-day-title">LOADING...</div>
+    <div id="todo-list"></div>
+    <div class="save-indicator" id="todo-status"></div>
+  </div>
+
+  <!-- DIVIDER -->
+  <div class="divider"></div>
+
+  <!-- SECTION: DAILY INTENTIONS -->
+  <div class="receipt-section">
+    <div class="section-title">DAILY INTENTIONS</div>
+    <div id="intentions-visible"></div>
+    <button class="expand-btn" id="expand-btn">+ More Intentions</button>
+    <div class="hidden-intentions" id="intentions-hidden"></div>
+    <div class="save-indicator" id="intention-status"></div>
+  </div>
+
+  <!-- DIVIDER -->
+  <div class="divider"></div>
+
+  <!-- SECTION: ARCHIVE -->
+  <div class="receipt-section">
+    <div class="section-title">ARCHIVE</div>
+    <button class="archive-btn" id="archive-btn">ARCHIVE TODAY</button>
+    <div class="save-indicator" id="archive-status"></div>
+    <div id="archive-list" class="archive-list"></div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="receipt-footer">
+    <div class="perforated">≈ ≈ ≈ ≈ ≈ ≈ ≈ ≈ ≈ ≈ ≈ ≈ ≈ ≈ ≈</div>
+    <div class="footer-text">END OF REPORT</div>
+    <div class="footer-date" id="footer-date"></div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ============================================
+   BUSINESS DAILY BRIEFING — script.js
+   ============================================ */
+
+// ── Supabase setup ──────────────────────────
+const SUPABASE_URL = 'https://urfsijczxmngbixprdkq.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZnNpamN6eG1uZ2JpeHByZGtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTU1NzIsImV4cCI6MjA5MTA3MTU3Mn0.KxNLu5Rg0A0IdxQbaAapDa-vmTkVmeUlub689o0ZOaM';
+
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ── Debounce helper ──────────────────────────
+function debounce(fn, delay) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
+// ── Get today's date in EST ──────────────────
+function getTodayEST() {
+  const now = new Date();
+  const estString = now.toLocaleString('en-US', { timeZone: 'America/New_York' });
+  const estDate = new Date(estString);
+  const year = estDate.getFullYear();
+  const month = String(estDate.getMonth() + 1).padStart(2, '0');
+  const day = String(estDate.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+// ── Format a date string nicely ─────────────
+function formatDateDisplay(dateString) {
+  const [year, month, day] = dateString.split('-').map(Number);
+  const d = new Date(year, month - 1, day, 12, 0, 0);
+  return d.toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  }).toUpperCase();
+}
+
+// ── Get day of week (0=Sunday, 1=Monday, etc) ──
+function getDayOfWeek() {
+  const now = new Date();
+  const estString = now.toLocaleString('en-US', { timeZone: 'America/New_York' });
+  const estDate = new Date(estString);
+  return estDate.getDay();
+}
+
+// ── Day name from number ──
+function getDayName(dayNum) {
+  const days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+  return days[dayNum];
+}
+
+// ── Todo data by day of week ──
+const TODO_DATA = {
+  1: [ // MONDAY
+    'Check Instantly',
+    'Check Form',
+    'Check LinkedIn',
+    'Comment on 8 LinkedIn posts',
+    'Batch LinkedIn content for the week',
+    'Connect & message 5 connections'
+  ],
+  2: [ // TUESDAY
+    'Check Instantly',
+    'Check Form',
+    'Check LinkedIn',
+    'Comment on 8 LinkedIn posts',
+    'Connect & message 5 connections'
+  ],
+  3: [ // WEDNESDAY
+    'Check Instantly',
+    'Check Form',
+    'Check LinkedIn',
+    'Comment on 8 LinkedIn posts',
+    'Connect & message 5 connections',
+    'Write SEO article'
+  ],
+  4: [ // THURSDAY
+    'Check Instantly',
+    'Check Form',
+    'Check LinkedIn',
+    'Comment on 8 LinkedIn posts',
+    'Connect & message 5 connections'
+  ],
+  5: [ // FRIDAY
+    'Check Instantly',
+    'Check Form',
+    'Check LinkedIn',
+    'Comment on 8 LinkedIn posts',
+    'Connect & message 5 connections'
+  ],
+  0: [], // SUNDAY - no tasks
+  6: []  // SATURDAY - no tasks
+};
+
+// ═══════════════════════════════════════════════
+// SECTION 1: HEADER
+// ═══════════════════════════════════════════════
+
+function initHeader() {
+  const today = getTodayEST();
+  document.getElementById('date-display').textContent = formatDateDisplay(today);
+  document.getElementById('footer-date').textContent = formatDateDisplay(today);
+}
+
+// ═══════════════════════════════════════════════
+// SECTION 2: DAILY TO-DO LIST
+// ═══════════════════════════════════════════════
+
+let currentTodoState = {};
+
+async function initTodoList() {
+  const today = getTodayEST();
+  const dayNum = getDayOfWeek();
+  const dayName = getDayName(dayNum);
+  const tasks = TODO_DATA[dayNum] || [];
+
+  document.getElementById('todo-day-title').textContent = dayName;
+
+  // Load saved state
+  const { data, error } = await db
+    .from('business_daily_todos')
+    .select('*')
+    .eq('date', today)
+    .single();
+
+  if (data) {
+    currentTodoState = data.completed_tasks || {};
+  }
+
+  // Render todo list
+  const todoList = document.getElementById('todo-list');
+  todoList.innerHTML = '';
+
+  tasks.forEach((task, index) => {
+    const taskId = `task-${index}`;
+    const isCompleted = currentTodoState[taskId] || false;
+
+    const row = document.createElement('div');
+    row.className = 'todo-item';
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.className = 'todo-checkbox';
+    checkbox.id = taskId;
+    checkbox.checked = isCompleted;
+    checkbox.addEventListener('change', debouncedSaveTodos);
+
+    const label = document.createElement('label');
+    label.className = 'todo-text';
+    label.htmlFor = taskId;
+    label.textContent = task;
+
+    row.appendChild(checkbox);
+    row.appendChild(label);
+    todoList.appendChild(row);
+  });
+}
+
+const debouncedSaveTodos = debounce(saveTodos, 500);
+
+async function saveTodos() {
+  const today = getTodayEST();
+  const status = document.getElementById('todo-status');
+
+  const completed = {};
+  const checkboxes = document.querySelectorAll('.todo-checkbox');
+  checkboxes.forEach((cb) => {
+    completed[cb.id] = cb.checked;
+  });
+
+  const { error } = await db
+    .from('business_daily_todos')
+    .upsert({
+      date: today,
+      completed_tasks: completed
+    }, { onConflict: 'date' });
+
+  if (error) {
+    console.error('Todo save error:', error);
+    status.textContent = 'ERROR SAVING';
+  } else {
+    status.textContent = 'SAVED';
+    setTimeout(() => { status.textContent = ''; }, 1500);
+    currentTodoState = completed;
+  }
+}
+
+// ═══════════════════════════════════════════════
+// SECTION 3: YEAR PROGRESS HEATMAP
+// ═══════════════════════════════════════════════
+
+function initYearHeatmap() {
+  const today = new Date();
+  const estString = today.toLocaleString('en-US', { timeZone: 'America/New_York' });
+  const estDate = new Date(estString);
+
+  const year = 2026;
+  const startDate = new Date(year, 0, 1);
+  const endDate = new Date(year, 11, 31);
+
+  let totalDays = 0;
+  let pastDays = 0;
+
+  const heatmap = document.getElementById('heatmap');
+  heatmap.innerHTML = '';
+
+  for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+    totalDays++;
+
+    const dayDate = new Date(d);
+    const isPast = dayDate < estDate;
+    if (isPast) pastDays++;
+
+    const dot = document.createElement('div');
+    dot.className = 'heatmap-day';
+    if (isPast) dot.classList.add('past');
+    dot.title = dayDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+    heatmap.appendChild(dot);
+  }
+
+  const percent = Math.round((pastDays / totalDays) * 100);
+  document.getElementById('year-percent').textContent = `${percent}% of 2026`;
+}
+
+// ═══════════════════════════════════════════════
+// SECTION 4: DAILY INTENTIONS (10 total, 5 visible + 5 expandable)
+// ═══════════════════════════════════════════════
+
+let currentIntentionData = null;
+
+async function initIntentions() {
+  const today = getTodayEST();
+
+  const { data, error } = await db
+    .from('business_daily_intentions')
+    .select('*')
+    .eq('date', today)
+    .single();
+
+  if (error && error.code !== 'PGRST116') {
+    console.error('Error loading intentions:', error);
+  }
+
+  if (data) {
+    currentIntentionData = data;
+  }
+
+  // Render visible (1-5)
+  const visibleContainer = document.getElementById('intentions-visible');
+  visibleContainer.innerHTML = '';
+  for (let i = 1; i <= 5; i++) {
+    const row = document.createElement('div');
+    row.className = 'intention-row';
+
+    const dash = document.createElement('span');
+    dash.className = 'dash';
+    dash.textContent = '-';
+
+    const input = document.createElement('input');
+    input.className = 'intention-input';
+    input.id = `intention-${i}`;
+    input.type = 'text';
+    input.placeholder = 'add intention...';
+    input.maxLength = '70';
+    input.autocomplete = 'off';
+    input.value = (data && data[`intention_${i}`]) ? data[`intention_${i}`] : '';
+    input.addEventListener('input', debouncedSaveIntentions);
+
+    row.appendChild(dash);
+    row.appendChild(input);
+    visibleContainer.appendChild(row);
+  }
+
+  // Render hidden (6-10)
+  const hiddenContainer = document.getElementById('intentions-hidden');
+  hiddenContainer.innerHTML = '';
+  for (let i = 6; i <= 10; i++) {
+    const row = document.createElement('div');
+    row.className = 'intention-row';
+
+    const dash = document.createElement('span');
+    dash.className = 'dash';
+    dash.textContent = '-';
+
+    const input = document.createElement('input');
+    input.className = 'intention-input';
+    input.id = `intention-${i}`;
+    input.type = 'text';
+    input.placeholder = 'add intention...';
+    input.maxLength = '70';
+    input.autocomplete = 'off';
+    input.value = (data && data[`intention_${i}`]) ? data[`intention_${i}`] : '';
+    input.addEventListener('input', debouncedSaveIntentions);
+
+    row.appendChild(dash);
+    row.appendChild(input);
+    hiddenContainer.appendChild(row);
+  }
+
+  // Setup expand button
+  const expandBtn = document.getElementById('expand-btn');
+  const hiddenDiv = document.getElementById('intentions-hidden');
+
+  expandBtn.addEventListener('click', () => {
+    expandBtn.classList.toggle('expanded');
+    hiddenDiv.classList.toggle('expanded');
+  });
+}
+
+const debouncedSaveIntentions = debounce(saveIntentions, 800);
+
+async function saveIntentions() {
+  const today = getTodayEST();
+  const status = document.getElementById('intention-status');
+
+  const payload = {
+    date: today,
+  };
+
+  for (let i = 1; i <= 10; i++) {
+    const input = document.getElementById(`intention-${i}`);
+    payload[`intention_${i}`] = input.value.trim();
+  }
+
+  const { error } = await db
+    .from('business_daily_intentions')
+    .upsert(payload, { onConflict: 'date' });
+
+  if (error) {
+    console.error('Save error:', error);
+    status.textContent = 'ERROR SAVING';
+  } else {
+    status.textContent = 'SAVED';
+    setTimeout(() => { status.textContent = ''; }, 1500);
+  }
+}
+
+// ═══════════════════════════════════════════════
+// SECTION 5: ARCHIVE
+// ═══════════════════════════════════════════════
+
+async function initArchive() {
+  document.getElementById('archive-btn').addEventListener('click', archiveToday);
+  await loadArchiveList();
+}
+
+async function archiveToday() {
+  const today = getTodayEST();
+  const dayNum = getDayOfWeek();
+  const tasks = TODO_DATA[dayNum] || [];
+  const status = document.getElementById('archive-status');
+  const btn = document.getElementById('archive-btn');
+
+  btn.disabled = true;
+  btn.textContent = 'ARCHIVING...';
+
+  // Get completed tasks
+  const completedTasks = {};
+  const checkboxes = document.querySelectorAll('.todo-checkbox');
+  checkboxes.forEach((cb, idx) => {
+    completedTasks[idx] = cb.checked;
+  });
+
+  // Get intentions
+  const intentionsData = {};
+  for (let i = 1; i <= 10; i++) {
+    const input = document.getElementById(`intention-${i}`);
+    intentionsData[`intention_${i}`] = input.value.trim();
+  }
+
+  const payload = {
+    date: today,
+    archived_at: new Date().toISOString(),
+    day_of_week: getDayName(dayNum),
+    tasks: tasks,
+    completed_tasks: completedTasks,
+    intentions_data: intentionsData,
+  };
+
+  const { error } = await db
+    .from('business_archived_reports')
+    .upsert(payload, { onConflict: 'date' });
+
+  btn.disabled = false;
+  btn.textContent = 'ARCHIVE TODAY';
+
+  if (error) {
+    console.error('Archive error:', error);
+    status.textContent = 'ERROR — COULD NOT ARCHIVE.';
+  } else {
+    status.textContent = `ARCHIVED — ${formatDateDisplay(today)}`;
+    setTimeout(() => { status.textContent = ''; }, 3000);
+    await loadArchiveList();
+  }
+}
+
+async function loadArchiveList() {
+  const container = document.getElementById('archive-list');
+
+  const { data, error } = await db
+    .from('business_archived_reports')
+    .select('*')
+    .order('date', { ascending: false });
+
+  if (error) {
+    container.innerHTML = '<div style="font-size:9px; color:#999;">COULD NOT LOAD ARCHIVE.</div>';
+    console.error('Archive load error:', error);
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    container.innerHTML = '<div style="font-size:9px; color:#999;">NO ARCHIVED REPORTS YET.</div>';
+    return;
+  }
+
+  container.innerHTML = '';
+
+  data.forEach(report => {
+    const entry = document.createElement('div');
+    entry.className = 'archive-entry';
+
+    const intentions = report.intentions_data || {};
+    const intentionItems = [];
+    for (let i = 1; i <= 10; i++) {
+      if (intentions[`intention_${i}`]) {
+        intentionItems.push(intentions[`intention_${i}`]);
+      }
+    }
+
+    const tasks = report.tasks || [];
+    const completedTasks = report.completed_tasks || {};
+
+    let contentHTML = '';
+
+    if (intentionItems.length > 0) {
+      contentHTML += `<div class="archive-label">INTENTIONS</div>`;
+      intentionItems.forEach(item => {
+        contentHTML += `<div class="archive-intention">${escapeHTML(item)}</div>`;
+      });
+    }
+
+    if (tasks.length > 0) {
+      contentHTML += `<div class="archive-label">COMPLETED TASKS</div>`;
+      tasks.forEach((task, idx) => {
+        const isCompleted = completedTasks[idx] || false;
+        const className = isCompleted ? 'archive-todo completed' : 'archive-todo uncompleted';
+        contentHTML += `<div class="${className}">${escapeHTML(task)}</div>`;
+      });
+    }
+
+    if (!contentHTML) {
+      contentHTML = '<div style="font-size:9px; color:#999;">NO DATA SAVED.</div>';
+    }
+
+    entry.innerHTML = `
+      <div class="archive-date-row">
+        <span class="archive-date-label">${formatDateDisplay(report.date)}</span>
+        <span class="archive-toggle">▶</span>
+      </div>
+      <div class="archive-content">
+        ${contentHTML}
+      </div>
+    `;
+
+    const dateRow = entry.querySelector('.archive-date-row');
+    const contentPanel = entry.querySelector('.archive-content');
+    const icon = entry.querySelector('.archive-toggle');
+
+    function toggleEntry() {
+      const isOpen = contentPanel.classList.contains('expanded');
+      contentPanel.classList.toggle('expanded', !isOpen);
+      icon.classList.toggle('open', !isOpen);
+    }
+
+    dateRow.addEventListener('click', toggleEntry);
+    dateRow.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleEntry();
+      }
+    });
+
+    container.appendChild(entry);
+  });
+}
+
+function escapeHTML(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// ═══════════════════════════════════════════════
+// BOOT — runs everything when the page loads
+// ═══════════════════════════════════════════════
+
+async function init() {
+  initHeader();
+  initYearHeatmap();
+
+  await Promise.allSettled([
+    initTodoList(),
+    initIntentions(),
+    initArchive(),
+  ]);
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
