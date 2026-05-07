@@ -11,7 +11,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:           #2B2D22;
+      --bg:           #ffffff;
       --card:         #F5F2EB;
       --card-footer:  #EDE8DF;
       --text-dark:    #2A2825;
@@ -19,7 +19,7 @@
       --text-light:   #B3ADA5;
       --stroke:       #C5BFB7;
       --line-rule:    rgba(42, 40, 37, 0.07);
-      --shadow:       0 6px 32px rgba(0,0,0,0.28), 0 1px 6px rgba(0,0,0,0.14);
+      --shadow:       0 6px 32px rgba(0,0,0,0.08), 0 1px 6px rgba(0,0,0,0.04);
       --radius-lg:    14px;
       --radius-md:    10px;
       --font-display: 'Cormorant Garamond', Georgia, serif;
@@ -35,9 +35,13 @@
       color: var(--text-dark);
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+      padding: 0;
     }
 
-    /* Same noise texture as the rest of your site */
+    /* Light noise texture */
     body::before {
       content: '';
       position: fixed;
@@ -58,11 +62,13 @@
     #page {
       position: relative;
       z-index: 1;
-      min-height: 100vh;
+      flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       padding: 24px 16px 80px;
+      overflow-y: auto;
+      min-height: 0;
     }
 
     /* ── PAGE HEADER ── */
@@ -79,7 +85,7 @@
       font-family: var(--font-display);
       font-size: clamp(22px, 3vw, 32px);
       font-weight: 500;
-      color: rgba(245, 242, 235, 0.55);
+      color: var(--text-dark);
       letter-spacing: 0.01em;
       line-height: 1;
     }
@@ -88,7 +94,7 @@
       font-family: var(--font-body);
       font-size: 11px;
       font-weight: 300;
-      color: rgba(245, 242, 235, 0.2);
+      color: var(--text-mid);
       font-style: italic;
       letter-spacing: 0.04em;
     }
@@ -290,7 +296,7 @@
 <body>
 
 <div id="site-header"></div>
-<script src="/header.js"></script>
+<script src="./header.js"></script>
 
 <div id="page">
 
