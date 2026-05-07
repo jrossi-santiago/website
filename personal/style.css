@@ -1,0 +1,469 @@
+/* ============================================
+   DAILY BRIEFING — style.css
+   Dot-matrix printout aesthetic
+   Font: Space Mono (loaded in HTML)
+   ============================================ */
+
+/* ── CSS Variables — edit these to change the whole look ── */
+:root {
+  --bg: #f5f0e8;           /* cream paper background */
+  --ink: #1a1a1a;          /* near-black ink */
+  --ink-faded: #555555;    /* lighter ink for secondary text */
+  --ink-ghost: #999999;    /* very light ink for placeholders */
+  --accent: #1a1a1a;       /* same as ink — no color accents */
+  --max-width: 720px;      /* max page width — keeps it readable */
+  --font: 'Space Mono', monospace;
+}
+
+/* ── Reset — clear browser default styles ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Base Page ── */
+html {
+  font-size: 16px;
+  background-color: var(--bg);
+  color: var(--ink);
+}
+
+body {
+  font-family: var(--font);
+  background-color: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
+}
+
+/* ── Report Container ── */
+.report {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 48px 24px 64px 24px;
+}
+
+/* ── Sections ── */
+.section {
+  padding: 32px 0;
+}
+
+/* ── Divider — mimics dot-matrix tear line ── */
+.divider {
+  font-family: var(--font);
+  color: var(--ink-ghost);
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  overflow: hidden;
+  white-space: nowrap;
+  user-select: none;
+}
+
+/* ── Section Titles ── */
+.section-title {
+  font-family: var(--font);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--ink-faded);
+  margin-bottom: 20px;
+}
+
+/* ── Section Subtitle (e.g. location) ── */
+.section-sub {
+  font-size: 0.75rem;
+  color: var(--ink-faded);
+  letter-spacing: 0.1em;
+  margin-top: -12px;
+  margin-bottom: 20px;
+}
+
+/* ── Loading text ── */
+.loading-text {
+  font-size: 0.8rem;
+  color: var(--ink-ghost);
+  letter-spacing: 0.1em;
+  animation: blink 1.2s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}
+
+/* ============================================
+   HEADER SECTION
+   ============================================ */
+
+.greeting {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+
+.date-display {
+  font-size: 0.85rem;
+  letter-spacing: 0.18em;
+  color: var(--ink-faded);
+}
+
+/* ============================================
+   WEATHER SECTION
+   ============================================ */
+
+.weather-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.weather-row {
+  display: grid;
+  grid-template-columns: 72px 40px 1fr 100px;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+  padding: 6px 0;
+  border-bottom: 1px dotted var(--ink-ghost);
+}
+
+.weather-row:last-child {
+  border-bottom: none;
+}
+
+.weather-time {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.weather-emoji {
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.weather-temp {
+  font-weight: 700;
+  color: var(--ink);
+  text-align: right;
+}
+
+.weather-condition {
+  color: var(--ink-faded);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+
+/* Mobile: stack weather rows */
+@media (max-width: 480px) {
+  .weather-row {
+    grid-template-columns: 60px 32px 1fr 72px;
+    gap: 8px;
+    font-size: 0.75rem;
+  }
+}
+
+/* ============================================
+   TOP 5 TODAY — INTENTIONS
+   ============================================ */
+
+.intentions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.intention-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--ink-ghost);
+  padding: 4px 0;
+}
+
+.intention-row:first-child {
+  border-top: 1px solid var(--ink-ghost);
+}
+
+.intention-num {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--ink-faded);
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+  min-width: 28px;
+}
+
+.intention-input {
+  font-family: var(--font);
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+  padding: 14px 0;
+  caret-color: var(--ink);
+  /* minimum touch target height = 44px, padding handles it */
+}
+
+.intention-input::placeholder {
+  color: var(--ink-ghost);
+  font-family: var(--font);
+}
+
+.intention-input:focus {
+  background: rgba(0,0,0,0.03);
+  padding-left: 6px;
+  transition: all 0.15s ease;
+}
+
+/* Save status feedback */
+.save-status {
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  color: var(--ink-ghost);
+  margin-top: 12px;
+  height: 16px;
+  text-transform: uppercase;
+  transition: opacity 0.3s ease;
+}
+
+/* ============================================
+   MOTIVATION — QUOTE
+   ============================================ */
+
+.quote-text {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  max-width: 580px;
+}
+
+/* ============================================
+   PRAYER + INSPIRATION — IMAGES
+   ============================================ */
+
+.image-frame {
+  width: 100%;
+  max-width: 580px;
+}
+
+.image-frame img {
+  width: 100%;
+  height: auto;
+  display: block;
+  /* Images render in color — intentional per design brief */
+}
+
+/* ============================================
+   REMINDERS
+   ============================================ */
+
+.reminders-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.reminders-list li {
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  line-height: 1.6;
+  padding: 10px 0;
+  border-bottom: 1px dotted var(--ink-ghost);
+  text-transform: uppercase;
+}
+
+.reminders-list li:first-child {
+  border-top: 1px dotted var(--ink-ghost);
+}
+
+.reminders-list li::before {
+  content: '» ';
+  color: var(--ink-faded);
+}
+
+/* ============================================
+   ARCHIVE SECTION
+   ============================================ */
+
+.archive-btn {
+  font-family: var(--font);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--ink);
+  background: transparent;
+  border: 2px solid var(--ink);
+  padding: 14px 24px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background 0.15s ease, color 0.15s ease;
+  touch-action: manipulation;
+  /* min 44px touch target */
+  min-height: 48px;
+}
+
+.archive-btn:hover,
+.archive-btn:focus {
+  background: var(--ink);
+  color: var(--bg);
+  outline: none;
+}
+
+.archive-status {
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  color: var(--ink-faded);
+  margin-top: 14px;
+  text-transform: uppercase;
+  height: 18px;
+}
+
+/* Archive list of past dates */
+.archive-list {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.archive-entry {
+  border-bottom: 1px dotted var(--ink-ghost);
+}
+
+.archive-entry:first-child {
+  border-top: 1px dotted var(--ink-ghost);
+}
+
+/* The clickable date row */
+.archive-date-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  cursor: pointer;
+  font-size: 0.82rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.archive-date-row:hover .archive-date-label {
+  text-decoration: underline;
+}
+
+.archive-toggle-icon {
+  font-size: 0.75rem;
+  color: var(--ink-faded);
+  transition: transform 0.2s ease;
+}
+
+.archive-toggle-icon.open {
+  transform: rotate(90deg);
+}
+
+/* Expanded archive content panel */
+.archive-content {
+  display: none;
+  padding: 0 0 20px 16px;
+  border-left: 2px solid var(--ink-ghost);
+  margin-bottom: 4px;
+}
+
+.archive-content.expanded {
+  display: block;
+}
+
+.archive-content-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  color: var(--ink-faded);
+  text-transform: uppercase;
+  margin-top: 16px;
+  margin-bottom: 6px;
+}
+
+.archive-content-label:first-child {
+  margin-top: 8px;
+}
+
+.archive-intention-item {
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  line-height: 1.6;
+  color: var(--ink);
+  padding: 2px 0;
+}
+
+.archive-intention-item::before {
+  content: '— ';
+  color: var(--ink-ghost);
+}
+
+.archive-quote-text {
+  font-size: 0.82rem;
+  line-height: 1.65;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  font-style: italic;
+}
+
+.archive-image-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.archive-image-thumb {
+  width: 120px;
+  height: auto;
+  display: block;
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+
+.footer {
+  padding-top: 32px;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  color: var(--ink-ghost);
+  text-transform: uppercase;
+}
+
+/* ============================================
+   RESPONSIVE — phone adjustments
+   ============================================ */
+
+@media (max-width: 480px) {
+  .report {
+    padding: 32px 16px 48px 16px;
+  }
+
+  .greeting {
+    font-size: 1.25rem;
+  }
+
+  .quote-text {
+    font-size: 0.95rem;
+  }
+
+  .archive-image-thumb {
+    width: 100px;
+  }
+}
