@@ -72,7 +72,10 @@
     <!-- Condition -->
     <div class="section-row">
       <div class="label">Condition</div>
-      <div class="value" id="weather-condition">[ LOADING ]</div>
+      <div class="value">
+        <span id="weather-icon">☀</span>
+        <span id="weather-condition">[ LOADING ]</span>
+      </div>
     </div>
     
     <!-- Temp -->
@@ -81,19 +84,19 @@
       <div class="value" id="weather-temp">--°F</div>
     </div>
 
-    <!-- Sunrise -->
+    <!-- Sunrise / Sunset / Precip -->
     <div class="section-row">
       <div class="label">Sunrise</div>
-      <div class="value" id="weather-sunrise">--</div>
+      <div id="meta-values">
+        <div class="value" id="weather-sunrise">--</div>
+      </div>
     </div>
-
-    <!-- Sunset -->
+    
     <div class="section-row">
       <div class="label">Sunset</div>
       <div class="value" id="weather-sunset">--</div>
     </div>
 
-    <!-- Precip -->
     <div class="section-row">
       <div class="label">Precip</div>
       <div class="value" id="weather-precip">--%</div>
@@ -104,11 +107,11 @@
       <div class="dot-grid" id="dot-grid"></div>
     </div>
 
-    <!-- Hourly strip label -->
-    <div class="section-row" style="margin-top: 12px;">
+    <!-- Hourly strip -->
+    <div class="section-row" style="margin-top: 16px;">
       <div class="label">Next 12 Hours</div>
     </div>
-    <div class="hourly-strip" id="weather-hourly"></div>
+    <div id="weather-hourly"></div>
   </div>
 
   <!-- DIVIDER -->
@@ -148,10 +151,10 @@
   <!-- SECTION: REMINDERS -->
   <div class="receipt-section">
     <div class="section-title">REMINDERS</div>
-    <div class="reminder-item">[PHRASE_1]</div>
-    <div class="reminder-item">[PHRASE_2]</div>
-    <div class="reminder-item">[PHRASE_3]</div>
-    <div class="reminder-item">[PHRASE_4]</div>
+    <div class="reminder-item">Trust in the Lord with all your heart</div>
+    <div class="reminder-item">Do not lean on your own understanding</div>
+    <div class="reminder-item">In all your ways acknowledge Him</div>
+    <div class="reminder-item">He will make your paths straight</div>
   </div>
 
   <!-- DIVIDER -->
