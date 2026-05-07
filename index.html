@@ -58,10 +58,32 @@
     @media (max-width: 1024px) {
       .reports-container {
         grid-template-columns: 1fr;
+        overflow-x: auto;
+        overflow-y: hidden;
+        display: flex;
+        gap: 0;
+        scroll-snap-type: x mandatory;
+        height: 100vh;
+        padding: 0;
+        margin: 0;
+      }
+
+      .report-frame {
+        flex: 0 0 100%;
+        scroll-snap-align: start;
+        border-radius: 0;
+        box-shadow: none;
+        height: 100vh;
       }
 
       .report-frame iframe {
         height: 100vh;
+      }
+
+      body {
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
       }
     }
   </style>
@@ -69,16 +91,16 @@
 <body>
 
 <div class="reports-container">
-  <!-- Personal Daily Report -->
-  <div class="report-frame">
-    <div class="report-label">Personal Daily Report</div>
-    <iframe src="./personal-daily-report.html" title="Personal Daily Report"></iframe>
-  </div>
-
   <!-- Business Daily Report -->
   <div class="report-frame">
     <div class="report-label">Business Daily Report</div>
     <iframe src="./business-daily-report.html" title="Business Daily Report"></iframe>
+  </div>
+
+  <!-- Personal Daily Report -->
+  <div class="report-frame">
+    <div class="report-label">Personal Daily Report</div>
+    <iframe src="./personal-daily-report.html" title="Personal Daily Report"></iframe>
   </div>
 </div>
 
