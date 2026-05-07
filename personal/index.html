@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DAILY BRIEFING</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <main class="report">
+
+    <!-- ░░ HEADER ░░ -->
+    <section class="section" id="header">
+      <p class="greeting" id="greeting">GOOD MORNING, JOE</p>
+      <p class="date-display" id="date-display">LOADING DATE...</p>
+    </section>
+
+    <div class="divider">────────────────────────────────────────</div>
+
+    <!-- ░░ WEATHER ░░ -->
+    <section class="section" id="weather-section">
+      <h2 class="section-title">WEATHER</h2>
+      <p class="section-sub">CLARKS SUMMIT, PA</p>
+      <div id="weather-grid" class="weather-grid">
+        <p class="loading-text">FETCHING WEATHER DATA...</p>
+      </div>
+    </section>
+
+    <div class="divider">────────────────────────────────────────</div>
+
+    <!-- ░░ TOP 5 TODAY ░░ -->
+    <section class="section" id="intentions-section">
+      <h2 class="section-title">TOP 5 TODAY</h2>
+      <div class="intentions-list">
+        <div class="intention-row">
+          <span class="intention-num">01.</span>
+          <input class="intention-input" id="intention-1" type="text" placeholder="ADD INTENTION..." maxlength="120" autocomplete="off" />
+        </div>
+        <div class="intention-row">
+          <span class="intention-num">02.</span>
+          <input class="intention-input" id="intention-2" type="text" placeholder="ADD INTENTION..." maxlength="120" autocomplete="off" />
+        </div>
+        <div class="intention-row">
+          <span class="intention-num">03.</span>
+          <input class="intention-input" id="intention-3" type="text" placeholder="ADD INTENTION..." maxlength="120" autocomplete="off" />
+        </div>
+        <div class="intention-row">
+          <span class="intention-num">04.</span>
+          <input class="intention-input" id="intention-4" type="text" placeholder="ADD INTENTION..." maxlength="120" autocomplete="off" />
+        </div>
+        <div class="intention-row">
+          <span class="intention-num">05.</span>
+          <input class="intention-input" id="intention-5" type="text" placeholder="ADD INTENTION..." maxlength="120" autocomplete="off" />
+        </div>
+      </div>
+      <p class="save-status" id="save-status"></p>
+    </section>
+
+    <div class="divider">────────────────────────────────────────</div>
+
+    <!-- ░░ MOTIVATION ░░ -->
+    <section class="section" id="motivation-section">
+      <h2 class="section-title">MOTIVATION</h2>
+      <p class="quote-text" id="quote-text">LOADING QUOTE...</p>
+    </section>
+
+    <div class="divider">────────────────────────────────────────</div>
+
+    <!-- ░░ PRAYER ░░ -->
+    <section class="section" id="prayer-section">
+      <h2 class="section-title">PRAYER</h2>
+      <div class="image-frame" id="prayer-frame">
+        <p class="loading-text">LOADING PRAYER...</p>
+      </div>
+    </section>
+
+    <div class="divider">────────────────────────────────────────</div>
+
+    <!-- ░░ INSPIRATION ░░ -->
+    <section class="section" id="inspiration-section">
+      <h2 class="section-title">INSPIRATION</h2>
+      <div class="image-frame" id="inspiration-frame">
+        <p class="loading-text">LOADING INSPIRATION...</p>
+      </div>
+    </section>
+
+    <div class="divider">────────────────────────────────────────</div>
+
+    <!-- ░░ REMINDERS ░░ -->
+    <section class="section" id="reminders-section">
+      <h2 class="section-title">REMINDERS</h2>
+      <ul class="reminders-list">
+        <li>[PHRASE_1]</li>
+        <li>[PHRASE_2]</li>
+        <li>[PHRASE_3]</li>
+        <li>[PHRASE_4]</li>
+      </ul>
+    </section>
+
+    <div class="divider">────────────────────────────────────────</div>
+
+    <!-- ░░ ARCHIVE ░░ -->
+    <section class="section" id="archive-section">
+      <h2 class="section-title">ARCHIVE</h2>
+      <button class="archive-btn" id="archive-btn">[ ARCHIVE TODAY'S REPORT ]</button>
+      <p class="archive-status" id="archive-status"></p>
+      <div id="archive-list" class="archive-list">
+        <p class="loading-text" id="archive-loading">LOADING ARCHIVE...</p>
+      </div>
+    </section>
+
+    <div class="divider">────────────────────────────────────────</div>
+
+    <footer class="footer">
+      <p>END OF REPORT // <span id="footer-date"></span></p>
+    </footer>
+
+  </main>
+
+  <!-- Supabase CDN — this is the free library that lets the page talk to your database -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="script.js"></script>
+</body>
+</html>
