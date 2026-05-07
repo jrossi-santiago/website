@@ -1,6 +1,6 @@
 /* ============================================
-   DAILY BRIEFING — style.css
-   Clean Centered Receipt Aesthetic
+   DAILY BRIEFING — AXIS RECEIPT REDESIGN
+   Corporate Transaction Aesthetic
    ============================================ */
 
 :root {
@@ -24,20 +24,22 @@ html, body {
   font-family: var(--font);
   color: var(--ink);
   font-size: 12px;
+  line-height: 1.5;
 }
 
 body {
   display: flex;
   justify-content: center;
-  padding: 40px 0 80px 0;
+  padding: 40px 20px 80px 20px;
   min-height: 100vh;
 }
 
 .receipt {
   width: var(--receipt-width);
+  max-width: 100%;
   background: var(--paper);
-  padding: 24px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+  padding: 28px 32px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
 /* ============================================
@@ -46,22 +48,25 @@ body {
 
 .receipt-header {
   text-align: center;
-  padding-bottom: 24px;
+  padding-bottom: 20px;
   border-bottom: 2px solid var(--ink);
+  margin-bottom: 20px;
 }
 
 .header-title {
   font-size: 48px;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   line-height: 1;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
+  color: var(--ink);
 }
 
 .header-subtitle {
-  font-size: 11px;
+  font-size: 10px;
   letter-spacing: 0.15em;
   color: var(--ink-light);
+  text-transform: uppercase;
 }
 
 /* ============================================
@@ -71,25 +76,27 @@ body {
 .token-box {
   text-align: center;
   margin: 20px 0;
-  padding: 16px 12px;
+  padding: 16px 20px;
   border: 2px dashed var(--ink);
-  border-radius: 8px;
+  background: transparent;
 }
 
 .token-label {
-  font-size: 10px;
+  font-size: 9px;
   letter-spacing: 0.2em;
   color: var(--ink-light);
   margin-bottom: 8px;
   text-transform: uppercase;
+  font-weight: 400;
 }
 
 .token-code {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.08em;
   word-break: break-all;
-  line-height: 1.5;
+  line-height: 1.6;
+  color: var(--ink);
 }
 
 /* ============================================
@@ -107,17 +114,17 @@ body {
    ============================================ */
 
 .receipt-section {
-  margin-bottom: 4px;
+  margin-bottom: 16px;
 }
 
 .section-title {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--ink-light);
   margin-bottom: 12px;
-  padding-bottom: 8px;
+  padding-bottom: 6px;
   border-bottom: 1px solid var(--ink-ghost);
 }
 
@@ -125,15 +132,17 @@ body {
 .section-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  align-items: center;
-  padding: 8px 0;
+  gap: 20px;
+  align-items: baseline;
+  padding: 6px 0;
   font-size: 11px;
 }
 
 .label {
   color: var(--ink-light);
   text-align: left;
+  font-weight: 400;
+  letter-spacing: 0.02em;
 }
 
 .value {
@@ -141,6 +150,7 @@ body {
   text-align: right;
   font-weight: 600;
   word-break: break-word;
+  letter-spacing: 0.01em;
 }
 
 /* ============================================
@@ -149,8 +159,8 @@ body {
 
 .intention-row {
   display: flex;
-  gap: 8px;
-  padding: 8px 0;
+  gap: 10px;
+  padding: 6px 0;
   align-items: center;
 }
 
@@ -158,6 +168,7 @@ body {
   color: var(--ink);
   flex-shrink: 0;
   font-weight: 700;
+  font-size: 11px;
 }
 
 .intention-input {
@@ -172,24 +183,27 @@ body {
   color: var(--ink);
   caret-color: var(--ink);
   -webkit-appearance: none;
+  letter-spacing: 0.01em;
 }
 
 .intention-input::placeholder {
   color: var(--ink-ghost);
-  font-style: italic;
+  font-style: normal;
+  letter-spacing: 0.01em;
 }
 
 .intention-input:focus {
   border-bottom: 1px solid var(--ink);
-  background: rgba(0,0,0,0.02);
+  background: rgba(0, 0, 0, 0.015);
 }
 
 .save-indicator {
-  font-size: 9px;
+  font-size: 8px;
   color: var(--ink-light);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   margin-top: 8px;
-  min-height: 14px;
+  min-height: 12px;
+  text-transform: uppercase;
 }
 
 /* ============================================
@@ -199,22 +213,23 @@ body {
 .dot-grid-container {
   display: flex;
   justify-content: center;
-  margin: 12px 0;
-  padding: 12px 0;
+  margin: 14px 0 8px 0;
+  padding: 0;
 }
 
 .dot-grid {
   display: grid;
-  grid-template-columns: repeat(12, 4px);
-  gap: 3px;
+  grid-template-columns: repeat(10, 5px);
+  gap: 4px;
+  justify-items: center;
 }
 
 .dot-grid span {
-  width: 4px;
-  height: 4px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: var(--ink);
-  opacity: 0.15;
+  opacity: 0.12;
 }
 
 .dot-grid span.active {
@@ -223,34 +238,35 @@ body {
 
 /* Hourly strip */
 .hourly-strip {
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-  padding: 8px 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+  gap: 6px;
+  margin-top: 10px;
 }
 
 .hourly-item {
-  flex: 1;
-  min-width: 45px;
   text-align: center;
-  padding: 6px 4px;
+  padding: 8px 4px;
   border: 1px solid var(--ink-ghost);
-  border-radius: 3px;
+  background: transparent;
   font-size: 9px;
 }
 
 .hourly-emoji {
   display: block;
-  font-size: 12px;
-  margin-bottom: 2px;
+  font-size: 14px;
+  margin-bottom: 3px;
+  line-height: 1;
 }
 
 .hourly-time {
   display: block;
-  font-size: 8px;
+  font-size: 7px;
   font-weight: 700;
   color: var(--ink-light);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
 }
 
 .hourly-temp {
@@ -258,6 +274,7 @@ body {
   font-size: 9px;
   font-weight: 700;
   color: var(--ink);
+  letter-spacing: 0.02em;
 }
 
 /* ============================================
@@ -265,11 +282,12 @@ body {
    ============================================ */
 
 .quote-text {
-  font-size: 11px;
-  line-height: 1.6;
+  font-size: 10px;
+  line-height: 1.7;
   font-style: italic;
   color: var(--ink);
-  padding: 8px 0;
+  padding: 6px 0;
+  letter-spacing: 0.01em;
 }
 
 /* ============================================
@@ -278,21 +296,23 @@ body {
 
 .image-frame {
   width: 100%;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 .image-frame img {
   width: 100%;
   height: auto;
   display: block;
-  border-radius: 4px;
+  border: 1px solid var(--ink-ghost);
 }
 
 .placeholder {
-  font-size: 10px;
+  font-size: 9px;
   color: var(--ink-light);
-  padding: 24px 8px;
+  padding: 32px 12px;
   text-align: center;
+  letter-spacing: 0.1em;
+  border: 1px solid var(--ink-ghost);
 }
 
 /* ============================================
@@ -300,16 +320,18 @@ body {
    ============================================ */
 
 .reminder-item {
-  font-size: 11px;
-  line-height: 1.6;
-  padding: 6px 0;
-  margin-left: 12px;
+  font-size: 10px;
+  line-height: 1.7;
+  padding: 5px 0;
+  color: var(--ink);
+  letter-spacing: 0.01em;
 }
 
 .reminder-item::before {
   content: '• ';
   color: var(--ink-light);
   font-weight: 700;
+  margin-right: 4px;
 }
 
 /* ============================================
@@ -318,19 +340,19 @@ body {
 
 .archive-btn {
   font-family: var(--font);
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.15em;
   color: var(--ink);
   background: transparent;
   border: 1px solid var(--ink);
-  padding: 8px 16px;
+  padding: 10px 20px;
   cursor: pointer;
   text-transform: uppercase;
   -webkit-appearance: none;
-  border-radius: 2px;
-  transition: background 0.15s, color 0.15s;
-  min-height: 40px;
+  width: 100%;
+  transition: background 0.2s, color 0.2s;
+  min-height: 38px;
 }
 
 .archive-btn:hover {
@@ -338,13 +360,23 @@ body {
   color: var(--paper);
 }
 
+.archive-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .archive-list {
-  margin-top: 12px;
+  margin-top: 16px;
 }
 
 .archive-entry {
   border-top: 1px solid var(--ink-ghost);
-  padding-top: 8px;
+  padding-top: 0;
+  margin-top: 12px;
+}
+
+.archive-entry:first-child {
+  margin-top: 0;
 }
 
 .archive-date-row {
@@ -352,11 +384,13 @@ body {
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  padding: 8px 0;
-  font-size: 10px;
-  letter-spacing: 0.1em;
+  padding: 10px 0;
+  font-size: 9px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   user-select: none;
+  color: var(--ink);
+  font-weight: 600;
 }
 
 .archive-date-row:hover {
@@ -364,9 +398,10 @@ body {
 }
 
 .archive-toggle {
-  font-size: 9px;
+  font-size: 8px;
   color: var(--ink-light);
-  transition: transform 0.15s;
+  transition: transform 0.2s;
+  font-weight: 700;
 }
 
 .archive-toggle.open {
@@ -375,8 +410,8 @@ body {
 
 .archive-content {
   display: none;
-  padding: 8px 0 8px 12px;
-  margin-top: 6px;
+  padding: 12px 0 8px 16px;
+  margin-top: 0;
   border-left: 2px solid var(--ink-ghost);
 }
 
@@ -385,12 +420,13 @@ body {
 }
 
 .archive-label {
-  font-size: 9px;
-  letter-spacing: 0.15em;
+  font-size: 8px;
+  letter-spacing: 0.18em;
   color: var(--ink-light);
   text-transform: uppercase;
-  margin-top: 8px;
-  margin-bottom: 4px;
+  margin-top: 10px;
+  margin-bottom: 6px;
+  font-weight: 700;
 }
 
 .archive-label:first-child {
@@ -399,33 +435,40 @@ body {
 
 .archive-intention {
   font-size: 10px;
-  padding: 2px 0;
-  line-height: 1.5;
+  padding: 3px 0;
+  line-height: 1.6;
+  color: var(--ink);
+  letter-spacing: 0.01em;
 }
 
 .archive-intention::before {
   content: '- ';
   color: var(--ink-light);
+  font-weight: 700;
+  margin-right: 4px;
 }
 
 .archive-quote {
   font-size: 10px;
-  line-height: 1.6;
+  line-height: 1.7;
   font-style: italic;
   padding: 4px 0;
+  color: var(--ink);
+  letter-spacing: 0.01em;
 }
 
 .archive-images {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  margin-top: 6px;
+  margin-top: 8px;
 }
 
 .archive-image-thumb {
-  width: 100px;
+  width: 90px;
   height: auto;
-  border-radius: 3px;
+  border: 1px solid var(--ink-ghost);
+  display: block;
 }
 
 /* ============================================
@@ -434,41 +477,120 @@ body {
 
 .receipt-footer {
   text-align: center;
-  margin-top: 24px;
-  padding-top: 16px;
+  margin-top: 28px;
+  padding-top: 20px;
   border-top: 2px solid var(--ink);
 }
 
 .perforated {
-  font-size: 12px;
-  letter-spacing: 0.2em;
+  font-size: 11px;
+  letter-spacing: 0.3em;
   color: var(--ink-ghost);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   user-select: none;
+  font-weight: 400;
 }
 
 .footer-text {
-  font-size: 10px;
-  letter-spacing: 0.15em;
+  font-size: 9px;
+  letter-spacing: 0.18em;
   color: var(--ink-light);
   text-transform: uppercase;
-  margin: 4px 0;
+  margin: 6px 0;
+  font-weight: 700;
 }
 
 .footer-date {
-  font-size: 10px;
+  font-size: 9px;
   letter-spacing: 0.15em;
   color: var(--ink-light);
+  text-transform: uppercase;
+  font-weight: 400;
 }
 
 /* ============================================
-   MOBILE
+   WEATHER HOUR ROW (from JS)
+   ============================================ */
+
+.weather-hour-row {
+  display: grid;
+  grid-template-columns: 50px 30px 1fr 50px;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--ink-ghost);
+  font-size: 10px;
+}
+
+.weather-hour-row:last-child {
+  border-bottom: none;
+}
+
+.wh-time {
+  font-weight: 700;
+  color: var(--ink-light);
+  font-size: 8px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.wh-emoji {
+  font-size: 16px;
+  text-align: center;
+}
+
+.wh-cond {
+  font-size: 9px;
+  color: var(--ink-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 400;
+}
+
+.wh-temp {
+  font-weight: 700;
+  color: var(--ink);
+  text-align: right;
+  font-size: 10px;
+  letter-spacing: 0.02em;
+}
+
+/* ============================================
+   RECEIPT-SPECIFIC ELEMENTS
+   ============================================ */
+
+#greeting-msg {
+  letter-spacing: 0.05em;
+}
+
+#weather-icon {
+  font-size: 20px;
+  display: inline-block;
+  margin-right: 4px;
+}
+
+#weather-temp {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+#meta-values {
+  display: contents;
+}
+
+/* ============================================
+   MOBILE RESPONSIVE
    ============================================ */
 
 @media (max-width: 480px) {
+  body {
+    padding: 20px 12px 60px 12px;
+  }
+
   .receipt {
     width: 100%;
-    padding: 16px;
+    padding: 20px 20px;
   }
 
   .header-title {
@@ -477,7 +599,7 @@ body {
 
   .section-row {
     grid-template-columns: 1fr;
-    gap: 4px;
+    gap: 3px;
   }
 
   .value {
@@ -485,6 +607,45 @@ body {
   }
 
   .archive-image-thumb {
-    width: 80px;
+    width: 75px;
+  }
+
+  .dot-grid {
+    grid-template-columns: repeat(10, 4px);
+    gap: 3px;
+  }
+
+  .dot-grid span {
+    width: 4px;
+    height: 4px;
+  }
+
+  .hourly-strip {
+    grid-template-columns: repeat(auto-fit, minmax(45px, 1fr));
+    gap: 4px;
+  }
+
+  .weather-hour-row {
+    grid-template-columns: 45px 25px 1fr 45px;
+    gap: 6px;
+    font-size: 9px;
+  }
+
+  .wh-emoji {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 360px) {
+  .receipt {
+    padding: 16px 16px;
+  }
+
+  .header-title {
+    font-size: 32px;
+  }
+
+  .token-code {
+    font-size: 11px;
   }
 }
