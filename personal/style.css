@@ -2,7 +2,7 @@
    DAILY BRIEFING — AXIS RECEIPT REDESIGN
    Corporate Transaction Aesthetic
    ============================================ */
-
+body { background: red !important; }
 :root {
   --paper: #ffffff;
   --ink: #1a1a1a;
