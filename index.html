@@ -1,135 +1,850 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Daily Reports</title>
-  
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    html, body {
-      background: #f0f0f0;
-      font-family: 'Space Mono', monospace;
-      color: #1a1a1a;
-      height: 100%;
-    }
-    body {
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-    }
-    .main-content {
-      flex: 1;
-      padding: 20px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-    .reports-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      width: 100%;
-      flex: 1;
-      min-height: 0;
-    }
-    .report-frame {
-      background: white;
-      border-radius: 4px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
-    }
-    .report-frame iframe {
-      flex: 1;
-      width: 100%;
-      border: none;
-      display: block;
-      min-height: 0;
-    }
-    .report-label {
-      padding: 12px 16px;
-      background: #1a1a1a;
-      color: white;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      text-align: center;
-      flex-shrink: 0;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Morning Report</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
 
-    /* ============================================================
-       RESPONSIVE — TABLET
-       ============================================================ */
-    
-    @media (max-width: 1200px) {
-      .main-content {
-        padding: 16px;
-      }
-      .reports-container {
-        gap: 16px;
-      }
-    }
+  :root {
+    --bg:       #0d0d0f;
+    --surface:  #16161a;
+    --surface2: #1e1e24;
+    --border:   #2a2a35;
+    --border2:  #3a3a48;
+    --text:     #e8e8f0;
+    --muted:    #6b6b80;
+    --accent:   #7c6af7;
+    --accent2:  #5b4fd4;
+    --success:  #3ecf8e;
+    --warn:     #f5a623;
+    --danger:   #f04747;
+  }
 
-    /* ============================================================
-       RESPONSIVE — MOBILE
-       ============================================================ */
-    
-    @media (max-width: 1024px) {
-      .reports-container {
-        grid-template-columns: 1fr;
-        gap: 0;
-        overflow-x: auto;
-        overflow-y: hidden;
-        scroll-snap-type: x mandatory;
-        display: flex;
-        width: 100%;
-        flex: 1;
-        min-height: 0;
-      }
-      .report-frame {
-        flex: 0 0 100%;
-        scroll-snap-align: start;
-        border-radius: 0;
-        box-shadow: none;
-        min-height: 0;
-      }
-      .report-frame iframe {
-        flex: 1;
-        min-height: 0;
-      }
-      .main-content {
-        padding: 0;
-        overflow: hidden;
-      }
-    }
-  </style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 32px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  nav a {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 5px 12px;
+    border-radius: 6px;
+    transition: all .2s;
+    letter-spacing: .03em;
+  }
+  nav a:hover { color: var(--text); background: var(--surface2); }
+  nav a.active { color: var(--accent); background: rgba(124,106,247,.12); }
+  nav .logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    margin-right: 12px;
+    letter-spacing: -.02em;
+  }
+  nav .spacer { flex: 1; }
+
+  /* PAGE */
+  .page { max-width: 720px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* GREETING HERO */
+  .hero {
+    margin-bottom: 40px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .hero-greeting {
+    font-size: 36px;
+    font-weight: 600;
+    letter-spacing: -.04em;
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+  .hero-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: .04em;
+  }
+
+  /* BEGIN BUTTON */
+  .begin-wrap {
+    margin-top: 24px;
+  }
+  .begin-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 12px 24px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all .2s;
+    letter-spacing: -.01em;
+  }
+  .begin-btn:hover { background: var(--accent2); transform: translateY(-1px); }
+
+  /* SECTIONS */
+  .section { margin-bottom: 32px; }
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+    padding-left: 2px;
+  }
+
+  /* QUOTE CARD */
+  .quote-card {
+    background: linear-gradient(135deg, rgba(124,106,247,.07) 0%, rgba(62,207,142,.04) 100%);
+    border: 1px solid rgba(124,106,247,.2);
+    border-radius: 12px;
+    padding: 24px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .quote-card::before {
+    content: '"';
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    font-size: 100px;
+    color: rgba(124,106,247,.08);
+    font-family: Georgia, serif;
+    line-height: 1;
+    pointer-events: none;
+  }
+  .quote-text {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text);
+    font-style: italic;
+    font-weight: 300;
+    position: relative;
+    z-index: 1;
+    min-height: 24px;
+  }
+  .quote-loading {
+    height: 20px;
+    background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+    border-radius: 4px;
+    width: 80%;
+    margin-bottom: 8px;
+  }
+  .quote-loading:last-child { width: 50%; }
+
+  /* REMINDERS */
+  .reminders-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .reminder-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .reminder-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+    margin-top: 7px;
+  }
+
+  /* IMAGE CARDS */
+  .image-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .image-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+  }
+  .image-card-label {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    background: rgba(13,13,15,.75);
+    color: var(--muted);
+    padding: 3px 8px;
+    border-radius: 4px;
+    backdrop-filter: blur(4px);
+    z-index: 2;
+  }
+  .image-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+    transition: transform .4s ease;
+  }
+  .image-card:hover img { transform: scale(1.03); }
+  .image-placeholder {
+    width: 100%;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: .08em;
+    background: var(--surface2);
+    animation: shimmer 1.4s infinite;
+    background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%);
+    background-size: 200% 100%;
+  }
+
+  /* WEATHER */
+  .weather-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .weather-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .weather-main {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .weather-emoji {
+    font-size: 36px;
+    line-height: 1;
+  }
+  .weather-temp-big {
+    font-family: 'DM Mono', monospace;
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: -.03em;
+  }
+  .weather-cond {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .weather-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    text-align: right;
+  }
+  .weather-meta-item {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: flex-end;
+  }
+  .weather-meta-item strong { color: var(--text); }
+
+  /* WEATHER STATS ROW */
+  .weather-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-bottom: 1px solid var(--border);
+  }
+  .weather-stat {
+    padding: 14px 20px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .weather-stat:last-child { border-right: none; }
+  .weather-stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .weather-stat-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: -.02em;
+  }
+
+  /* HOURLY */
+  .weather-hourly {
+    padding: 4px 0;
+  }
+  .hourly-row {
+    display: grid;
+    grid-template-columns: 70px 32px 1fr 56px;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--border);
+    transition: background .15s;
+  }
+  .hourly-row:last-child { border-bottom: none; }
+  .hourly-row:hover { background: var(--surface2); }
+  .hourly-time {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: .04em;
+  }
+  .hourly-time.now { color: var(--accent); font-weight: 500; }
+  .hourly-emoji { font-size: 18px; text-align: center; }
+  .hourly-cond {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  .hourly-temp {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    text-align: right;
+    letter-spacing: -.01em;
+  }
+
+  /* PRECIP BAR */
+  .precip-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .precip-bar {
+    flex: 1;
+    height: 3px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .precip-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+  }
+  .precip-pct {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    width: 28px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* SKELETON */
+  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+  .skeleton {
+    background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+    border-radius: 8px;
+  }
+
+  /* FADE IN */
+  .fade-in {
+    animation: fadeIn .4s ease forwards;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  @media (max-width: 600px) {
+    nav { padding: 12px 16px; }
+    .page { padding: 24px 16px 60px; }
+    .hero-greeting { font-size: 28px; }
+    .image-grid { grid-template-columns: 1fr; }
+    .weather-stats { grid-template-columns: repeat(3,1fr); }
+    .hourly-row { grid-template-columns: 56px 28px 1fr 48px; padding: 10px 14px; gap: 8px; }
+  }
+</style>
 </head>
 <body>
 
-<div class="main-content">
-  <div class="reports-container">
-    <!-- Personal Daily Report -->
-    <div class="report-frame">
-      <div class="report-label">Personal Daily Report</div>
-      <iframe src="./personal-daily-report.html" title="Personal Daily Report"></iframe>
-    </div>
-    <!-- Business Daily Report -->
-    <div class="report-frame">
-      <div class="report-label">Business Daily Report</div>
-      <iframe src="./business-daily-report.html" title="Business Daily Report"></iframe>
+<script>
+  const SUPABASE_URL      = 'https://lxarvlyxpegwpfxnzacj.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx4YXJ2bHl4cGVnd3BmeG56YWNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyNTA1NzgsImV4cCI6MjA5MzgyNjU3OH0.A4LjF_1LV7d522jhigD4izyjY6S0fgETgebeDKGUsQU';
+
+  // ── Your location coordinates (Mountain Top, PA)
+  const LAT = 41.0762;
+  const LNG = -75.9894;
+
+  // ── Your standard sayings — baked in, edit freely
+  const REMINDERS = [
+    'Trust in the Lord with all your heart',
+    'Do not lean on your own understanding',
+    'In all your ways acknowledge Him',
+    'He will make your paths straight',
+    'You are called. You are equipped. Go.',
+    'Consistency beats intensity every single time',
+    'Preempt Global exists to serve. Lead accordingly.',
+  ];
+</script>
+
+<!-- NAV -->
+<nav>
+  <span class="logo">// workspace</span>
+  <a href="/" class="active">morning</a>
+  <a href="/tasks">tasks</a>
+  <a href="/goals">goals</a>
+  <a href="/notes">notes</a>
+  <a href="/calendar">calendar</a>
+  <a href="/capture">capture</a>
+  <span class="spacer"></span>
+</nav>
+
+<div class="page">
+
+  <!-- HERO GREETING -->
+  <div class="hero">
+    <div class="hero-eyebrow" id="heroEyebrow">Daily report</div>
+    <div class="hero-greeting" id="heroGreeting">Good morning, Joe</div>
+    <div class="hero-date" id="heroDate">—</div>
+    <div class="begin-wrap">
+      <a class="begin-btn" href="/tasks">Begin my day →</a>
     </div>
   </div>
+
+  <!-- QUOTE -->
+  <div class="section">
+    <div class="section-label">Motivation</div>
+    <div class="quote-card">
+      <div class="quote-text" id="quoteText">
+        <div class="quote-loading"></div>
+        <div class="quote-loading"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REMINDERS -->
+  <div class="section">
+    <div class="section-label">Reminders</div>
+    <div class="reminders-card" id="remindersCard"></div>
+  </div>
+
+  <!-- IMAGES: PRAYER + INSPIRATION -->
+  <div class="section">
+    <div class="section-label">Prayer &amp; Inspiration</div>
+    <div class="image-grid">
+      <div class="image-card" id="prayerCard">
+        <div class="image-card-label">Prayer</div>
+        <div class="image-placeholder">Loading…</div>
+      </div>
+      <div class="image-card" id="inspirationCard">
+        <div class="image-card-label">Inspiration</div>
+        <div class="image-placeholder">Loading…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEATHER -->
+  <div class="section">
+    <div class="section-label">Weather — Mountain Top, PA</div>
+    <div class="weather-card">
+
+      <!-- Current conditions -->
+      <div class="weather-hero">
+        <div class="weather-main">
+          <div class="weather-emoji" id="weatherEmoji">—</div>
+          <div>
+            <div class="weather-temp-big" id="weatherTemp">--°F</div>
+            <div class="weather-cond" id="weatherCond">Loading…</div>
+          </div>
+        </div>
+        <div class="weather-meta">
+          <div class="weather-meta-item">🌅 <strong id="weatherSunrise">--</strong></div>
+          <div class="weather-meta-item">🌇 <strong id="weatherSunset">--</strong></div>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div class="weather-stats">
+        <div class="weather-stat">
+          <div class="weather-stat-label">Precip</div>
+          <div class="weather-stat-val" id="weatherPrecip">--%</div>
+        </div>
+        <div class="weather-stat">
+          <div class="weather-stat-label">High</div>
+          <div class="weather-stat-val" id="weatherHigh">--°</div>
+        </div>
+        <div class="weather-stat">
+          <div class="weather-stat-label">Low</div>
+          <div class="weather-stat-val" id="weatherLow">--°</div>
+        </div>
+      </div>
+
+      <!-- Hourly strip -->
+      <div class="weather-hourly" id="weatherHourly">
+        <div class="hourly-row">
+          <div class="skeleton" style="height:14px;width:50px"></div>
+          <div class="skeleton" style="height:18px;width:18px;border-radius:50%"></div>
+          <div class="skeleton" style="height:12px;width:80px"></div>
+          <div class="skeleton" style="height:14px;width:40px"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
 </div>
 
-<script src="./header.js"></script>
+<!--
+  SUPABASE SQL — run in your new project's SQL editor:
 
+  -- 1. MOTIVATIONAL QUOTES
+  CREATE TABLE motivational_quotes (
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    quote_text text NOT NULL,
+    created_at timestamptz DEFAULT now()
+  );
+  ALTER TABLE motivational_quotes ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "allow all" ON motivational_quotes FOR ALL USING (true);
+
+  -- 2. DAILY MEDIA CACHE (so images don't change mid-day)
+  CREATE TABLE daily_media_cache (
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    date date NOT NULL UNIQUE,
+    prayer_image_url text,
+    inspiration_image_url text,
+    created_at timestamptz DEFAULT now()
+  );
+  ALTER TABLE daily_media_cache ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "allow all" ON daily_media_cache FOR ALL USING (true);
+
+  -- STORAGE BUCKETS:
+  -- Create two public buckets in Supabase Storage:
+  --   • prayer_images
+  --   • inspirational_images
+  -- Set both to public. Upload your images directly into each bucket root.
+-->
+
+<script>
+// ── Vanilla Supabase REST client
+const supa = (() => {
+  const headers = {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+    'Content-Type': 'application/json'
+  };
+  const base = `${SUPABASE_URL}/rest/v1`;
+  const store = `${SUPABASE_URL}/storage/v1`;
+
+  async function query(table, params = {}) {
+    const url = new URL(`${base}/${table}`);
+    Object.entries(params).forEach(([k,v]) => url.searchParams.set(k,v));
+    const r = await fetch(url, { headers });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  }
+
+  async function upsert(table, data) {
+    const r = await fetch(`${base}/${table}`, {
+      method: 'POST',
+      headers: { ...headers, 'Prefer': 'resolution=merge-duplicates,return=representation' },
+      body: JSON.stringify(data)
+    });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  }
+
+  async function listBucket(bucket) {
+    const r = await fetch(`${store}/object/list/${bucket}`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ limit: 200, offset: 0, prefix: '' })
+    });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  }
+
+  function publicUrl(bucket, filename) {
+    return `${store}/object/public/${bucket}/${filename}`;
+  }
+
+  return { query, upsert, listBucket, publicUrl };
+})();
+
+// ── Helpers
+function getTodayStr() {
+  const now = new Date();
+  const est = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+  return `${est.getFullYear()}-${String(est.getMonth()+1).padStart(2,'0')}-${String(est.getDate()).padStart(2,'0')}`;
+}
+
+function getCurrentHourEST() {
+  return new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })).getHours();
+}
+
+function formatTime(dtStr) {
+  if (!dtStr) return '--';
+  const t = new Date(dtStr);
+  const h = t.getHours() % 12 || 12;
+  const m = String(t.getMinutes()).padStart(2,'0');
+  return `${h}:${m}${t.getHours() < 12 ? 'AM' : 'PM'}`;
+}
+
+function formatHour(hour) {
+  const h = hour % 12 === 0 ? 12 : hour % 12;
+  return `${h}:00${hour < 12 ? 'AM' : 'PM'}`;
+}
+
+function weatherInfo(code) {
+  if (code === 0)    return { emoji: '☀️',  label: 'Clear' };
+  if (code <= 2)     return { emoji: '⛅',  label: 'Partly Cloudy' };
+  if (code === 3)    return { emoji: '☁️',  label: 'Overcast' };
+  if (code <= 49)    return { emoji: '🌫️',  label: 'Fog' };
+  if (code <= 57)    return { emoji: '🌦️',  label: 'Drizzle' };
+  if (code <= 65)    return { emoji: '🌧️',  label: 'Rain' };
+  if (code <= 77)    return { emoji: '❄️',  label: 'Snow' };
+  if (code <= 82)    return { emoji: '🌦️',  label: 'Showers' };
+  if (code <= 86)    return { emoji: '🌨️',  label: 'Snow Showers' };
+  if (code <= 99)    return { emoji: '⛈️',  label: 'Thunderstorm' };
+  return { emoji: '🌡️', label: 'Unknown' };
+}
+
+const MONTHS_FULL = ['January','February','March','April','May','June',
+                     'July','August','September','October','November','December'];
+const DAYS_FULL   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+// ── Init header
+function initHeader() {
+  const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }));
+  const hour = now.getHours();
+  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+
+  document.getElementById('heroGreeting').textContent = `${greeting}, Joe`;
+  document.getElementById('heroDate').textContent =
+    `${DAYS_FULL[now.getDay()]}, ${MONTHS_FULL[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+  document.getElementById('heroEyebrow').textContent =
+    hour < 12 ? 'Daily morning report' : 'Daily report';
+}
+
+// ── Init reminders (baked in)
+function initReminders() {
+  const card = document.getElementById('remindersCard');
+  card.innerHTML = '';
+  REMINDERS.forEach(text => {
+    const item = document.createElement('div');
+    item.className = 'reminder-item fade-in';
+    item.innerHTML = `<div class="reminder-dot"></div><span>${text}</span>`;
+    card.appendChild(item);
+  });
+}
+
+// ── Init quote
+async function initQuote() {
+  const el = document.getElementById('quoteText');
+  try {
+    const rows = await supa.query('motivational_quotes', { select: 'quote_text' });
+    if (!rows || rows.length === 0) {
+      el.textContent = 'Add quotes to your motivational_quotes table in Supabase.';
+      return;
+    }
+    const pick = rows[Math.floor(Math.random() * rows.length)];
+    el.classList.add('fade-in');
+    el.textContent = `"${pick.quote_text}"`;
+  } catch(e) {
+    el.textContent = 'Could not load quote.';
+    console.warn('Quote error', e);
+  }
+}
+
+// ── Load image from bucket with daily cache
+async function loadImage(bucket, cacheField, cardId) {
+  const today = getTodayStr();
+  const card  = document.getElementById(cardId);
+  const label = card.querySelector('.image-card-label').outerHTML;
+
+  // Check cache
+  try {
+    const cached = await supa.query('daily_media_cache', {
+      date: `eq.${today}`,
+      select: `${cacheField}`
+    });
+    if (cached && cached[0] && cached[0][cacheField]) {
+      card.innerHTML = label + `<img src="${cached[0][cacheField]}" alt="${cacheField}" loading="lazy" class="fade-in">`;
+      return;
+    }
+  } catch(e) { /* no cache yet */ }
+
+  // Pick random from bucket
+  try {
+    const files = await supa.listBucket(bucket);
+    const images = files.filter(f => f.name && /\.(jpg|jpeg|png|gif|webp)$/i.test(f.name));
+    if (!images.length) {
+      card.innerHTML = label + `<div class="image-placeholder">No images found</div>`;
+      return;
+    }
+    const pick = images[Math.floor(Math.random() * images.length)];
+    const url  = supa.publicUrl(bucket, pick.name);
+
+    card.innerHTML = label + `<img src="${url}" alt="${cacheField}" loading="lazy" class="fade-in">`;
+
+    // Cache it
+    await supa.upsert('daily_media_cache', [{ date: today, [cacheField]: url }]);
+  } catch(e) {
+    card.innerHTML = label + `<div class="image-placeholder">Could not load image</div>`;
+    console.warn(`${bucket} error`, e);
+  }
+}
+
+// ── Init weather
+async function initWeather() {
+  const url =
+    `https://api.open-meteo.com/v1/forecast` +
+    `?latitude=${LAT}&longitude=${LNG}` +
+    `&hourly=temperature_2m,weathercode,precipitation_probability` +
+    `&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max` +
+    `&temperature_unit=fahrenheit` +
+    `&timezone=America%2FNew_York` +
+    `&forecast_days=2`;
+
+  try {
+    const res  = await fetch(url);
+    const data = await res.json();
+
+    const hours  = data.hourly.time;
+    const temps  = data.hourly.temperature_2m;
+    const codes  = data.hourly.weathercode;
+    const precip = data.hourly.precipitation_probability;
+
+    const today       = getTodayStr();
+    const currentHour = getCurrentHourEST();
+    const hourStr     = `${today}T${String(currentHour).padStart(2,'0')}:00`;
+    const startIdx    = hours.findIndex(h => h === hourStr);
+
+    if (startIdx === -1) {
+      document.getElementById('weatherCond').textContent = 'No data';
+      return;
+    }
+
+    const { emoji, label } = weatherInfo(codes[startIdx]);
+    const currentTemp = Math.round(temps[startIdx]);
+
+    document.getElementById('weatherEmoji').textContent  = emoji;
+    document.getElementById('weatherTemp').textContent   = `${currentTemp}°F`;
+    document.getElementById('weatherCond').textContent   = label;
+    document.getElementById('weatherSunrise').textContent = formatTime(data.daily.sunrise[0]);
+    document.getElementById('weatherSunset').textContent  = formatTime(data.daily.sunset[0]);
+    document.getElementById('weatherPrecip').textContent  = `${precip[startIdx]}%`;
+    document.getElementById('weatherHigh').textContent    = `${Math.round(data.daily.temperature_2m_max[0])}°`;
+    document.getElementById('weatherLow').textContent     = `${Math.round(data.daily.temperature_2m_min[0])}°`;
+
+    // Hourly strip — next 6 hours
+    const hourlyEl = document.getElementById('weatherHourly');
+    hourlyEl.innerHTML = '';
+
+    for (let i = startIdx; i < startIdx + 6 && i < hours.length; i++) {
+      const hourNum = new Date(hours[i]).getHours();
+      const { emoji: hEmoji, label: hLabel } = weatherInfo(codes[i]);
+      const hTemp   = Math.round(temps[i]);
+      const hPrecip = precip[i];
+      const isNow   = i === startIdx;
+
+      const row = document.createElement('div');
+      row.className = 'hourly-row fade-in';
+      row.innerHTML = `
+        <div class="hourly-time${isNow ? ' now' : ''}">${isNow ? 'Now' : formatHour(hourNum)}</div>
+        <div class="hourly-emoji">${hEmoji}</div>
+        <div>
+          <div class="hourly-cond">${hLabel}</div>
+          <div class="precip-bar-wrap">
+            <div class="precip-bar"><div class="precip-bar-fill" style="width:${hPrecip}%"></div></div>
+            <div class="precip-pct">${hPrecip}%</div>
+          </div>
+        </div>
+        <div class="hourly-temp">${hTemp}°F</div>
+      `;
+      hourlyEl.appendChild(row);
+    }
+
+  } catch(e) {
+    document.getElementById('weatherCond').textContent = 'Unavailable';
+    console.warn('Weather error', e);
+  }
+}
+
+// ── Boot
+async function init() {
+  initHeader();
+  initReminders();
+
+  await Promise.allSettled([
+    initQuote(),
+    loadImage('prayer_images',       'prayer_image_url',      'prayerCard'),
+    loadImage('inspirational_images', 'inspiration_image_url', 'inspirationCard'),
+    initWeather(),
+  ]);
+}
+
+init().catch(console.error);
+</script>
 </body>
 </html>
