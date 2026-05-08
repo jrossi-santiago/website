@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendar</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg:       #0d0d0f;
+    --surface:  #16161a;
+    --surface2: #1e1e24;
+    --border:   #2a2a35;
+    --border2:  #3a3a48;
+    --text:     #e8e8f0;
+    --muted:    #6b6b80;
+    --accent:   #7c6af7;
+    --accent2:  #5b4fd4;
+    --success:  #3ecf8e;
+    --warn:     #f5a623;
+    --danger:   #f04747;
+    --g0: #161b22;
+    --g1: #1a3a2a;
+    --g2: #1e5c3a;
+    --g3: #26834f;
+    --g4: #2ea043;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 32px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  nav a {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 5px 12px;
+    border-radius: 6px;
+    transition: all .2s;
+    letter-spacing: .03em;
+  }
+  nav a:hover { color: var(--text); background: var(--surface2); }
+  nav a.active { color: var(--accent); background: rgba(124,106,247,.12); }
+  nav .logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    margin-right: 12px;
+    letter-spacing: -.02em;
+  }
+  nav .spacer { flex: 1; }
+  .status-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--muted);
+    margin-right: 6px;
+    vertical-align: middle;
+    transition: background .3s;
+  }
+  .status-dot.connected { background: var(--success); }
+
+  /* PAGE */
+  .page { max-width: 1000px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* PAGE HEADER */
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-header h1 {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -.03em;
+    line-height: 1;
+  }
+  .page-header h1 span {
+    display: block;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 6px;
+    letter-spacing: .04em;
+  }
+  .month-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .month-nav-btn {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .2s;
+  }
+  .month-nav-btn:hover { border-color: var(--border2); background: var(--border); }
+  .month-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--text);
+    min-width: 130px;
+    text-align: center;
+    letter-spacing: .02em;
+  }
+  .today-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 6px 12px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .2s;
+    letter-spacing: .04em;
+  }
+  .today-btn:hover { color: var(--text); border-color: var(--border2); }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: .04em;
+  }
+  .legend-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .legend-dot.task    { background: var(--success); }
+  .legend-dot.fleeting { background: var(--warn); }
+  .legend-dot.goal    { background: var(--accent); }
+  .legend-dot.overdue { background: var(--danger); }
+
+  /* THIS WEEK STRIP */
+  .week-strip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+  }
+  .week-strip-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .week-strip-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+  .strip-day {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 8px;
+    min-height: 70px;
+    position: relative;
+    transition: border-color .2s;
+  }
+  .strip-day.is-today {
+    border-color: var(--accent);
+    background: rgba(124,106,247,.06);
+  }
+  .strip-day-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    margin-bottom: 6px;
+  }
+  .strip-dow {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .strip-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .strip-day.is-today .strip-date {
+    color: var(--accent);
+  }
+  .strip-productivity {
+    height: 3px;
+    border-radius: 2px;
+    background: var(--border);
+    margin-bottom: 6px;
+    overflow: hidden;
+  }
+  .strip-productivity-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width .5s;
+  }
+  .strip-events {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .strip-event-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .strip-event-pill {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 9px;
+    color: var(--muted);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  /* MONTHLY CALENDAR */
+  .cal-grid-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+
+  .cal-dow-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-bottom: 1px solid var(--border);
+  }
+  .cal-dow {
+    padding: 10px 0;
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+  }
+
+  .cal-cell {
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    min-height: 100px;
+    padding: 8px 10px;
+    position: relative;
+    cursor: default;
+    transition: background .15s;
+  }
+  .cal-cell:nth-child(7n) { border-right: none; }
+  .cal-cell:hover { background: var(--surface2); }
+  .cal-cell.other-month { opacity: .3; }
+  .cal-cell.is-today { background: rgba(124,106,247,.05); }
+  .cal-cell.is-today .cal-day-num { color: var(--accent); }
+
+  /* Productivity overlay on cell */
+  .cal-cell.grade-1 { border-bottom-color: var(--g1); }
+  .cal-cell.grade-2 { border-bottom-color: var(--g2); }
+  .cal-cell.grade-3 { border-bottom-color: var(--g3); }
+  .cal-cell.grade-4 { border-bottom-color: var(--g4); }
+
+  .cal-day-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .cal-day-today-badge {
+    width: 18px; height: 18px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #fff;
+    font-weight: 500;
+  }
+
+  .cal-week-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    color: var(--accent);
+    letter-spacing: .06em;
+    opacity: .7;
+  }
+
+  .cal-events {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .cal-event {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    line-height: 1.3;
+    padding: 2px 5px;
+    border-radius: 3px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  .cal-event.type-task    { background: rgba(62,207,142,.1);  color: #3ecf8e; }
+  .cal-event.type-fleeting { background: rgba(245,166,35,.1); color: #f5a623; }
+  .cal-event.type-goal    { background: rgba(124,106,247,.12); color: #7c6af7; }
+  .cal-event.type-overdue { background: rgba(240,71,71,.1);   color: #f04747; }
+  .cal-event-dot {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: currentColor;
+  }
+  .cal-event-more {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    padding: 1px 4px;
+  }
+
+  /* DETAIL PANEL */
+  .detail-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    display: none;
+  }
+  .detail-panel.open { display: block; }
+  .detail-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .detail-date {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -.02em;
+  }
+  .detail-close {
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--muted);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .2s;
+  }
+  .detail-close:hover { color: var(--text); }
+
+  .detail-section { margin-bottom: 16px; }
+  .detail-section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .detail-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 7px;
+    margin-bottom: 4px;
+    font-size: 13px;
+  }
+  .detail-item.type-task    { background: rgba(62,207,142,.08);  color: var(--text); }
+  .detail-item.type-fleeting { background: rgba(245,166,35,.08); color: var(--text); }
+  .detail-item.type-goal    { background: rgba(124,106,247,.08);  color: var(--text); }
+  .detail-item.type-overdue { background: rgba(240,71,71,.08);   color: var(--text); }
+  .detail-item-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+  .type-task    .detail-item-dot { background: var(--success); }
+  .type-fleeting .detail-item-dot { background: var(--warn); }
+  .type-goal    .detail-item-dot { background: var(--accent); }
+  .type-overdue .detail-item-dot { background: var(--danger); }
+  .detail-item-text { flex: 1; line-height: 1.4; }
+  .detail-item-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .detail-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    text-decoration: none;
+    opacity: .7;
+    transition: opacity .2s;
+    flex-shrink: 0;
+  }
+  .detail-link:hover { opacity: 1; }
+
+  .detail-productivity {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--surface2);
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+  .detail-productivity-bar {
+    flex: 1;
+    height: 5px;
+    background: var(--border);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .detail-productivity-fill {
+    height: 100%;
+    border-radius: 5px;
+  }
+  .detail-productivity-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 13px;
+    color: var(--text);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all .3s;
+    z-index: 999;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.error { border-color: var(--danger); color: var(--danger); }
+
+  /* SKELETON */
+  .skeleton {
+    background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+    border-radius: 8px;
+  }
+  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+  @media (max-width: 700px) {
+    .page { padding: 20px 12px 60px; }
+    nav { padding: 12px 16px; }
+    nav a { display: none; }
+    nav a.active { display: block; }
+    .page-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .cal-cell { min-height: 60px; padding: 4px 6px; }
+    .cal-event { display: none; }
+    .week-strip-days { grid-template-columns: repeat(7,1fr); gap: 3px; }
+    .strip-day { padding: 6px 4px; min-height: 50px; }
+    .strip-event-pill { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<script>
+  const SUPABASE_URL      = 'https://lxarvlyxpegwpfxnzacj.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx4YXJ2bHl4cGVnd3BmeG56YWNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyNTA1NzgsImV4cCI6MjA5MzgyNjU3OH0.A4LjF_1LV7d522jhigD4izyjY6S0fgETgebeDKGUsQU';
+
+  // 12 Week Year block
+  const BLOCK_START = new Date('2025-05-11');
+  const WEEKS_12 = [
+    { w:1,  start:'2025-05-11', end:'2025-05-17', target:'Systematize LinkedIn for growth/getting the right people at scale.' },
+    { w:2,  start:'2025-05-18', end:'2025-05-24', target:'Systematize inviting connections to Preempt Global LinkedIn.' },
+    { w:3,  start:'2025-05-25', end:'2025-05-31', target:'Disney trip — have everything pre-planned. Don\'t let it slip.' },
+    { w:4,  start:'2025-06-01', end:'2025-06-07', target:'Review best performing Instantly and LinkedIn & double down.' },
+    { w:5,  start:'2025-06-08', end:'2025-06-14', target:'Have at least 1 phone call with referral.' },
+    { w:6,  start:'2025-06-15', end:'2025-06-21', target:'Have at least 1 phone call with client.' },
+    { w:7,  start:'2025-06-22', end:'2025-06-28', target:'Personally message/email all LinkedIn convos and connections.' },
+    { w:8,  start:'2025-06-29', end:'2025-07-05', target:'More domains, more leads, more emails, more convos.' },
+    { w:9,  start:'2025-07-06', end:'2025-07-12', target:'Follow up with every interested past prospect.' },
+    { w:10, start:'2025-07-13', end:'2025-07-19', target:'How can this work without me — more systems or SOPs.' },
+    { w:11, start:'2025-07-20', end:'2025-07-26', target:'Personal LinkedIn activate.' },
+    { w:12, start:'2025-07-27', end:'2025-08-02', target:'Work current clients a rev up for next 12 week year.' },
+  ];
+</script>
+
+<!-- NAV -->
+<nav>
+  <span class="logo">// workspace</span>
+  <a href="/">morning</a>
+  <a href="/tasks">tasks</a>
+  <a href="/goals">goals</a>
+  <a href="/notes">notes</a>
+  <a href="/calendar" class="active">calendar</a>
+  <a href="/capture">capture</a>
+  <span class="spacer"></span>
+  <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">
+    <span class="status-dot" id="statusDot"></span>
+    <span id="statusText">connecting…</span>
+  </span>
+</nav>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <h1>
+      <span>read-only overview</span>
+      Calendar
+    </h1>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button class="today-btn" onclick="goToday()">Today</button>
+      <div class="month-nav">
+        <button class="month-nav-btn" onclick="changeMonth(-1)">‹</button>
+        <span class="month-label" id="monthLabel">—</span>
+        <button class="month-nav-btn" onclick="changeMonth(1)">›</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot task"></div> Custom task</div>
+    <div class="legend-item"><div class="legend-dot fleeting"></div> Fleeting reminder</div>
+    <div class="legend-item"><div class="legend-dot goal"></div> 12WY milestone</div>
+    <div class="legend-item"><div class="legend-dot overdue"></div> Overdue</div>
+    <div class="legend-item" style="margin-left:auto;">
+      <div style="display:flex;gap:3px;align-items:center;">
+        <div style="width:10px;height:10px;border-radius:2px;background:var(--g0);border:1px solid var(--border)"></div>
+        <div style="width:10px;height:10px;border-radius:2px;background:var(--g1)"></div>
+        <div style="width:10px;height:10px;border-radius:2px;background:var(--g2)"></div>
+        <div style="width:10px;height:10px;border-radius:2px;background:var(--g3)"></div>
+        <div style="width:10px;height:10px;border-radius:2px;background:var(--g4)"></div>
+      </div>
+      <span style="margin-left:4px;">productivity</span>
+    </div>
+  </div>
+
+  <!-- THIS WEEK STRIP -->
+  <div class="week-strip">
+    <div class="week-strip-label" id="weekStripLabel">This week</div>
+    <div class="week-strip-days" id="weekStripDays"></div>
+  </div>
+
+  <!-- MONTHLY GRID -->
+  <div class="cal-grid-wrap">
+    <div class="cal-dow-header">
+      <div class="cal-dow">Sun</div>
+      <div class="cal-dow">Mon</div>
+      <div class="cal-dow">Tue</div>
+      <div class="cal-dow">Wed</div>
+      <div class="cal-dow">Thu</div>
+      <div class="cal-dow">Fri</div>
+      <div class="cal-dow">Sat</div>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+  </div>
+
+  <!-- DETAIL PANEL -->
+  <div class="detail-panel" id="detailPanel">
+    <div class="detail-header">
+      <div class="detail-date" id="detailDate">—</div>
+      <div class="detail-close" onclick="closeDetail()">×</div>
+    </div>
+    <div id="detailContent"></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Supabase client
+const supa = (() => {
+  const headers = {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+    'Content-Type': 'application/json',
+  };
+  const base = `${SUPABASE_URL}/rest/v1`;
+
+  async function query(table, params = {}) {
+    const url = new URL(`${base}/${table}`);
+    Object.entries(params).forEach(([k,v]) => url.searchParams.set(k,v));
+    const r = await fetch(url, { headers });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  }
+
+  return { query };
+})();
+
+// ── Helpers
+const MONTHS = ['January','February','March','April','May','June',
+                'July','August','September','October','November','December'];
+const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DAYS_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+function toDateStr(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function todayStr() { return toDateStr(new Date()); }
+
+function toast(msg, type='') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `toast show ${type}`;
+  setTimeout(() => el.className = 'toast', 2400);
+}
+
+function gradeColor(grade) {
+  return ['var(--g0)','var(--g1)','var(--g2)','var(--g3)','var(--g4)'][grade] || 'var(--g0)';
+}
+
+function gradeBorderColor(grade) {
+  return ['transparent','#1a3a2a','#1e5c3a','#26834f','#2ea043'][grade] || 'transparent';
+}
+
+// ── State
+let viewYear  = new Date().getFullYear();
+let viewMonth = new Date().getMonth();
+let scores    = {};   // dateStr → {grade, pct, done_tasks, total_tasks}
+let events    = {};   // dateStr → [{type, title, sub, link}]
+let selectedDay = null;
+
+// ── Get 12WY week for a date
+function getWeekForDate(dateStr) {
+  return WEEKS_12.find(w => dateStr >= w.start && dateStr <= w.end) || null;
+}
+
+// ── Build events map from data
+function buildEvents(customTasks, fleetingNotes, scores12wy) {
+  events = {};
+
+  // Custom tasks with a specific date (rolled-over tasks show on their date)
+  customTasks.forEach(t => {
+    if (!t.date || !t.text) return;
+    const ds = t.date;
+    if (!events[ds]) events[ds] = [];
+    const today = todayStr();
+    const isOverdue = !t.is_done && ds < today;
+    events[ds].push({
+      type: isOverdue ? 'overdue' : 'task',
+      title: t.text,
+      sub: t.is_done ? 'done' : isOverdue ? 'overdue' : 'custom task',
+      link: '/tasks'
+    });
+  });
+
+  // Fleeting notes with reminder dates
+  fleetingNotes.forEach(n => {
+    if (!n.reminder_date) return;
+    const ds = n.reminder_date;
+    if (!events[ds]) events[ds] = [];
+    const today = todayStr();
+    const isOverdue = ds < today;
+    events[ds].push({
+      type: isOverdue ? 'overdue' : 'fleeting',
+      title: n.title,
+      sub: isOverdue ? 'overdue reminder' : 'fleeting note',
+      link: '/notes'
+    });
+  });
+
+  // 12WY weekly milestones — show on the Monday of each week
+  WEEKS_12.forEach(w => {
+    const ds = w.start;
+    if (!events[ds]) events[ds] = [];
+    events[ds].push({
+      type: 'goal',
+      title: `W${w.w}: ${w.target}`,
+      sub: `${w.start} → ${w.end}`,
+      link: '/goals'
+    });
+  });
+}
+
+// ── Render week strip
+function renderWeekStrip() {
+  const now  = new Date();
+  const dow  = now.getDay();
+  const sun  = new Date(now);
+  sun.setDate(sun.getDate() - dow);
+
+  const label = document.getElementById('weekStripLabel');
+  label.textContent = `This week — ${MONTHS_SHORT[sun.getMonth()]} ${sun.getDate()}`;
+
+  const container = document.getElementById('weekStripDays');
+  container.innerHTML = '';
+  const today = todayStr();
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(sun);
+    d.setDate(d.getDate() + i);
+    const ds = toDateStr(d);
+    const isToday = ds === today;
+    const score   = scores[ds];
+    const dayEvents = events[ds] || [];
+
+    const cell = document.createElement('div');
+    cell.className = `strip-day${isToday ? ' is-today' : ''}`;
+    cell.onclick = () => openDetail(ds);
+    cell.style.cursor = 'pointer';
+
+    const pct   = score ? score.pct : 0;
+    const grade = score ? score.grade : 0;
+    const fillColor = gradeColor(grade);
+
+    cell.innerHTML = `
+      <div class="strip-day-header">
+        <div class="strip-dow">${DAYS_SHORT[i]}</div>
+        <div class="strip-date">${d.getDate()}</div>
+      </div>
+      <div class="strip-productivity">
+        <div class="strip-productivity-fill" style="width:${pct}%;background:${fillColor}"></div>
+      </div>
+      <div class="strip-events">
+        ${dayEvents.slice(0,3).map(e => `
+          <div class="strip-event-pill">
+            <div class="strip-event-dot" style="background:${e.type==='task'?'var(--success)':e.type==='fleeting'?'var(--warn)':e.type==='overdue'?'var(--danger)':'var(--accent)'}"></div>
+            <span style="overflow:hidden;text-overflow:ellipsis;font-size:9px;color:var(--muted)">${e.title}</span>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    container.appendChild(cell);
+  }
+}
+
+// ── Render monthly grid
+function renderMonth() {
+  document.getElementById('monthLabel').textContent =
+    `${MONTHS[viewMonth]} ${viewYear}`;
+
+  const grid  = document.getElementById('calGrid');
+  grid.innerHTML = '';
+
+  const today   = todayStr();
+  const firstDay = new Date(viewYear, viewMonth, 1);
+  const lastDay  = new Date(viewYear, viewMonth + 1, 0);
+  const startDow = firstDay.getDay();
+
+  // Fill leading blanks from prev month
+  const cells = [];
+  for (let i = 0; i < startDow; i++) {
+    const d = new Date(viewYear, viewMonth, 1 - (startDow - i));
+    cells.push({ date: d, otherMonth: true });
+  }
+  // Current month days
+  for (let d = 1; d <= lastDay.getDate(); d++) {
+    cells.push({ date: new Date(viewYear, viewMonth, d), otherMonth: false });
+  }
+  // Fill trailing blanks to complete grid rows
+  const remaining = (7 - (cells.length % 7)) % 7;
+  for (let i = 1; i <= remaining; i++) {
+    cells.push({ date: new Date(viewYear, viewMonth + 1, i), otherMonth: true });
+  }
+
+  cells.forEach(({ date, otherMonth }) => {
+    const ds      = toDateStr(date);
+    const isToday = ds === today;
+    const score   = scores[ds];
+    const grade   = score ? score.grade : 0;
+    const dayEvents = events[ds] || [];
+    const week    = getWeekForDate(ds);
+
+    const cell = document.createElement('div');
+    cell.className = [
+      'cal-cell',
+      otherMonth ? 'other-month' : '',
+      isToday ? 'is-today' : '',
+      grade > 0 ? `grade-${grade}` : ''
+    ].filter(Boolean).join(' ');
+
+    if (grade > 0) {
+      cell.style.borderBottomColor = gradeBorderColor(grade);
+      cell.style.borderBottomWidth = '3px';
+    }
+
+    cell.onclick = () => !otherMonth && openDetail(ds);
+    if (!otherMonth) cell.style.cursor = 'pointer';
+
+    const maxVisible = 3;
+    const visibleEvents = dayEvents.slice(0, maxVisible);
+    const extraCount = dayEvents.length - maxVisible;
+
+    const weekBadge = (week && date.getDay() === 1 && !otherMonth)
+      ? `<span class="cal-week-badge">W${week.w}</span>`
+      : '';
+
+    cell.innerHTML = `
+      <div class="cal-day-num">
+        ${isToday
+          ? `<div class="cal-day-today-badge">${date.getDate()}</div>`
+          : `<span>${date.getDate()}</span>`
+        }
+        ${weekBadge}
+      </div>
+      <div class="cal-events">
+        ${visibleEvents.map(e => `
+          <div class="cal-event type-${e.type}">
+            <div class="cal-event-dot"></div>
+            <span style="overflow:hidden;text-overflow:ellipsis">${e.title}</span>
+          </div>
+        `).join('')}
+        ${extraCount > 0 ? `<div class="cal-event-more">+${extraCount} more</div>` : ''}
+      </div>
+    `;
+
+    grid.appendChild(cell);
+  });
+}
+
+// ── Detail panel
+function openDetail(ds) {
+  selectedDay = ds;
+  const d = new Date(ds + 'T12:00:00');
+  const dayEvents  = events[ds] || [];
+  const score      = scores[ds];
+  const week       = getWeekForDate(ds);
+
+  document.getElementById('detailDate').textContent =
+    `${DAYS_SHORT[d.getDay()]}, ${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+
+  const content = document.getElementById('detailContent');
+  content.innerHTML = '';
+
+  // Productivity bar
+  if (score) {
+    const pct = score.pct;
+    const grade = score.grade;
+    const fill = document.createElement('div');
+    fill.className = 'detail-productivity';
+    fill.innerHTML = `
+      <div class="detail-productivity-bar">
+        <div class="detail-productivity-fill" style="width:${pct}%;background:${gradeColor(grade)}"></div>
+      </div>
+      <span class="detail-productivity-label">${score.done_tasks}/${score.total_tasks} tasks · ${pct}%</span>
+    `;
+    content.appendChild(fill);
+  }
+
+  // 12WY week
+  if (week && d.getDay() === 1) {
+    const sec = document.createElement('div');
+    sec.className = 'detail-section';
+    sec.innerHTML = `
+      <div class="detail-section-label">12 week year — week ${week.w}</div>
+      <div class="detail-item type-goal">
+        <div class="detail-item-dot"></div>
+        <div class="detail-item-text">
+          ${week.target}
+          <div class="detail-item-sub">${week.start} → ${week.end}</div>
+        </div>
+        <a class="detail-link" href="/goals">→ goals</a>
+      </div>
+    `;
+    content.appendChild(sec);
+  }
+
+  // Tasks
+  const taskEvents = dayEvents.filter(e => e.type === 'task' || e.type === 'overdue');
+  if (taskEvents.length) {
+    const sec = document.createElement('div');
+    sec.className = 'detail-section';
+    sec.innerHTML = `<div class="detail-section-label">Custom tasks</div>`;
+    taskEvents.forEach(e => {
+      const item = document.createElement('div');
+      item.className = `detail-item type-${e.type}`;
+      item.innerHTML = `
+        <div class="detail-item-dot"></div>
+        <div class="detail-item-text">
+          ${e.title}
+          <div class="detail-item-sub">${e.sub}</div>
+        </div>
+        <a class="detail-link" href="/tasks">→ tasks</a>
+      `;
+      sec.appendChild(item);
+    });
+    content.appendChild(sec);
+  }
+
+  // Fleeting notes
+  const noteEvents = dayEvents.filter(e => e.type === 'fleeting');
+  if (noteEvents.length) {
+    const sec = document.createElement('div');
+    sec.className = 'detail-section';
+    sec.innerHTML = `<div class="detail-section-label">Fleeting reminders</div>`;
+    noteEvents.forEach(e => {
+      const item = document.createElement('div');
+      item.className = `detail-item type-fleeting`;
+      item.innerHTML = `
+        <div class="detail-item-dot"></div>
+        <div class="detail-item-text">
+          ${e.title}
+          <div class="detail-item-sub">${e.sub}</div>
+        </div>
+        <a class="detail-link" href="/notes">→ notes</a>
+      `;
+      sec.appendChild(item);
+    });
+    content.appendChild(sec);
+  }
+
+  // Empty
+  if (!score && dayEvents.length === 0) {
+    content.innerHTML = `
+      <div style="text-align:center;padding:28px 0;color:var(--muted);font-size:13px;">
+        Nothing scheduled for this day.
+      </div>
+    `;
+  }
+
+  document.getElementById('detailPanel').classList.add('open');
+  document.getElementById('detailPanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function closeDetail() {
+  document.getElementById('detailPanel').classList.remove('open');
+  selectedDay = null;
+}
+
+// ── Navigation
+function changeMonth(dir) {
+  viewMonth += dir;
+  if (viewMonth > 11) { viewMonth = 0;  viewYear++; }
+  if (viewMonth < 0)  { viewMonth = 11; viewYear--; }
+  closeDetail();
+  renderMonth();
+}
+
+function goToday() {
+  const now = new Date();
+  viewYear  = now.getFullYear();
+  viewMonth = now.getMonth();
+  closeDetail();
+  renderMonth();
+  renderWeekStrip();
+}
+
+// ── Keyboard
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeDetail();
+  if (e.key === 'ArrowLeft')  changeMonth(-1);
+  if (e.key === 'ArrowRight') changeMonth(1);
+});
+
+// ── Init
+async function init() {
+  // Connection check + load data
+  try {
+    const [scoreRows, customRows, noteRows] = await Promise.all([
+      supa.query('daily_score', {
+        select: 'date,grade,pct,done_tasks,total_tasks'
+      }),
+      supa.query('custom_tasks', {
+        text: 'neq.',
+        select: 'date,text,is_done',
+        order: 'date.asc'
+      }),
+      supa.query('notes', {
+        type: 'eq.fleeting',
+        select: 'title,reminder_date',
+        reminder_date: 'not.is.null'
+      })
+    ]);
+
+    scoreRows.forEach(r => { scores[r.date] = r; });
+    buildEvents(customRows, noteRows, []);
+
+    document.getElementById('statusDot').className = 'status-dot connected';
+    document.getElementById('statusText').textContent = 'connected';
+  } catch(e) {
+    document.getElementById('statusText').textContent = 'offline';
+    toast('Could not load data — check your config', 'error');
+    buildEvents([], [], []);
+  }
+
+  renderWeekStrip();
+  renderMonth();
+}
+
+init().catch(console.error);
+</script>
+</body>
+</html>
