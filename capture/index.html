@@ -537,11 +537,12 @@ const supa = (() => {
   async function insert(table, data) {
     const r = await fetch(`${base}/${table}`, {
       method: 'POST',
-      headers,
+      headers: { ...headers, 'Prefer': 'return=representation' },
       body: JSON.stringify(data)
     });
     if (!r.ok) throw new Error(await r.text());
-    return r.json();
+    const text = await r.text();
+    try { return JSON.parse(text); } catch { return null; }
   }
 
   async function patch(table, id, data) {
@@ -717,6 +718,63 @@ async function completeTriage(id, destination, detail) {
   if (!item) return;
 
   try {
+    // ── Actually create the item in its destination
+    if (destination === 'task') {
+      // Figure out target date
+      const now = new Date();
+      let targetDate;
+      if (detail === 'Today') {
+        targetDate = toDateStr(now);
+      } else if (detail === 'Tomorrow') {
+        const d = new Date(now); d.setDate(d.getDate() + 1);
+        targetDate = toDateStr(d);
+      } else {
+        // Next Monday
+        const d = new Date(now);
+        const daysUntilMon = (8 - d.getDay()) % 7 || 7;
+        d.setDate(d.getDate() + daysUntilMon);
+        targetDate = toDateStr(d);
+      }
+
+      // Find first open slot for that date (slots 1-5)
+      const existing = await supa.query('custom_tasks', {
+        date: `eq.${targetDate}`,
+        select: 'slot'
+      });
+      const usedSlots = existing.map(r => r.slot);
+      const openSlot = [1,2,3,4,5].find(s => !usedSlots.includes(s));
+
+      if (!openSlot) {
+        toast('All 5 custom slots are full for that day', 'error');
+        return;
+      }
+
+      await supa.insert('custom_tasks', {
+        date: targetDate,
+        slot: openSlot,
+        text: item.text,
+        is_done: false,
+        rolled_over: false
+      });
+
+    } else if (destination === 'note') {
+      await supa.insert('notes', {
+        type: detail, // 'reference' or 'fleeting'
+        title: item.text.length > 60 ? item.text.slice(0, 57) + '…' : item.text,
+        body: item.text,
+        updated_at: new Date().toISOString()
+      });
+
+    } else if (destination === 'goal') {
+      // Insert into goal_inbox for weekly review
+      await supa.insert('goal_inbox', {
+        text: item.text,
+        reviewed: false
+      });
+    }
+    // 'discard' — no action needed, just mark triaged below
+
+    // ── Mark capture item as triaged
     await supa.patch('capture_items', id, {
       triaged: true,
       triage_destination: destination
@@ -735,18 +793,23 @@ async function completeTriage(id, destination, detail) {
       }, 600);
     }
 
-    // Guidance toast
     const msgs = {
-      task:    `Noted → go to /tasks to add it to tomorrow's custom slots`,
-      note:    `Noted → go to /notes to create a ${detail} note`,
-      goal:    `Noted → review during your next weekly planning session`,
+      task:    `Added to ${detail}'s task list ✓`,
+      note:    `Saved as ${detail} note ✓`,
+      goal:    `Added to goal inbox for weekly review ✓`,
       discard: `Discarded`,
     };
     toast(msgs[destination] || 'Triaged', destination === 'discard' ? '' : 'success');
     updateInboxCount();
+
   } catch(e) {
-    toast('Triage failed', 'error');
+    console.error(e);
+    toast('Triage failed — ' + e.message, 'error');
   }
+}
+
+function toDateStr(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 
 // ── Render inbox
