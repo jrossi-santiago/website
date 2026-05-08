@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Tasks</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg:        #0d0d0f;
+    --surface:   #16161a;
+    --surface2:  #1e1e24;
+    --border:    #2a2a35;
+    --border2:   #3a3a48;
+    --text:      #e8e8f0;
+    --muted:     #6b6b80;
+    --accent:    #7c6af7;
+    --accent2:   #5b4fd4;
+    --success:   #3ecf8e;
+    --warn:      #f5a623;
+    --danger:    #f04747;
+
+    --g0: #161b22;
+    --g1: #1a3a2a;
+    --g2: #1e5c3a;
+    --g3: #26834f;
+    --g4: #2ea043;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 32px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  nav a {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 5px 12px;
+    border-radius: 6px;
+    transition: all .2s;
+    letter-spacing: .03em;
+  }
+  nav a:hover { color: var(--text); background: var(--surface2); }
+  nav a.active { color: var(--accent); background: rgba(124,106,247,.12); }
+  nav .logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    margin-right: 12px;
+    letter-spacing: -.02em;
+  }
+  nav .spacer { flex: 1; }
+
+  /* LAYOUT */
+  .page { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* HEADER */
+  .page-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 36px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-header h1 {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -.03em;
+    line-height: 1;
+  }
+  .page-header h1 span {
+    display: block;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 6px;
+    letter-spacing: .04em;
+  }
+  .day-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    background: rgba(124,106,247,.15);
+    color: var(--accent);
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(124,106,247,.25);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+
+  /* PROGRESS BAR */
+  .progress-wrap {
+    margin-bottom: 32px;
+  }
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .progress-meta span {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .progress-meta .pct {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--success));
+    border-radius: 4px;
+    transition: width .5s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* SECTIONS */
+  .section { margin-bottom: 32px; }
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    padding-left: 2px;
+  }
+
+  /* TASK CARDS */
+  .task-list { display: flex; flex-direction: column; gap: 6px; }
+
+  .task-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    transition: all .2s;
+    cursor: pointer;
+    user-select: none;
+  }
+  .task-item:hover { border-color: var(--border2); background: var(--surface2); }
+  .task-item.done {
+    opacity: .5;
+    border-color: var(--border);
+  }
+  .task-item.done .task-name {
+    text-decoration: line-through;
+    color: var(--muted);
+  }
+
+  .task-check {
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid var(--border2);
+    border-radius: 6px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .2s;
+    background: transparent;
+  }
+  .task-item.done .task-check {
+    background: var(--success);
+    border-color: var(--success);
+  }
+  .task-check svg { display: none; }
+  .task-item.done .task-check svg { display: block; }
+
+  .task-name {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text);
+    transition: color .2s;
+    flex: 1;
+  }
+  .task-type {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: .04em;
+  }
+  .task-item.rollover .task-type { color: var(--warn); }
+
+  /* CUSTOM INPUTS */
+  .custom-slot {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    transition: all .2s;
+    margin-bottom: 6px;
+  }
+  .custom-slot:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(124,106,247,.1);
+  }
+  .custom-slot.has-text.done {
+    opacity: .5;
+  }
+  .custom-slot.has-text.done input {
+    text-decoration: line-through;
+    color: var(--muted);
+  }
+
+  .custom-check {
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid var(--border2);
+    border-radius: 6px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all .2s;
+    background: transparent;
+  }
+  .custom-slot.has-text.done .custom-check {
+    background: var(--success);
+    border-color: var(--success);
+  }
+  .custom-check svg { display: none; }
+  .custom-slot.has-text.done .custom-check svg { display: block; }
+
+  .custom-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    caret-color: var(--accent);
+  }
+  .custom-input::placeholder { color: var(--muted); }
+  .custom-save-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--success);
+    opacity: 0;
+    transition: opacity .3s;
+    flex-shrink: 0;
+  }
+  .custom-save-dot.saving { opacity: 1; }
+
+  /* CONTRIBUTION GRID */
+  .grid-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .grid-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .grid-header h3 {
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: -.01em;
+  }
+  .grid-legend {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+  .grid-legend-squares {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+  }
+  .legend-sq {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+  }
+
+  .contrib-grid {
+    display: grid;
+    grid-template-columns: repeat(53, 1fr);
+    gap: 3px;
+  }
+  .grid-cell {
+    aspect-ratio: 1;
+    border-radius: 2px;
+    background: var(--g0);
+    position: relative;
+    cursor: default;
+    transition: transform .1s;
+  }
+  .grid-cell:hover { transform: scale(1.4); z-index: 10; }
+  .grid-cell[data-pct="0"]  { background: var(--g0); }
+  .grid-cell[data-pct="1"]  { background: var(--g1); }
+  .grid-cell[data-pct="2"]  { background: var(--g2); }
+  .grid-cell[data-pct="3"]  { background: var(--g3); }
+  .grid-cell[data-pct="4"]  { background: var(--g4); }
+  .grid-cell.today { outline: 1.5px solid var(--accent); outline-offset: 1px; }
+
+  .grid-months {
+    display: flex;
+    gap: 0;
+    margin-bottom: 4px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: .04em;
+  }
+  .grid-month-label { text-transform: uppercase; }
+
+  .grid-stats {
+    display: flex;
+    gap: 24px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .grid-stat { display: flex; flex-direction: column; gap: 2px; }
+  .grid-stat .val {
+    font-family: 'DM Mono', monospace;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: -.03em;
+  }
+  .grid-stat .lbl {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 13px;
+    color: var(--text);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all .3s;
+    z-index: 999;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.success { border-color: var(--success); color: var(--success); }
+  .toast.error { border-color: var(--danger); color: var(--danger); }
+
+  /* STATUS DOT */
+  .status-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--muted);
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .status-dot.connected { background: var(--success); }
+
+  /* LOADING */
+  .skeleton {
+    background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+    border-radius: 8px;
+    height: 52px;
+    margin-bottom: 6px;
+  }
+  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+  /* TOOLTIP */
+  .grid-cell[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    white-space: nowrap;
+    padding: 4px 8px;
+    border-radius: 5px;
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  @media (max-width: 600px) {
+    .page { padding: 24px 16px 60px; }
+    nav { padding: 12px 16px; }
+    .contrib-grid { grid-template-columns: repeat(26, 1fr); }
+    .page-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     CONFIGURATION — replace with your values
+     ═══════════════════════════════════════════════ -->
+<script>
+  const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
+  const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
+
+  // ── Repeatable tasks per day (0=Sun,1=Mon,...,6=Sat)
+  const DAILY_TASKS = {
+    0: [], // Sunday — no repeatable tasks
+    1: ['Check Instantly','Check Form','Check LinkedIn','Comment on 8 LinkedIn posts','Send 5 connections'],
+    2: ['Check Instantly','Check Form','Check LinkedIn','Comment on 8 LinkedIn posts','Send 5 connections'],
+    3: ['Check Instantly','Check Form','Check LinkedIn','Comment on 8 LinkedIn posts','Send 5 connections','Write SEO Article'],
+    4: ['Check Instantly','Check Form','Check LinkedIn','Comment on 8 LinkedIn posts','Send 5 connections','Invite connections to follow business page'],
+    5: ['Check Instantly','Check Form','Check LinkedIn','Comment on 8 LinkedIn posts','Send 5 connections'],
+    6: [], // Saturday — no repeatable tasks
+  };
+
+  const CUSTOM_SLOTS = 5;
+</script>
+
+<!-- NAV -->
+<nav>
+  <span class="logo">// workspace</span>
+  <a href="/">morning</a>
+  <a href="/tasks" class="active">tasks</a>
+  <a href="/goals">goals</a>
+  <a href="/notes">notes</a>
+  <a href="/calendar">calendar</a>
+  <a href="/capture">capture</a>
+  <span class="spacer"></span>
+  <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">
+    <span class="status-dot" id="statusDot"></span>
+    <span id="statusText">connecting…</span>
+  </span>
+</nav>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <h1>
+      <span id="todayDate">—</span>
+      Daily Tasks
+    </h1>
+    <span class="day-badge" id="dayBadge">—</span>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap">
+    <div class="progress-meta">
+      <span id="progressLabel">0 of 0 complete</span>
+      <span class="pct" id="progressPct">0%</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- REPEATABLE TASKS -->
+  <div class="section" id="repeatableSection">
+    <div class="section-label">Daily repeatables</div>
+    <div class="task-list" id="repeatableList">
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+    </div>
+  </div>
+
+  <!-- CUSTOM TASKS -->
+  <div class="section">
+    <div class="section-label">Custom tasks <span style="color:var(--muted);font-size:9px;margin-left:6px;">AUTO-SAVES · INCOMPLETE ROLLS OVER</span></div>
+    <div id="customList"></div>
+  </div>
+
+  <!-- CONTRIBUTION GRID -->
+  <div class="section">
+    <div class="section-label">Productivity history</div>
+    <div class="grid-wrap">
+      <div class="grid-header">
+        <h3>Contribution grid</h3>
+        <div class="grid-legend">
+          <span>less</span>
+          <div class="grid-legend-squares">
+            <div class="legend-sq" style="background:var(--g0)"></div>
+            <div class="legend-sq" style="background:var(--g1)"></div>
+            <div class="legend-sq" style="background:var(--g2)"></div>
+            <div class="legend-sq" style="background:var(--g3)"></div>
+            <div class="legend-sq" style="background:var(--g4)"></div>
+          </div>
+          <span>more</span>
+        </div>
+      </div>
+      <div class="grid-months" id="gridMonths"></div>
+      <div class="contrib-grid" id="contribGrid"></div>
+      <div class="grid-stats">
+        <div class="grid-stat">
+          <span class="val" id="statStreak">—</span>
+          <span class="lbl">day streak</span>
+        </div>
+        <div class="grid-stat">
+          <span class="val" id="statBest">—</span>
+          <span class="lbl">best streak</span>
+        </div>
+        <div class="grid-stat">
+          <span class="val" id="statTotal">—</span>
+          <span class="lbl">active days</span>
+        </div>
+        <div class="grid-stat">
+          <span class="val" id="statAvg">—</span>
+          <span class="lbl">avg completion</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ═══════════════════════════════════════════════
+     SUPABASE SETUP INSTRUCTIONS
+     ═══════════════════════════════════════════════
+     Run these SQL statements in your Supabase SQL editor:
+
+     -- 1. TASK STATE (repeatable checkboxes per day)
+     CREATE TABLE task_state (
+       id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+       date date NOT NULL,
+       task_name text NOT NULL,
+       task_type text NOT NULL DEFAULT 'repeatable', -- 'repeatable' | 'custom'
+       is_done boolean DEFAULT false,
+       created_at timestamptz DEFAULT now(),
+       UNIQUE(date, task_name, task_type)
+     );
+
+     -- 2. CUSTOM TASKS (the 5 input slots, with rollover)
+     CREATE TABLE custom_tasks (
+       id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+       date date NOT NULL,
+       slot integer NOT NULL CHECK (slot BETWEEN 1 AND 5),
+       text text DEFAULT '',
+       is_done boolean DEFAULT false,
+       rolled_over boolean DEFAULT false,
+       created_at timestamptz DEFAULT now(),
+       UNIQUE(date, slot)
+     );
+
+     -- 3. DAILY SCORE (contribution grid data)
+     CREATE TABLE daily_score (
+       id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+       date date NOT NULL UNIQUE,
+       total_tasks integer DEFAULT 0,
+       done_tasks integer DEFAULT 0,
+       pct integer DEFAULT 0,  -- 0-100
+       grade integer DEFAULT 0 -- 0-4 for grid color
+     );
+
+     -- 4. MIDNIGHT FUNCTION (schedule via pg_cron or Supabase cron)
+     -- This scores the day and rolls over incomplete custom tasks
+     CREATE OR REPLACE FUNCTION score_and_rollover()
+     RETURNS void AS $$
+     DECLARE
+       yesterday date := CURRENT_DATE - 1;
+       total_r integer;
+       done_r integer;
+       total_c integer;
+       done_c integer;
+       total_all integer;
+       done_all integer;
+       pct_val integer;
+       grade_val integer;
+       slot_offset integer := 0;
+     BEGIN
+       -- Count repeatables for yesterday
+       SELECT COUNT(*), COUNT(*) FILTER (WHERE is_done)
+       INTO total_r, done_r
+       FROM task_state WHERE date = yesterday AND task_type = 'repeatable';
+
+       -- Count custom tasks for yesterday
+       SELECT COUNT(*) FILTER (WHERE text != ''), COUNT(*) FILTER (WHERE is_done AND text != '')
+       INTO total_c, done_c
+       FROM custom_tasks WHERE date = yesterday;
+
+       total_all := total_r + total_c;
+       done_all  := done_r + done_c;
+
+       IF total_all > 0 THEN
+         pct_val := ROUND((done_all::numeric / total_all) * 100);
+       ELSE
+         pct_val := 0;
+       END IF;
+
+       grade_val := CASE
+         WHEN pct_val = 0   THEN 0
+         WHEN pct_val < 40  THEN 1
+         WHEN pct_val < 60  THEN 2
+         WHEN pct_val < 85  THEN 3
+         ELSE 4
+       END;
+
+       INSERT INTO daily_score (date, total_tasks, done_tasks, pct, grade)
+       VALUES (yesterday, total_all, done_all, pct_val, grade_val)
+       ON CONFLICT (date) DO UPDATE
+         SET total_tasks = EXCLUDED.total_tasks,
+             done_tasks = EXCLUDED.done_tasks,
+             pct = EXCLUDED.pct,
+             grade = EXCLUDED.grade;
+
+       -- Roll over incomplete custom tasks (non-empty, not done)
+       -- Fill into today's earliest open slots
+       FOR slot_rec IN
+         SELECT text FROM custom_tasks
+         WHERE date = yesterday AND is_done = false AND text != ''
+         ORDER BY slot
+       LOOP
+         slot_offset := slot_offset + 1;
+         INSERT INTO custom_tasks (date, slot, text, rolled_over)
+         VALUES (CURRENT_DATE, slot_offset, slot_rec.text, true)
+         ON CONFLICT (date, slot) DO NOTHING;
+       END LOOP;
+     END;
+     $$ LANGUAGE plpgsql;
+
+     -- Schedule it (requires pg_cron extension enabled in Supabase):
+     SELECT cron.schedule('midnight-score', '0 0 * * *', 'SELECT score_and_rollover()');
+
+     -- Enable Row Level Security (optional but recommended):
+     ALTER TABLE task_state ENABLE ROW LEVEL SECURITY;
+     ALTER TABLE custom_tasks ENABLE ROW LEVEL SECURITY;
+     ALTER TABLE daily_score ENABLE ROW LEVEL SECURITY;
+     CREATE POLICY "allow all" ON task_state FOR ALL USING (true);
+     CREATE POLICY "allow all" ON custom_tasks FOR ALL USING (true);
+     CREATE POLICY "allow all" ON daily_score FOR ALL USING (true);
+═══════════════════════════════════════════════ -->
+
+<script>
+// ── Supabase client (vanilla, no npm)
+const supa = (() => {
+  const headers = {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+    'Content-Type': 'application/json',
+    'Prefer': 'return=representation'
+  };
+  const base = `${SUPABASE_URL}/rest/v1`;
+
+  async function query(table, params = {}) {
+    const url = new URL(`${base}/${table}`);
+    Object.entries(params).forEach(([k,v]) => url.searchParams.set(k, v));
+    const r = await fetch(url, { headers });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  }
+
+  async function upsert(table, data) {
+    const r = await fetch(`${base}/${table}`, {
+      method: 'POST',
+      headers: { ...headers, 'Prefer': 'resolution=merge-duplicates,return=representation' },
+      body: JSON.stringify(data)
+    });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  }
+
+  async function patch(table, filter, data) {
+    const url = new URL(`${base}/${table}`);
+    Object.entries(filter).forEach(([k,v]) => url.searchParams.set(k, `eq.${v}`));
+    const r = await fetch(url, {
+      method: 'PATCH',
+      headers,
+      body: JSON.stringify(data)
+    });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  }
+
+  return { query, upsert, patch };
+})();
+
+// ── Helpers
+const TODAY = (() => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+})();
+
+const DOW = new Date().getDay();
+
+const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function todayLabel() {
+  const d = new Date();
+  return `${MONTH_NAMES[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+}
+
+function toast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `toast show ${type}`;
+  setTimeout(() => el.className = 'toast', 2400);
+}
+
+function checkSVG() {
+  return `<svg width="11" height="9" viewBox="0 0 11 9" fill="none">
+    <path d="M1 4L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+}
+
+// ── State
+let repeatableStates = {}; // task_name → is_done
+let customTasks = [];       // array of {id, slot, text, is_done, rolled_over}
+let saveTimers = {};
+
+// ── Init
+async function init() {
+  // Set header
+  document.getElementById('todayDate').textContent = todayLabel() + ' — ';
+  document.getElementById('dayBadge').textContent = DAY_NAMES[DOW];
+
+  // Test connection
+  try {
+    await supa.query('daily_score', { limit: 1 });
+    document.getElementById('statusDot').className = 'status-dot connected';
+    document.getElementById('statusText').textContent = 'connected';
+  } catch(e) {
+    document.getElementById('statusText').textContent = 'offline';
+    toast('Supabase connection failed — check your config', 'error');
+  }
+
+  await Promise.all([
+    loadRepeatables(),
+    loadCustomTasks(),
+    loadGrid()
+  ]);
+}
+
+// ── Repeatables
+async function loadRepeatables() {
+  const tasks = DAILY_TASKS[DOW] || [];
+  const listEl = document.getElementById('repeatableList');
+  const sectionEl = document.getElementById('repeatableSection');
+
+  if (tasks.length === 0) {
+    sectionEl.style.display = 'none';
+    updateProgress();
+    return;
+  }
+
+  // Fetch today's state from Supabase
+  try {
+    const rows = await supa.query('task_state', {
+      date: `eq.${TODAY}`,
+      task_type: 'eq.repeatable',
+      select: 'task_name,is_done'
+    });
+    rows.forEach(r => { repeatableStates[r.task_name] = r.is_done; });
+  } catch(e) {
+    console.warn('Could not load repeatable state', e);
+  }
+
+  // Seed any missing rows
+  const upsertData = tasks.map(name => ({
+    date: TODAY,
+    task_name: name,
+    task_type: 'repeatable',
+    is_done: repeatableStates[name] ?? false
+  }));
+  try {
+    await supa.upsert('task_state', upsertData);
+  } catch(e) {
+    console.warn('Could not seed repeatable state', e);
+  }
+
+  // Render
+  listEl.innerHTML = '';
+  tasks.forEach(name => {
+    const done = repeatableStates[name] ?? false;
+    const el = document.createElement('div');
+    el.className = `task-item${done ? ' done' : ''}`;
+    el.dataset.name = name;
+    el.innerHTML = `
+      <div class="task-check">${checkSVG()}</div>
+      <span class="task-name">${name}</span>
+      <span class="task-type">daily</span>
+    `;
+    el.addEventListener('click', () => toggleRepeatable(name, el));
+    listEl.appendChild(el);
+    repeatableStates[name] = done;
+  });
+
+  updateProgress();
+}
+
+async function toggleRepeatable(name, el) {
+  const newDone = !el.classList.contains('done');
+  el.classList.toggle('done', newDone);
+  repeatableStates[name] = newDone;
+  updateProgress();
+
+  try {
+    await supa.upsert('task_state', [{
+      date: TODAY,
+      task_name: name,
+      task_type: 'repeatable',
+      is_done: newDone
+    }]);
+  } catch(e) {
+    toast('Save failed', 'error');
+    el.classList.toggle('done', !newDone);
+    repeatableStates[name] = !newDone;
+    updateProgress();
+  }
+}
+
+// ── Custom Tasks
+async function loadCustomTasks() {
+  const listEl = document.getElementById('customList');
+
+  // Fetch or create today's 5 slots
+  try {
+    const rows = await supa.query('custom_tasks', {
+      date: `eq.${TODAY}`,
+      order: 'slot.asc',
+      select: 'id,slot,text,is_done,rolled_over'
+    });
+
+    // Build full slot array (1-5), merge with existing
+    customTasks = Array.from({length: CUSTOM_SLOTS}, (_, i) => {
+      const existing = rows.find(r => r.slot === i+1);
+      return existing || { id: null, slot: i+1, text: '', is_done: false, rolled_over: false };
+    });
+  } catch(e) {
+    customTasks = Array.from({length: CUSTOM_SLOTS}, (_, i) => ({
+      id: null, slot: i+1, text: '', is_done: false, rolled_over: false
+    }));
+  }
+
+  // Seed missing slots
+  const toSeed = customTasks.filter(t => !t.id).map(t => ({
+    date: TODAY, slot: t.slot, text: t.text, is_done: false, rolled_over: false
+  }));
+  if (toSeed.length) {
+    try {
+      const seeded = await supa.upsert('custom_tasks', toSeed);
+      seeded.forEach(s => {
+        const t = customTasks.find(c => c.slot === s.slot);
+        if (t) t.id = s.id;
+      });
+    } catch(e) { console.warn('Could not seed custom tasks', e); }
+  }
+
+  renderCustomTasks();
+}
+
+function renderCustomTasks() {
+  const listEl = document.getElementById('customList');
+  listEl.innerHTML = '';
+
+  customTasks.forEach((task, idx) => {
+    const wrap = document.createElement('div');
+    wrap.className = `custom-slot${task.text ? ' has-text' : ''}${task.is_done ? ' done' : ''}`;
+    wrap.dataset.slot = task.slot;
+
+    wrap.innerHTML = `
+      <div class="custom-check" data-slot="${task.slot}">${checkSVG()}</div>
+      <input
+        class="custom-input"
+        type="text"
+        placeholder="Add a task…"
+        value="${task.text.replace(/"/g, '&quot;')}"
+        data-slot="${task.slot}"
+        ${task.is_done ? 'disabled' : ''}
+      >
+      ${task.rolled_over ? '<span style="font-family:DM Mono,monospace;font-size:10px;color:var(--warn);flex-shrink:0">rolled over</span>' : ''}
+      <div class="custom-save-dot" id="dot-${task.slot}"></div>
+    `;
+
+    const input = wrap.querySelector('.custom-input');
+    const checkEl = wrap.querySelector('.custom-check');
+
+    // Input events
+    input.addEventListener('input', () => {
+      const hasText = input.value.trim().length > 0;
+      wrap.classList.toggle('has-text', hasText);
+      scheduleSave(task.slot, input.value);
+    });
+
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && idx < customTasks.length - 1) {
+        const next = listEl.querySelectorAll('.custom-input')[idx + 1];
+        if (next) next.focus();
+      }
+    });
+
+    // Check click
+    checkEl.addEventListener('click', () => {
+      if (!task.text.trim()) return;
+      toggleCustom(task.slot, wrap, input, checkEl);
+    });
+
+    listEl.appendChild(wrap);
+  });
+
+  updateProgress();
+}
+
+function scheduleSave(slot, text) {
+  const dot = document.getElementById(`dot-${slot}`);
+  if (dot) dot.classList.add('saving');
+
+  clearTimeout(saveTimers[slot]);
+  saveTimers[slot] = setTimeout(async () => {
+    const task = customTasks.find(t => t.slot === slot);
+    if (!task) return;
+    task.text = text;
+    try {
+      await supa.upsert('custom_tasks', [{
+        date: TODAY, slot, text, is_done: task.is_done, rolled_over: task.rolled_over
+      }]);
+      if (dot) { dot.classList.remove('saving'); }
+    } catch(e) {
+      toast('Auto-save failed', 'error');
+      if (dot) dot.classList.remove('saving');
+    }
+    updateProgress();
+  }, 800);
+}
+
+async function toggleCustom(slot, wrap, input, checkEl) {
+  const task = customTasks.find(t => t.slot === slot);
+  if (!task) return;
+
+  const newDone = !wrap.classList.contains('done');
+  task.is_done = newDone;
+  wrap.classList.toggle('done', newDone);
+  input.disabled = newDone;
+  updateProgress();
+
+  try {
+    await supa.upsert('custom_tasks', [{
+      date: TODAY, slot, text: task.text, is_done: newDone, rolled_over: task.rolled_over
+    }]);
+  } catch(e) {
+    toast('Save failed', 'error');
+    task.is_done = !newDone;
+    wrap.classList.toggle('done', !newDone);
+    input.disabled = !newDone;
+    updateProgress();
+  }
+}
+
+// ── Progress
+function updateProgress() {
+  const tasks = DAILY_TASKS[DOW] || [];
+  const rTotal = tasks.length;
+  const rDone  = tasks.filter(n => repeatableStates[n]).length;
+
+  const cTasks = customTasks.filter(t => t.text.trim().length > 0);
+  const cTotal = cTasks.length;
+  const cDone  = cTasks.filter(t => t.is_done).length;
+
+  const total = rTotal + cTotal;
+  const done  = rDone + cDone;
+  const pct   = total > 0 ? Math.round((done / total) * 100) : 0;
+
+  document.getElementById('progressLabel').textContent = `${done} of ${total} complete`;
+  document.getElementById('progressPct').textContent   = `${pct}%`;
+  document.getElementById('progressFill').style.width  = `${pct}%`;
+}
+
+// ── Contribution Grid
+async function loadGrid() {
+  const gridEl  = document.getElementById('contribGrid');
+  const monthEl = document.getElementById('gridMonths');
+
+  // Build 371-day window (53 weeks) ending today
+  const cells = [];
+  const now = new Date();
+  const endDate = new Date(now);
+  const startDate = new Date(now);
+  startDate.setDate(startDate.getDate() - 364);
+  // Align to Sunday
+  while (startDate.getDay() !== 0) startDate.setDate(startDate.getDate() - 1);
+
+  let d = new Date(startDate);
+  while (d <= endDate) {
+    cells.push(new Date(d));
+    d.setDate(d.getDate() + 1);
+  }
+
+  // Fetch scores
+  const fromDate = startDate.toISOString().split('T')[0];
+  let scores = {};
+  try {
+    const rows = await supa.query('daily_score', {
+      date: `gte.${fromDate}`,
+      select: 'date,grade,pct,done_tasks,total_tasks'
+    });
+    rows.forEach(r => { scores[r.date] = r; });
+  } catch(e) { console.warn('Could not load scores', e); }
+
+  // Render month labels
+  const months = [];
+  let lastMonth = -1;
+  let colIdx = 0;
+  cells.forEach((date, i) => {
+    const m = date.getMonth();
+    if (m !== lastMonth && date.getDay() === 0) {
+      months.push({ label: MONTH_NAMES[m], col: Math.floor(i / 7) });
+      lastMonth = m;
+    }
+  });
+
+  monthEl.innerHTML = '';
+  // Build 53 columns with labels
+  for (let c = 0; c < 53; c++) {
+    const span = document.createElement('span');
+    span.className = 'grid-month-label';
+    const m = months.find(mo => mo.col === c);
+    span.textContent = m ? m.label : '';
+    span.style.flex = '1';
+    monthEl.appendChild(span);
+  }
+
+  // Render cells
+  gridEl.innerHTML = '';
+  const todayStr = TODAY;
+  cells.forEach(date => {
+    const ds = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+    const score = scores[ds];
+    const grade = score ? score.grade : 0;
+    const cell = document.createElement('div');
+    cell.className = `grid-cell${ds === todayStr ? ' today' : ''}`;
+    cell.dataset.pct = grade;
+    if (score) {
+      cell.title = `${ds}: ${score.done_tasks}/${score.total_tasks} (${score.pct}%)`;
+    } else if (ds <= todayStr) {
+      cell.title = `${ds}: no data`;
+    }
+    gridEl.appendChild(cell);
+  });
+
+  // Stats
+  const allScores = Object.values(scores).filter(s => s.pct > 0);
+  const totalActive = allScores.length;
+  const avgPct = totalActive > 0
+    ? Math.round(allScores.reduce((a,b) => a + b.pct, 0) / totalActive)
+    : 0;
+
+  // Streak calc
+  let streak = 0;
+  let best = 0;
+  let cur = 0;
+  let checkDay = new Date(now);
+  checkDay.setDate(checkDay.getDate() - 1); // start from yesterday
+
+  // Current streak
+  while (true) {
+    const ds = `${checkDay.getFullYear()}-${String(checkDay.getMonth()+1).padStart(2,'0')}-${String(checkDay.getDate()).padStart(2,'0')}`;
+    if (scores[ds] && scores[ds].grade > 0) {
+      streak++;
+      checkDay.setDate(checkDay.getDate() - 1);
+    } else break;
+  }
+
+  // Best streak (over all data)
+  const sortedKeys = Object.keys(scores).sort();
+  cur = 0;
+  sortedKeys.forEach(k => {
+    if (scores[k] && scores[k].grade > 0) {
+      cur++;
+      if (cur > best) best = cur;
+    } else {
+      cur = 0;
+    }
+  });
+
+  document.getElementById('statStreak').textContent = streak;
+  document.getElementById('statBest').textContent   = best;
+  document.getElementById('statTotal').textContent  = totalActive;
+  document.getElementById('statAvg').textContent    = avgPct + '%';
+}
+
+// ── Boot
+init().catch(console.error);
+</script>
+</body>
+</html>
