@@ -9,8 +9,8 @@
     <nav class="shared-navbar">
       <a href="https://josephrossi.co">Home</a>
       <a href="https://josephrossi.co/card">Analog</a>
-      <a href="https://josephrossi.co/notebook">B-Journal</a>
-      <a href="https://josephrossi.co/journal">P-Journal</a>
+      <a href="https://josephrossi.co/journal">Intake</a>
+      <a href="https://josephrossi.co/weekly">12 Week Year</a>
       <a href="https://josephrossi.co/bookmarks">Bookmarks</a>
     </nav>
   `;
