@@ -53,8 +53,6 @@
       opacity: 0.5;
     }
 
-
-
     #page {
       position: relative;
       z-index: 1;
@@ -106,6 +104,7 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      max-height: 70vh;
       animation: cardRise 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
 
@@ -132,6 +131,7 @@
       align-items: baseline;
       padding: 26px 32px 20px;
       border-bottom: 1px solid var(--line-rule);
+      flex-shrink: 0;
     }
 
     .card-date {
@@ -157,6 +157,7 @@
       display: flex;
       gap: 8px;
       padding: 20px 32px 12px;
+      flex-shrink: 0;
     }
 
     .toolbar-btn {
@@ -186,6 +187,8 @@
     .card-body {
       padding: 20px 32px 24px;
       flex: 1;
+      overflow-y: auto;
+      min-height: 0;
     }
 
     .editor {
@@ -198,7 +201,6 @@
       font-weight: 300;
       font-size: 16px;
       line-height: 2;
-      min-height: 380px;
       caret-color: var(--text-dark);
     }
 
@@ -220,6 +222,7 @@
       padding: 16px 32px 24px;
       border-top: 1px solid var(--line-rule);
       background: var(--card-footer);
+      flex-shrink: 0;
     }
 
     .char-count {
@@ -282,12 +285,13 @@
       #page        { padding: 10px 12px 72px; }
       .page-title  { font-size: 28px; }
       .page-header { margin-bottom: 16px; }
+      .journal-card { max-height: 80vh; }
       .card-top    { padding: 20px 20px 16px; }
       .card-date   { font-size: 22px; }
       .toolbar     { padding: 16px 20px 10px; }
       .card-body   { padding: 16px 20px 20px; }
       .card-footer { padding: 14px 20px 20px; }
-      .editor      { font-size: 16px; line-height: 1.9; min-height: 300px; }
+      .editor      { font-size: 16px; line-height: 1.9; }
     }
   </style>
 </head>
