@@ -432,11 +432,204 @@
     z-index: 100;
   }
 
+  /* DATE NAVIGATOR */
+  .date-nav {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    width: fit-content;
+    margin-bottom: 28px;
+  }
+  .date-nav-btn {
+    width: 38px; height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-size: 16px;
+    cursor: pointer;
+    transition: all .15s;
+    flex-shrink: 0;
+  }
+  .date-nav-btn:hover { color: var(--text); background: var(--surface2); }
+  .date-nav-btn:disabled { opacity: .3; cursor: default; }
+
+  .date-nav-center {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 4px;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+  .date-nav-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    white-space: nowrap;
+    cursor: pointer;
+    padding: 8px 12px;
+    transition: color .15s;
+    letter-spacing: .02em;
+  }
+  .date-nav-label:hover { color: var(--accent); }
+
+  .date-nav-today {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: rgba(124,106,247,.12);
+    color: var(--accent);
+    border: 1px solid rgba(124,106,247,.2);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all .15s;
+    margin-right: 4px;
+  }
+  .date-nav-today:hover { background: rgba(124,106,247,.2); }
+  .date-nav-today.hidden { display: none; }
+
+  /* CALENDAR PICKER POPUP */
+  .cal-popup {
+    position: fixed;
+    z-index: 500;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 8px 40px rgba(0,0,0,.6);
+    display: none;
+    min-width: 260px;
+  }
+  .cal-popup.open { display: block; }
+
+  .cal-popup-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .cal-popup-month {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    letter-spacing: .03em;
+  }
+  .cal-popup-nav {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-size: 14px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 5px;
+    transition: all .15s;
+  }
+  .cal-popup-nav:hover { color: var(--text); background: var(--surface2); }
+
+  .cal-popup-dow {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    margin-bottom: 4px;
+  }
+  .cal-popup-dow span {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    text-align: center;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 2px 0;
+  }
+
+  .cal-popup-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+  }
+  .cal-popup-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all .12s;
+    border: none;
+    background: transparent;
+  }
+  .cal-popup-day:hover { background: var(--surface2); color: var(--text); }
+  .cal-popup-day.other-month { opacity: .25; }
+  .cal-popup-day.is-today { color: var(--accent); font-weight: 500; }
+  .cal-popup-day.selected {
+    background: var(--accent);
+    color: #fff;
+    font-weight: 500;
+  }
+  .cal-popup-day.has-data::after {
+    content: '';
+    display: block;
+    width: 3px; height: 3px;
+    border-radius: 50%;
+    background: var(--success);
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .cal-popup-day { position: relative; }
+
+  /* VIEW MODE BANNER */
+  .view-mode-banner {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 13px;
+  }
+  .view-mode-banner.past {
+    display: flex;
+    background: rgba(62,207,142,.06);
+    border: 1px solid rgba(62,207,142,.15);
+    color: var(--success);
+  }
+  .view-mode-banner.future {
+    display: flex;
+    background: rgba(124,106,247,.06);
+    border: 1px solid rgba(124,106,247,.15);
+    color: var(--accent);
+  }
+  .view-mode-banner span { flex: 1; font-size: 12px; }
+
+  /* READ ONLY OVERLAY on custom inputs */
+  .custom-slot.readonly {
+    opacity: .7;
+    pointer-events: none;
+  }
+  .custom-slot.readonly input { color: var(--muted); }
+
   @media (max-width: 600px) {
     .page { padding: 24px 16px 60px; }
     nav { padding: 12px 16px; }
     .contrib-grid { grid-template-columns: repeat(26, 1fr); }
     .page-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .date-nav { width: 100%; }
+    .date-nav-center { flex: 1; justify-content: center; }
   }
 </style>
 </head>
@@ -446,8 +639,8 @@
      CONFIGURATION — replace with your values
      ═══════════════════════════════════════════════ -->
 <script>
-  const SUPABASE_URL = 'https://lxarvlyxpegwpfxnzacj.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx4YXJ2bHl4cGVnd3BmeG56YWNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyNTA1NzgsImV4cCI6MjA5MzgyNjU3OH0.A4LjF_1LV7d522jhigD4izyjY6S0fgETgebeDKGUsQU';
+  const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
+  const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
 
   // ── Repeatable tasks per day (0=Sun,1=Mon,...,6=Sat)
   const DAILY_TASKS = {
@@ -488,6 +681,35 @@
       Daily Tasks
     </h1>
     <span class="day-badge" id="dayBadge">—</span>
+  </div>
+
+  <!-- DATE NAVIGATOR -->
+  <div class="date-nav" id="dateNav">
+    <button class="date-nav-btn" id="datePrev" onclick="stepDay(-1)" title="Previous day">‹</button>
+    <div class="date-nav-center">
+      <span class="date-nav-label" id="dateNavLabel" onclick="toggleCalPicker()">—</span>
+      <span class="date-nav-today hidden" id="dateNavToday" onclick="goToday()">today</span>
+    </div>
+    <button class="date-nav-btn" id="dateNext" onclick="stepDay(1)" title="Next day">›</button>
+  </div>
+
+  <!-- CALENDAR PICKER POPUP -->
+  <div class="cal-popup" id="calPopup">
+    <div class="cal-popup-header">
+      <button class="cal-popup-nav" onclick="pickerChangeMonth(-1)">‹</button>
+      <span class="cal-popup-month" id="pickerMonthLabel">—</span>
+      <button class="cal-popup-nav" onclick="pickerChangeMonth(1)">›</button>
+    </div>
+    <div class="cal-popup-dow">
+      <span>Su</span><span>Mo</span><span>Tu</span><span>We</span>
+      <span>Th</span><span>Fr</span><span>Sa</span>
+    </div>
+    <div class="cal-popup-days" id="pickerDays"></div>
+  </div>
+
+  <!-- VIEW MODE BANNER -->
+  <div class="view-mode-banner" id="viewModeBanner">
+    <span id="viewModeText"></span>
   </div>
 
   <!-- PROGRESS -->
@@ -680,7 +902,7 @@
 ═══════════════════════════════════════════════ -->
 
 <script>
-// ── Supabase client (vanilla, no npm)
+// ── Supabase client
 const supa = (() => {
   const headers = {
     'apikey': SUPABASE_ANON_KEY,
@@ -711,11 +933,7 @@ const supa = (() => {
   async function patch(table, filter, data) {
     const url = new URL(`${base}/${table}`);
     Object.entries(filter).forEach(([k,v]) => url.searchParams.set(k, `eq.${v}`));
-    const r = await fetch(url, {
-      method: 'PATCH',
-      headers,
-      body: JSON.stringify(data)
-    });
+    const r = await fetch(url, { method: 'PATCH', headers, body: JSON.stringify(data) });
     if (!r.ok) throw new Error(await r.text());
     return r.json();
   }
@@ -723,105 +941,235 @@ const supa = (() => {
   return { query, upsert, patch };
 })();
 
-// ── Helpers
-const TODAY = (() => {
-  const d = new Date();
+// ── Date helpers
+function makeDateStr(d) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-})();
-
-const DOW = new Date().getDay();
-
-const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-function todayLabel() {
-  const d = new Date();
-  return `${MONTH_NAMES[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 }
+const TODAY_STR = makeDateStr(new Date());
+function parseDateStr(str) {
+  const [y,m,d] = str.split('-').map(Number);
+  return new Date(y, m-1, d);
+}
+const DAY_NAMES   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTH_FULL  = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-function toast(msg, type = '') {
+function formatLabel(str) {
+  if (str === TODAY_STR) return 'Today';
+  const d = parseDateStr(str);
+  const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+  const tomorrow  = new Date(); tomorrow.setDate(tomorrow.getDate()+1);
+  if (str === makeDateStr(yesterday)) return 'Yesterday';
+  if (str === makeDateStr(tomorrow))  return 'Tomorrow';
+  return `${DAY_NAMES[d.getDay()]}, ${MONTH_NAMES[d.getMonth()]} ${d.getDate()}`;
+}
+function toast(msg, type='') {
   const el = document.getElementById('toast');
   el.textContent = msg;
   el.className = `toast show ${type}`;
   setTimeout(() => el.className = 'toast', 2400);
 }
-
 function checkSVG() {
-  return `<svg width="11" height="9" viewBox="0 0 11 9" fill="none">
-    <path d="M1 4L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>`;
+  return `<svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 }
 
 // ── State
-let repeatableStates = {}; // task_name → is_done
-let customTasks = [];       // array of {id, slot, text, is_done, rolled_over}
-let saveTimers = {};
+let viewDateStr      = TODAY_STR;
+let repeatableStates = {};
+let customTasks      = [];
+let saveTimers       = {};
+let datesWithData    = new Set();
 
-// ── Init
-async function init() {
-  // Set header
-  document.getElementById('todayDate').textContent = todayLabel() + ' — ';
-  document.getElementById('dayBadge').textContent = DAY_NAMES[DOW];
+// picker state
+let pickerYear  = new Date().getFullYear();
+let pickerMonth = new Date().getMonth();
+let pickerOpen  = false;
 
-  // Test connection
-  try {
-    await supa.query('daily_score', { limit: 1 });
-    document.getElementById('statusDot').className = 'status-dot connected';
-    document.getElementById('statusText').textContent = 'connected';
-  } catch(e) {
-    document.getElementById('statusText').textContent = 'offline';
-    toast('Supabase connection failed — check your config', 'error');
+// ── Date Navigator
+function updateDateNav() {
+  const isToday  = viewDateStr === TODAY_STR;
+  const viewDate = parseDateStr(viewDateStr);
+  const dow      = viewDate.getDay();
+
+  document.getElementById('dateNavLabel').textContent = formatLabel(viewDateStr);
+  document.getElementById('todayDate').textContent    =
+    `${MONTH_NAMES[viewDate.getMonth()]} ${viewDate.getDate()}, ${viewDate.getFullYear()} — `;
+  document.getElementById('dayBadge').textContent = DAY_NAMES[dow];
+
+  const todayBtn = document.getElementById('dateNavToday');
+  todayBtn.classList.toggle('hidden', isToday);
+
+  // View mode banner
+  const banner   = document.getElementById('viewModeBanner');
+  const bannerTx = document.getElementById('viewModeText');
+  if (isToday) {
+    banner.className = 'view-mode-banner';
+  } else if (viewDateStr < TODAY_STR) {
+    banner.className = 'view-mode-banner past';
+    bannerTx.textContent = '📋 Viewing a past day — read only';
+  } else {
+    banner.className = 'view-mode-banner future';
+    bannerTx.textContent = '🔮 Viewing a future day — tasks shown as planned';
   }
+}
+
+function stepDay(dir) {
+  const d = parseDateStr(viewDateStr);
+  d.setDate(d.getDate() + dir);
+  viewDateStr = makeDateStr(d);
+  closeCalPicker();
+  loadDay();
+}
+
+function goToday() {
+  viewDateStr = TODAY_STR;
+  closeCalPicker();
+  loadDay();
+}
+
+// ── Calendar Picker
+function toggleCalPicker() {
+  pickerOpen = !pickerOpen;
+  const popup = document.getElementById('calPopup');
+  if (pickerOpen) {
+    const btn = document.getElementById('dateNavLabel');
+    const rect = btn.getBoundingClientRect();
+    popup.style.top  = (rect.bottom + window.scrollY + 6) + 'px';
+    popup.style.left = rect.left + 'px';
+    pickerYear  = parseDateStr(viewDateStr).getFullYear();
+    pickerMonth = parseDateStr(viewDateStr).getMonth();
+    renderPicker();
+    popup.classList.add('open');
+  } else {
+    popup.classList.remove('open');
+  }
+}
+
+function closeCalPicker() {
+  pickerOpen = false;
+  document.getElementById('calPopup').classList.remove('open');
+}
+
+function pickerChangeMonth(dir) {
+  pickerMonth += dir;
+  if (pickerMonth > 11) { pickerMonth = 0; pickerYear++; }
+  if (pickerMonth < 0)  { pickerMonth = 11; pickerYear--; }
+  renderPicker();
+}
+
+function renderPicker() {
+  document.getElementById('pickerMonthLabel').textContent =
+    `${MONTH_FULL[pickerMonth]} ${pickerYear}`;
+
+  const daysEl   = document.getElementById('pickerDays');
+  daysEl.innerHTML = '';
+
+  const firstDay = new Date(pickerYear, pickerMonth, 1);
+  const lastDay  = new Date(pickerYear, pickerMonth + 1, 0);
+  const startDow = firstDay.getDay();
+
+  // Leading blanks
+  for (let i = 0; i < startDow; i++) {
+    const prev = new Date(pickerYear, pickerMonth, 1 - (startDow - i));
+    addPickerDay(daysEl, prev, true);
+  }
+  // Current month
+  for (let d = 1; d <= lastDay.getDate(); d++) {
+    addPickerDay(daysEl, new Date(pickerYear, pickerMonth, d), false);
+  }
+  // Trailing blanks
+  const total = startDow + lastDay.getDate();
+  const trailing = (7 - (total % 7)) % 7;
+  for (let i = 1; i <= trailing; i++) {
+    addPickerDay(daysEl, new Date(pickerYear, pickerMonth + 1, i), true);
+  }
+}
+
+function addPickerDay(container, date, otherMonth) {
+  const ds  = makeDateStr(date);
+  const btn = document.createElement('button');
+  btn.className = [
+    'cal-popup-day',
+    otherMonth       ? 'other-month' : '',
+    ds === TODAY_STR ? 'is-today'    : '',
+    ds === viewDateStr ? 'selected'  : '',
+    datesWithData.has(ds) ? 'has-data' : ''
+  ].filter(Boolean).join(' ');
+  btn.textContent = date.getDate();
+  btn.onclick = () => {
+    viewDateStr = ds;
+    closeCalPicker();
+    loadDay();
+  };
+  container.appendChild(btn);
+}
+
+// close picker on outside click
+document.addEventListener('click', e => {
+  if (pickerOpen &&
+      !document.getElementById('calPopup').contains(e.target) &&
+      e.target !== document.getElementById('dateNavLabel')) {
+    closeCalPicker();
+  }
+});
+
+// ── Load a day (repeatables + custom tasks)
+async function loadDay() {
+  updateDateNav();
+  const isToday  = viewDateStr === TODAY_STR;
+  const isPast   = viewDateStr < TODAY_STR;
+  const isFuture = viewDateStr > TODAY_STR;
+  const viewDate = parseDateStr(viewDateStr);
+  const dow      = viewDate.getDay();
+
+  repeatableStates = {};
+  customTasks      = [];
 
   await Promise.all([
-    loadRepeatables(),
-    loadCustomTasks(),
-    loadGrid()
+    loadRepeatables(dow, isToday, isPast, isFuture),
+    loadCustomTasks(isToday, isPast, isFuture)
   ]);
 }
 
 // ── Repeatables
-async function loadRepeatables() {
-  const tasks = DAILY_TASKS[DOW] || [];
-  const listEl = document.getElementById('repeatableList');
+async function loadRepeatables(dow, isToday, isPast, isFuture) {
+  const tasks   = DAILY_TASKS[dow] || [];
+  const listEl  = document.getElementById('repeatableList');
   const sectionEl = document.getElementById('repeatableSection');
 
   if (tasks.length === 0) {
     sectionEl.style.display = 'none';
-    updateProgress();
+    updateProgress(dow);
     return;
   }
+  sectionEl.style.display = '';
 
-  // Fetch today's state from Supabase
+  // Show skeletons while loading
+  listEl.innerHTML = '<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>';
+
   try {
     const rows = await supa.query('task_state', {
-      date: `eq.${TODAY}`,
+      date:      `eq.${viewDateStr}`,
       task_type: 'eq.repeatable',
-      select: 'task_name,is_done'
+      select:    'task_name,is_done'
     });
     rows.forEach(r => { repeatableStates[r.task_name] = r.is_done; });
-  } catch(e) {
-    console.warn('Could not load repeatable state', e);
+  } catch(e) { console.warn('Could not load repeatable state', e); }
+
+  // Only seed today's rows — never write to past/future
+  if (isToday) {
+    const upsertData = tasks.map(name => ({
+      date: viewDateStr, task_name: name,
+      task_type: 'repeatable',
+      is_done: repeatableStates[name] ?? false
+    }));
+    try { await supa.upsert('task_state', upsertData); } catch(e) {}
   }
 
-  // Seed any missing rows
-  const upsertData = tasks.map(name => ({
-    date: TODAY,
-    task_name: name,
-    task_type: 'repeatable',
-    is_done: repeatableStates[name] ?? false
-  }));
-  try {
-    await supa.upsert('task_state', upsertData);
-  } catch(e) {
-    console.warn('Could not seed repeatable state', e);
-  }
-
-  // Render
   listEl.innerHTML = '';
   tasks.forEach(name => {
     const done = repeatableStates[name] ?? false;
-    const el = document.createElement('div');
+    const el   = document.createElement('div');
     el.className = `task-item${done ? ' done' : ''}`;
     el.dataset.name = name;
     el.innerHTML = `
@@ -829,82 +1177,103 @@ async function loadRepeatables() {
       <span class="task-name">${name}</span>
       <span class="task-type">daily</span>
     `;
-    el.addEventListener('click', () => toggleRepeatable(name, el));
+    // Only allow toggling on today
+    if (isToday) {
+      el.addEventListener('click', () => toggleRepeatable(name, el, dow));
+    } else {
+      el.style.cursor = 'default';
+    }
     listEl.appendChild(el);
     repeatableStates[name] = done;
   });
 
-  updateProgress();
+  updateProgress(dow);
 }
 
-async function toggleRepeatable(name, el) {
+async function toggleRepeatable(name, el, dow) {
   const newDone = !el.classList.contains('done');
   el.classList.toggle('done', newDone);
   repeatableStates[name] = newDone;
-  updateProgress();
+  updateProgress(dow);
 
   try {
     await supa.upsert('task_state', [{
-      date: TODAY,
-      task_name: name,
-      task_type: 'repeatable',
-      is_done: newDone
+      date: viewDateStr, task_name: name,
+      task_type: 'repeatable', is_done: newDone
     }]);
   } catch(e) {
     toast('Save failed', 'error');
     el.classList.toggle('done', !newDone);
     repeatableStates[name] = !newDone;
-    updateProgress();
+    updateProgress(dow);
   }
 }
 
 // ── Custom Tasks
-async function loadCustomTasks() {
+async function loadCustomTasks(isToday, isPast, isFuture) {
   const listEl = document.getElementById('customList');
+  listEl.innerHTML = '<div class="skeleton" style="height:48px;margin-bottom:6px"></div>';
 
-  // Fetch or create today's 5 slots
   try {
     const rows = await supa.query('custom_tasks', {
-      date: `eq.${TODAY}`,
-      order: 'slot.asc',
+      date:   `eq.${viewDateStr}`,
+      order:  'slot.asc',
       select: 'id,slot,text,is_done,rolled_over'
     });
 
-    // Build full slot array (1-5), merge with existing
     customTasks = Array.from({length: CUSTOM_SLOTS}, (_, i) => {
       const existing = rows.find(r => r.slot === i+1);
       return existing || { id: null, slot: i+1, text: '', is_done: false, rolled_over: false };
     });
   } catch(e) {
-    customTasks = Array.from({length: CUSTOM_SLOTS}, (_, i) => ({
-      id: null, slot: i+1, text: '', is_done: false, rolled_over: false
+    customTasks = Array.from({length: CUSTOM_SLOTS}, (_, i) =>
+      ({ id: null, slot: i+1, text: '', is_done: false, rolled_over: false })
+    );
+  }
+
+  // Only seed on today
+  if (isToday) {
+    const toSeed = customTasks.filter(t => !t.id).map(t => ({
+      date: viewDateStr, slot: t.slot, text: t.text,
+      is_done: false, rolled_over: false
     }));
+    if (toSeed.length) {
+      try {
+        const seeded = await supa.upsert('custom_tasks', toSeed);
+        seeded.forEach(s => {
+          const t = customTasks.find(c => c.slot === s.slot);
+          if (t) t.id = s.id;
+        });
+      } catch(e) {}
+    }
   }
 
-  // Seed missing slots
-  const toSeed = customTasks.filter(t => !t.id).map(t => ({
-    date: TODAY, slot: t.slot, text: t.text, is_done: false, rolled_over: false
-  }));
-  if (toSeed.length) {
-    try {
-      const seeded = await supa.upsert('custom_tasks', toSeed);
-      seeded.forEach(s => {
-        const t = customTasks.find(c => c.slot === s.slot);
-        if (t) t.id = s.id;
-      });
-    } catch(e) { console.warn('Could not seed custom tasks', e); }
-  }
-
-  renderCustomTasks();
+  renderCustomTasks(isToday);
+  updateProgress(parseDateStr(viewDateStr).getDay());
 }
 
-function renderCustomTasks() {
+function renderCustomTasks(isToday = true) {
   const listEl = document.getElementById('customList');
   listEl.innerHTML = '';
 
-  customTasks.forEach((task, idx) => {
+  // On past/future: only show slots that have text, or show all 5 on today
+  const slotsToShow = isToday
+    ? customTasks
+    : customTasks.filter(t => t.text.trim().length > 0);
+
+  if (!isToday && slotsToShow.length === 0) {
+    listEl.innerHTML = `<div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);padding:12px 0;">No custom tasks for this day.</div>`;
+    return;
+  }
+
+  slotsToShow.forEach((task, idx) => {
     const wrap = document.createElement('div');
-    wrap.className = `custom-slot${task.text ? ' has-text' : ''}${task.is_done ? ' done' : ''}`;
+    wrap.className = [
+      'custom-slot',
+      task.text ? 'has-text' : '',
+      task.is_done ? 'done' : '',
+      !isToday ? 'readonly' : ''
+    ].filter(Boolean).join(' ');
     wrap.dataset.slot = task.slot;
 
     wrap.innerHTML = `
@@ -912,48 +1281,45 @@ function renderCustomTasks() {
       <input
         class="custom-input"
         type="text"
-        placeholder="Add a task…"
+        placeholder="${isToday ? 'Add a task…' : '—'}"
         value="${task.text.replace(/"/g, '&quot;')}"
         data-slot="${task.slot}"
-        ${task.is_done ? 'disabled' : ''}
+        ${task.is_done || !isToday ? 'disabled' : ''}
       >
       ${task.rolled_over ? '<span style="font-family:DM Mono,monospace;font-size:10px;color:var(--warn);flex-shrink:0">rolled over</span>' : ''}
       <div class="custom-save-dot" id="dot-${task.slot}"></div>
     `;
 
-    const input = wrap.querySelector('.custom-input');
-    const checkEl = wrap.querySelector('.custom-check');
+    if (isToday) {
+      const input   = wrap.querySelector('.custom-input');
+      const checkEl = wrap.querySelector('.custom-check');
 
-    // Input events
-    input.addEventListener('input', () => {
-      const hasText = input.value.trim().length > 0;
-      wrap.classList.toggle('has-text', hasText);
-      scheduleSave(task.slot, input.value);
-    });
+      input.addEventListener('input', () => {
+        const hasText = input.value.trim().length > 0;
+        wrap.classList.toggle('has-text', hasText);
+        scheduleSave(task.slot, input.value);
+      });
 
-    input.addEventListener('keydown', e => {
-      if (e.key === 'Enter' && idx < customTasks.length - 1) {
-        const next = listEl.querySelectorAll('.custom-input')[idx + 1];
-        if (next) next.focus();
-      }
-    });
+      input.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && idx < slotsToShow.length - 1) {
+          const next = listEl.querySelectorAll('.custom-input')[idx + 1];
+          if (next) next.focus();
+        }
+      });
 
-    // Check click
-    checkEl.addEventListener('click', () => {
-      if (!task.text.trim()) return;
-      toggleCustom(task.slot, wrap, input, checkEl);
-    });
+      checkEl.addEventListener('click', () => {
+        if (!task.text.trim()) return;
+        toggleCustom(task.slot, wrap, input, checkEl);
+      });
+    }
 
     listEl.appendChild(wrap);
   });
-
-  updateProgress();
 }
 
 function scheduleSave(slot, text) {
   const dot = document.getElementById(`dot-${slot}`);
   if (dot) dot.classList.add('saving');
-
   clearTimeout(saveTimers[slot]);
   saveTimers[slot] = setTimeout(async () => {
     const task = customTasks.find(t => t.slot === slot);
@@ -961,14 +1327,15 @@ function scheduleSave(slot, text) {
     task.text = text;
     try {
       await supa.upsert('custom_tasks', [{
-        date: TODAY, slot, text, is_done: task.is_done, rolled_over: task.rolled_over
+        date: viewDateStr, slot, text,
+        is_done: task.is_done, rolled_over: task.rolled_over
       }]);
-      if (dot) { dot.classList.remove('saving'); }
+      if (dot) dot.classList.remove('saving');
     } catch(e) {
       toast('Auto-save failed', 'error');
       if (dot) dot.classList.remove('saving');
     }
-    updateProgress();
+    updateProgress(parseDateStr(viewDateStr).getDay());
   }, 800);
 }
 
@@ -980,24 +1347,25 @@ async function toggleCustom(slot, wrap, input, checkEl) {
   task.is_done = newDone;
   wrap.classList.toggle('done', newDone);
   input.disabled = newDone;
-  updateProgress();
+  updateProgress(parseDateStr(viewDateStr).getDay());
 
   try {
     await supa.upsert('custom_tasks', [{
-      date: TODAY, slot, text: task.text, is_done: newDone, rolled_over: task.rolled_over
+      date: viewDateStr, slot, text: task.text,
+      is_done: newDone, rolled_over: task.rolled_over
     }]);
   } catch(e) {
     toast('Save failed', 'error');
     task.is_done = !newDone;
     wrap.classList.toggle('done', !newDone);
     input.disabled = !newDone;
-    updateProgress();
+    updateProgress(parseDateStr(viewDateStr).getDay());
   }
 }
 
 // ── Progress
-function updateProgress() {
-  const tasks = DAILY_TASKS[DOW] || [];
+function updateProgress(dow) {
+  const tasks  = DAILY_TASKS[dow] || [];
   const rTotal = tasks.length;
   const rDone  = tasks.filter(n => repeatableStates[n]).length;
 
@@ -1006,7 +1374,7 @@ function updateProgress() {
   const cDone  = cTasks.filter(t => t.is_done).length;
 
   const total = rTotal + cTotal;
-  const done  = rDone + cDone;
+  const done  = rDone  + cDone;
   const pct   = total > 0 ? Math.round((done / total) * 100) : 0;
 
   document.getElementById('progressLabel').textContent = `${done} of ${total} complete`;
@@ -1019,36 +1387,31 @@ async function loadGrid() {
   const gridEl  = document.getElementById('contribGrid');
   const monthEl = document.getElementById('gridMonths');
 
-  // Build 371-day window (53 weeks) ending today
-  const cells = [];
-  const now = new Date();
-  const endDate = new Date(now);
+  const now       = new Date();
   const startDate = new Date(now);
   startDate.setDate(startDate.getDate() - 364);
-  // Align to Sunday
   while (startDate.getDay() !== 0) startDate.setDate(startDate.getDate() - 1);
 
+  const cells = [];
   let d = new Date(startDate);
-  while (d <= endDate) {
-    cells.push(new Date(d));
-    d.setDate(d.getDate() + 1);
-  }
+  while (d <= now) { cells.push(new Date(d)); d.setDate(d.getDate() + 1); }
 
-  // Fetch scores
-  const fromDate = startDate.toISOString().split('T')[0];
+  const fromDate = makeDateStr(startDate);
   let scores = {};
   try {
     const rows = await supa.query('daily_score', {
-      date: `gte.${fromDate}`,
+      date:   `gte.${fromDate}`,
       select: 'date,grade,pct,done_tasks,total_tasks'
     });
-    rows.forEach(r => { scores[r.date] = r; });
+    rows.forEach(r => {
+      scores[r.date] = r;
+      if (r.grade > 0) datesWithData.add(r.date);
+    });
   } catch(e) { console.warn('Could not load scores', e); }
 
-  // Render month labels
+  // Month labels
   const months = [];
   let lastMonth = -1;
-  let colIdx = 0;
   cells.forEach((date, i) => {
     const m = date.getMonth();
     if (m !== lastMonth && date.getDay() === 0) {
@@ -1058,7 +1421,6 @@ async function loadGrid() {
   });
 
   monthEl.innerHTML = '';
-  // Build 53 columns with labels
   for (let c = 0; c < 53; c++) {
     const span = document.createElement('span');
     span.className = 'grid-month-label';
@@ -1068,57 +1430,46 @@ async function loadGrid() {
     monthEl.appendChild(span);
   }
 
-  // Render cells
   gridEl.innerHTML = '';
-  const todayStr = TODAY;
   cells.forEach(date => {
-    const ds = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+    const ds    = makeDateStr(date);
     const score = scores[ds];
     const grade = score ? score.grade : 0;
-    const cell = document.createElement('div');
-    cell.className = `grid-cell${ds === todayStr ? ' today' : ''}`;
+    const cell  = document.createElement('div');
+    cell.className = `grid-cell${ds === TODAY_STR ? ' today' : ''}`;
     cell.dataset.pct = grade;
-    if (score) {
-      cell.title = `${ds}: ${score.done_tasks}/${score.total_tasks} (${score.pct}%)`;
-    } else if (ds <= todayStr) {
-      cell.title = `${ds}: no data`;
-    }
+    cell.title = score
+      ? `${ds}: ${score.done_tasks}/${score.total_tasks} (${score.pct}%)`
+      : `${ds}: no data`;
+    // Click a grid cell to jump to that day
+    cell.style.cursor = 'pointer';
+    cell.addEventListener('click', () => {
+      viewDateStr = ds;
+      loadDay();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
     gridEl.appendChild(cell);
   });
 
   // Stats
-  const allScores = Object.values(scores).filter(s => s.pct > 0);
+  const allScores   = Object.values(scores).filter(s => s.pct > 0);
   const totalActive = allScores.length;
-  const avgPct = totalActive > 0
-    ? Math.round(allScores.reduce((a,b) => a + b.pct, 0) / totalActive)
-    : 0;
+  const avgPct      = totalActive > 0
+    ? Math.round(allScores.reduce((a,b) => a + b.pct, 0) / totalActive) : 0;
 
-  // Streak calc
   let streak = 0;
-  let best = 0;
-  let cur = 0;
   let checkDay = new Date(now);
-  checkDay.setDate(checkDay.getDate() - 1); // start from yesterday
-
-  // Current streak
+  checkDay.setDate(checkDay.getDate() - 1);
   while (true) {
-    const ds = `${checkDay.getFullYear()}-${String(checkDay.getMonth()+1).padStart(2,'0')}-${String(checkDay.getDate()).padStart(2,'0')}`;
-    if (scores[ds] && scores[ds].grade > 0) {
-      streak++;
-      checkDay.setDate(checkDay.getDate() - 1);
-    } else break;
+    const ds = makeDateStr(checkDay);
+    if (scores[ds] && scores[ds].grade > 0) { streak++; checkDay.setDate(checkDay.getDate()-1); }
+    else break;
   }
 
-  // Best streak (over all data)
-  const sortedKeys = Object.keys(scores).sort();
-  cur = 0;
-  sortedKeys.forEach(k => {
-    if (scores[k] && scores[k].grade > 0) {
-      cur++;
-      if (cur > best) best = cur;
-    } else {
-      cur = 0;
-    }
+  let best = 0, cur = 0;
+  Object.keys(scores).sort().forEach(k => {
+    if (scores[k] && scores[k].grade > 0) { cur++; if (cur > best) best = cur; }
+    else cur = 0;
   });
 
   document.getElementById('statStreak').textContent = streak;
@@ -1128,7 +1479,26 @@ async function loadGrid() {
 }
 
 // ── Boot
+async function init() {
+  document.getElementById('todayDate').textContent =
+    `${MONTH_NAMES[new Date().getMonth()]} ${new Date().getDate()}, ${new Date().getFullYear()} — `;
+  document.getElementById('dayBadge').textContent = DAY_NAMES[new Date().getDay()];
+  document.getElementById('dateNavLabel').textContent = 'Today';
+
+  try {
+    await supa.query('daily_score', { limit: 1 });
+    document.getElementById('statusDot').className = 'status-dot connected';
+    document.getElementById('statusText').textContent = 'connected';
+  } catch(e) {
+    document.getElementById('statusText').textContent = 'offline';
+    toast('Supabase connection failed — check your config', 'error');
+  }
+
+  await Promise.all([loadDay(), loadGrid()]);
+}
+
 init().catch(console.error);
 </script>
+-e 
 </body>
 </html>
