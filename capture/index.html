@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capture</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg:       #0d0d0f;
+    --surface:  #16161a;
+    --surface2: #1e1e24;
+    --border:   #2a2a35;
+    --border2:  #3a3a48;
+    --text:     #e8e8f0;
+    --muted:    #6b6b80;
+    --accent:   #7c6af7;
+    --accent2:  #5b4fd4;
+    --success:  #3ecf8e;
+    --warn:     #f5a623;
+    --danger:   #f04747;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 32px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    flex-shrink: 0;
+  }
+  nav a {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 5px 12px;
+    border-radius: 6px;
+    transition: all .2s;
+    letter-spacing: .03em;
+  }
+  nav a:hover { color: var(--text); background: var(--surface2); }
+  nav a.active { color: var(--accent); background: rgba(124,106,247,.12); }
+  nav .logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    margin-right: 12px;
+    letter-spacing: -.02em;
+  }
+  nav .spacer { flex: 1; }
+  .status-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--muted);
+    margin-right: 6px;
+    vertical-align: middle;
+    transition: background .3s;
+  }
+  .status-dot.connected { background: var(--success); }
+
+  /* TWO-PANEL LAYOUT */
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* LEFT — CAPTURE PANEL */
+  .capture-panel {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+    padding: 40px 40px 40px;
+    gap: 24px;
+  }
+
+  .capture-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .capture-heading {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -.03em;
+    line-height: 1.15;
+    color: var(--text);
+  }
+  .capture-heading span {
+    color: var(--muted);
+    font-weight: 300;
+  }
+
+  /* THE CARD */
+  .analog-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    min-height: 280px;
+    max-height: 420px;
+    transition: border-color .2s;
+  }
+  .analog-card:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(124,106,247,.1);
+  }
+
+  .card-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .card-textarea {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.65;
+    resize: none;
+    width: 100%;
+    caret-color: var(--accent);
+  }
+  .card-textarea::placeholder {
+    color: var(--muted);
+    font-style: italic;
+    font-weight: 300;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+  .card-char-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+  .card-char-count.near { color: var(--warn); }
+
+  /* CAPTURE BUTTON */
+  .capture-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all .2s;
+    letter-spacing: -.01em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .capture-btn:hover { background: var(--accent2); transform: translateY(-1px); }
+  .capture-btn:active { transform: translateY(0); }
+  .capture-btn.saving {
+    background: var(--surface2);
+    color: var(--muted);
+    pointer-events: none;
+  }
+  .capture-btn.saved {
+    background: var(--success);
+    pointer-events: none;
+  }
+
+  .capture-hint {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-align: center;
+    letter-spacing: .04em;
+  }
+
+  /* RIGHT — INBOX PANEL */
+  .inbox-panel {
+    display: flex;
+    flex-direction: column;
+    padding: 40px 40px 40px;
+    gap: 20px;
+    overflow-y: auto;
+  }
+
+  .inbox-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .inbox-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -.02em;
+  }
+  .inbox-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    background: rgba(124,106,247,.15);
+    color: var(--accent);
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(124,106,247,.2);
+  }
+
+  .inbox-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: -12px;
+    flex-shrink: 0;
+  }
+
+  /* INBOX ITEMS */
+  .inbox-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+  }
+
+  .inbox-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    transition: all .2s;
+    cursor: default;
+  }
+  .inbox-item:hover { border-color: var(--border2); }
+  .inbox-item.triaged {
+    opacity: .4;
+    pointer-events: none;
+  }
+
+  .inbox-item-text {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.5;
+    margin-bottom: 10px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .inbox-item-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .inbox-item-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  /* TRIAGE BUTTONS */
+  .triage-btns {
+    display: flex;
+    gap: 5px;
+  }
+  .triage-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 4px 9px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .triage-btn:hover { color: var(--text); border-color: var(--border2); }
+  .triage-btn.task:hover  { background: rgba(62,207,142,.1);  color: var(--success); border-color: rgba(62,207,142,.3); }
+  .triage-btn.note:hover  { background: rgba(124,106,247,.1); color: var(--accent);  border-color: rgba(124,106,247,.3); }
+  .triage-btn.goal:hover  { background: rgba(245,166,35,.1);  color: var(--warn);    border-color: rgba(245,166,35,.3); }
+  .triage-btn.later:hover { background: rgba(240,71,71,.08);  color: var(--danger);  border-color: rgba(240,71,71,.2); }
+
+  /* TRIAGE CONFIRM STRIP */
+  .triage-confirm {
+    display: none;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    gap: 8px;
+    flex-direction: column;
+  }
+  .triage-confirm.open { display: flex; }
+  .triage-confirm-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: .06em;
+  }
+  .triage-confirm-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .triage-confirm-btn {
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    cursor: pointer;
+    transition: all .15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .triage-confirm-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .triage-confirm-btn.cancel {
+    background: transparent;
+    border-color: transparent;
+    color: var(--muted);
+    font-size: 11px;
+  }
+  .triage-confirm-btn.cancel:hover { color: var(--text); border-color: transparent; }
+
+  /* EMPTY INBOX */
+  .inbox-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    color: var(--muted);
+    text-align: center;
+    gap: 10px;
+    padding: 40px 0;
+  }
+  .inbox-empty .icon { font-size: 28px; opacity: .3; }
+  .inbox-empty p { font-size: 13px; }
+
+  /* SKELETON */
+  .skeleton {
+    background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+    border-radius: 10px;
+    height: 80px;
+  }
+  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 13px;
+    color: var(--text);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all .3s;
+    z-index: 999;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.success { border-color: var(--success); color: var(--success); }
+  .toast.error   { border-color: var(--danger);  color: var(--danger); }
+
+  /* MOBILE */
+  @media (max-width: 700px) {
+    nav { padding: 12px 16px; }
+    nav a { display: none; }
+    nav a.active { display: block; }
+    nav .logo { display: none; }
+
+    .layout {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto;
+    }
+    .capture-panel {
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      padding: 24px 20px;
+    }
+    .inbox-panel { padding: 24px 20px; }
+    .analog-card { max-height: 300px; }
+  }
+</style>
+</head>
+<body>
+
+<script>
+  const SUPABASE_URL      = 'https://YOUR_PROJECT.supabase.co';
+  const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
+</script>
+
+<!-- NAV -->
+<nav>
+  <span class="logo">// workspace</span>
+  <a href="/">morning</a>
+  <a href="/tasks">tasks</a>
+  <a href="/goals">goals</a>
+  <a href="/notes">notes</a>
+  <a href="/calendar">calendar</a>
+  <a href="/capture" class="active">capture</a>
+  <span class="spacer"></span>
+  <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">
+    <span class="status-dot" id="statusDot"></span>
+    <span id="statusText">connecting…</span>
+  </span>
+</nav>
+
+<div class="layout">
+
+  <!-- LEFT: CAPTURE -->
+  <div class="capture-panel">
+    <div>
+      <div class="capture-eyebrow">Ugmonk-style inbox</div>
+      <div class="capture-heading">What's on<br><span>your mind?</span></div>
+    </div>
+
+    <!-- ANALOG CARD -->
+    <div class="analog-card">
+      <div class="card-label">Preempt Global · Capture</div>
+      <textarea
+        class="card-textarea"
+        id="captureInput"
+        placeholder="Just type. Don't think about where it goes yet…"
+        maxlength="1000"
+        autofocus
+        oninput="updateCharCount()"
+        onkeydown="handleKey(event)"
+      ></textarea>
+      <div class="card-footer">
+        <span class="card-char-count" id="charCount">0 / 1000</span>
+      </div>
+    </div>
+
+    <button class="capture-btn" id="captureBtn" onclick="captureThought()">
+      <span id="captureBtnText">Capture thought</span>
+    </button>
+
+    <div class="capture-hint">Cmd + Enter to capture · Triage later from inbox</div>
+  </div>
+
+  <!-- RIGHT: INBOX -->
+  <div class="inbox-panel">
+    <div class="inbox-header">
+      <h2>Inbox</h2>
+      <span class="inbox-count" id="inboxCount">0 to triage</span>
+    </div>
+    <div class="inbox-sub">Triage each item into its proper place — or discard it.</div>
+
+    <div class="inbox-list" id="inboxList">
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!--
+  SUPABASE SQL — run in SQL editor:
+
+  CREATE TABLE capture_items (
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    text text NOT NULL DEFAULT '',
+    triaged boolean DEFAULT false,
+    triage_destination text DEFAULT null,  -- 'task' | 'note' | 'goal' | 'discard'
+    created_at timestamptz DEFAULT now()
+  );
+
+  ALTER TABLE capture_items ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "allow all" ON capture_items FOR ALL USING (true);
+-->
+
+<script>
+// ── Supabase client
+const supa = (() => {
+  const headers = {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+    'Content-Type': 'application/json',
+    'Prefer': 'return=representation'
+  };
+  const base = `${SUPABASE_URL}/rest/v1`;
+
+  async function query(table, params = {}) {
+    const url = new URL(`${base}/${table}`);
+    Object.entries(params).forEach(([k,v]) => url.searchParams.set(k,v));
+    const r = await fetch(url, { headers });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  }
+
+  async function insert(table, data) {
+    const r = await fetch(`${base}/${table}`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(data)
+    });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  }
+
+  async function patch(table, id, data) {
+    const url = new URL(`${base}/${table}`);
+    url.searchParams.set('id', `eq.${id}`);
+    const r = await fetch(url, {
+      method: 'PATCH',
+      headers,
+      body: JSON.stringify(data)
+    });
+    if (!r.ok) throw new Error(await r.text());
+  }
+
+  async function remove(table, id) {
+    const url = new URL(`${base}/${table}`);
+    url.searchParams.set('id', `eq.${id}`);
+    const r = await fetch(url, { method: 'DELETE', headers });
+    if (!r.ok) throw new Error(await r.text());
+  }
+
+  return { query, insert, patch, remove };
+})();
+
+// ── State
+let items = [];
+
+// ── Helpers
+function toast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `toast show ${type}`;
+  setTimeout(() => el.className = 'toast', 2400);
+}
+
+function formatTime(iso) {
+  const d = new Date(iso);
+  const now = new Date();
+  const diff = Math.floor((now - d) / 1000);
+  if (diff < 60)   return 'just now';
+  if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${months[d.getMonth()]} ${d.getDate()}`;
+}
+
+function updateCharCount() {
+  const val = document.getElementById('captureInput').value;
+  const el  = document.getElementById('charCount');
+  el.textContent = `${val.length} / 1000`;
+  el.className = `card-char-count${val.length > 900 ? ' near' : ''}`;
+}
+
+function handleKey(e) {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+    e.preventDefault();
+    captureThought();
+  }
+}
+
+function updateInboxCount() {
+  const untriaged = items.filter(i => !i.triaged).length;
+  document.getElementById('inboxCount').textContent =
+    untriaged === 0 ? 'all clear' : `${untriaged} to triage`;
+}
+
+// ── Capture
+async function captureThought() {
+  const text = document.getElementById('captureInput').value.trim();
+  if (!text) {
+    document.getElementById('captureInput').focus();
+    return;
+  }
+
+  const btn     = document.getElementById('captureBtn');
+  const btnText = document.getElementById('captureBtnText');
+
+  btn.className = 'capture-btn saving';
+  btnText.textContent = 'Saving…';
+
+  try {
+    const [saved] = await supa.insert('capture_items', { text, triaged: false });
+    items.unshift(saved);
+
+    // Reset card
+    document.getElementById('captureInput').value = '';
+    updateCharCount();
+
+    btn.className = 'capture-btn saved';
+    btnText.textContent = '✓ Captured';
+
+    setTimeout(() => {
+      btn.className = 'capture-btn';
+      btnText.textContent = 'Capture thought';
+      document.getElementById('captureInput').focus();
+    }, 1200);
+
+    renderInbox();
+  } catch(e) {
+    btn.className = 'capture-btn';
+    btnText.textContent = 'Capture thought';
+    toast('Save failed — check connection', 'error');
+  }
+}
+
+// ── Triage
+let openTriageId = null;
+
+function openTriage(id, destination) {
+  // Close any open triage
+  document.querySelectorAll('.triage-confirm').forEach(el => el.classList.remove('open'));
+
+  const confirmEl = document.getElementById(`confirm-${id}`);
+  if (!confirmEl) return;
+
+  openTriageId = id;
+
+  const labelEl = confirmEl.querySelector('.triage-confirm-label');
+  const actionsEl = confirmEl.querySelector('.triage-confirm-actions');
+
+  actionsEl.innerHTML = '';
+
+  if (destination === 'task') {
+    labelEl.textContent = 'Send to tasks →';
+    const days = ['Today','Tomorrow','Next Monday'];
+    days.forEach(day => {
+      const b = document.createElement('button');
+      b.className = 'triage-confirm-btn';
+      b.textContent = day;
+      b.onclick = () => completeTriage(id, 'task', day);
+      actionsEl.appendChild(b);
+    });
+  } else if (destination === 'note') {
+    labelEl.textContent = 'Save as note →';
+    ['Reference','Fleeting'].forEach(type => {
+      const b = document.createElement('button');
+      b.className = 'triage-confirm-btn';
+      b.textContent = type;
+      b.onclick = () => completeTriage(id, 'note', type.toLowerCase());
+      actionsEl.appendChild(b);
+    });
+  } else if (destination === 'goal') {
+    labelEl.textContent = 'Add to goals →';
+    const b = document.createElement('button');
+    b.className = 'triage-confirm-btn';
+    b.textContent = 'Mark for weekly review';
+    b.onclick = () => completeTriage(id, 'goal', 'weekly');
+    actionsEl.appendChild(b);
+  } else if (destination === 'discard') {
+    labelEl.textContent = 'Discard this thought?';
+    const b = document.createElement('button');
+    b.className = 'triage-confirm-btn';
+    b.textContent = 'Yes, discard';
+    b.style.color = 'var(--danger)';
+    b.onclick = () => completeTriage(id, 'discard', null);
+    actionsEl.appendChild(b);
+  }
+
+  // Cancel button
+  const cancel = document.createElement('button');
+  cancel.className = 'triage-confirm-btn cancel';
+  cancel.textContent = 'Cancel';
+  cancel.onclick = () => {
+    confirmEl.classList.remove('open');
+    openTriageId = null;
+  };
+  actionsEl.appendChild(cancel);
+
+  confirmEl.classList.add('open');
+}
+
+async function completeTriage(id, destination, detail) {
+  const item = items.find(i => i.id === id);
+  if (!item) return;
+
+  try {
+    await supa.patch('capture_items', id, {
+      triaged: true,
+      triage_destination: destination
+    });
+
+    item.triaged = true;
+    item.triage_destination = destination;
+
+    // Visual feedback
+    const el = document.getElementById(`item-${id}`);
+    if (el) {
+      el.classList.add('triaged');
+      setTimeout(() => {
+        items = items.filter(i => i.id !== id);
+        renderInbox();
+      }, 600);
+    }
+
+    // Guidance toast
+    const msgs = {
+      task:    `Noted → go to /tasks to add it to tomorrow's custom slots`,
+      note:    `Noted → go to /notes to create a ${detail} note`,
+      goal:    `Noted → review during your next weekly planning session`,
+      discard: `Discarded`,
+    };
+    toast(msgs[destination] || 'Triaged', destination === 'discard' ? '' : 'success');
+    updateInboxCount();
+  } catch(e) {
+    toast('Triage failed', 'error');
+  }
+}
+
+// ── Render inbox
+function renderInbox() {
+  const list = document.getElementById('inboxList');
+  const untriaged = items.filter(i => !i.triaged);
+  updateInboxCount();
+
+  if (untriaged.length === 0) {
+    list.innerHTML = `
+      <div class="inbox-empty">
+        <div class="icon">✦</div>
+        <p>Inbox is clear.<br>Capture something new.</p>
+      </div>
+    `;
+    return;
+  }
+
+  list.innerHTML = '';
+  untriaged.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'inbox-item';
+    el.id = `item-${item.id}`;
+
+    el.innerHTML = `
+      <div class="inbox-item-text">${escapeHtml(item.text)}</div>
+      <div class="inbox-item-meta">
+        <span class="inbox-item-date">${formatTime(item.created_at)}</span>
+        <div class="triage-btns">
+          <button class="triage-btn task"  onclick="openTriage('${item.id}','task')">→ task</button>
+          <button class="triage-btn note"  onclick="openTriage('${item.id}','note')">→ note</button>
+          <button class="triage-btn goal"  onclick="openTriage('${item.id}','goal')">→ goal</button>
+          <button class="triage-btn later" onclick="openTriage('${item.id}','discard')">discard</button>
+        </div>
+      </div>
+      <div class="triage-confirm" id="confirm-${item.id}">
+        <div class="triage-confirm-label"></div>
+        <div class="triage-confirm-actions"></div>
+      </div>
+    `;
+
+    list.appendChild(el);
+  });
+}
+
+function escapeHtml(str) {
+  return str
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/\n/g,'<br>');
+}
+
+// ── Init
+async function init() {
+  try {
+    items = await supa.query('capture_items', {
+      triaged: 'eq.false',
+      order: 'created_at.desc',
+      select: 'id,text,triaged,triage_destination,created_at'
+    });
+    document.getElementById('statusDot').className = 'status-dot connected';
+    document.getElementById('statusText').textContent = 'connected';
+  } catch(e) {
+    document.getElementById('statusText').textContent = 'offline';
+    items = [];
+    toast('Could not connect to Supabase', 'error');
+  }
+  renderInbox();
+}
+
+init().catch(console.error);
+</script>
+</body>
+</html>
