@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>12 Week Year — Goals</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg:       #0d0d0f;
+    --surface:  #16161a;
+    --surface2: #1e1e24;
+    --border:   #2a2a35;
+    --border2:  #3a3a48;
+    --text:     #e8e8f0;
+    --muted:    #6b6b80;
+    --accent:   #7c6af7;
+    --accent2:  #5b4fd4;
+    --success:  #3ecf8e;
+    --warn:     #f5a623;
+    --danger:   #f04747;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 32px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  nav a {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 5px 12px;
+    border-radius: 6px;
+    transition: all .2s;
+    letter-spacing: .03em;
+  }
+  nav a:hover { color: var(--text); background: var(--surface2); }
+  nav a.active { color: var(--accent); background: rgba(124,106,247,.12); }
+  nav .logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    margin-right: 12px;
+    letter-spacing: -.02em;
+  }
+  nav .spacer { flex: 1; }
+  .status-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--muted);
+    margin-right: 6px;
+    vertical-align: middle;
+    transition: background .3s;
+  }
+  .status-dot.connected { background: var(--success); }
+
+  /* LAYOUT */
+  .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* PAGE HEADER */
+  .page-header {
+    margin-bottom: 40px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-header .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .page-header h1 {
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: -.04em;
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+  .page-header .sub {
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 300;
+  }
+
+  /* YEARLY GOAL */
+  .yearly-card {
+    background: linear-gradient(135deg, rgba(124,106,247,.08) 0%, rgba(62,207,142,.05) 100%);
+    border: 1px solid rgba(124,106,247,.25);
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .yearly-card::before {
+    content: '2025';
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'DM Mono', monospace;
+    font-size: 80px;
+    font-weight: 500;
+    color: rgba(124,106,247,.06);
+    pointer-events: none;
+    letter-spacing: -.04em;
+  }
+  .yearly-card .label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  .yearly-goals { display: flex; flex-direction: column; gap: 10px; }
+  .yearly-goal-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    font-weight: 400;
+  }
+  .yearly-goal-item .bullet {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+
+  /* 12-WEEK GOAL */
+  .twelve-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin-bottom: 28px;
+  }
+  .twelve-card .label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--warn);
+    margin-bottom: 14px;
+  }
+  .twelve-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .metric-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .metric-box .val {
+    font-family: 'DM Mono', monospace;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: -.03em;
+    margin-bottom: 4px;
+  }
+  .metric-box .lbl {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .twelve-tactics { margin-top: 4px; }
+  .twelve-tactics .tact-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .tactic-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .tactic-item::before {
+    content: '';
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--warn);
+    flex-shrink: 0;
+  }
+
+  /* WEEK PROGRESS */
+  .week-progress-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 32px;
+    margin-bottom: 28px;
+  }
+  .week-progress-card .label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--success);
+    margin-bottom: 16px;
+  }
+  .week-bar-wrap { margin-bottom: 10px; }
+  .week-bar-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+  .week-bar-meta .current { font-weight: 500; }
+  .week-bar-meta .remaining { color: var(--muted); }
+  .week-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 4px;
+  }
+  .week-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--success));
+    border-radius: 6px;
+    transition: width .8s cubic-bezier(.4,0,.2,1);
+  }
+  .week-dots {
+    display: flex;
+    gap: 4px;
+    margin-top: 12px;
+  }
+  .week-dot {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    transition: background .3s;
+    cursor: default;
+    position: relative;
+  }
+  .week-dot.past { background: var(--accent2); }
+  .week-dot.current { background: var(--accent); }
+
+  /* WEEKLY PLAN */
+  .weekly-section { margin-bottom: 28px; }
+  .weekly-section .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+    padding-left: 2px;
+  }
+
+  .week-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .week-row {
+    display: grid;
+    grid-template-columns: 56px 110px 1fr auto;
+    align-items: start;
+    gap: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    transition: all .2s;
+    cursor: default;
+  }
+  .week-row:hover { border-color: var(--border2); }
+  .week-row.current-week {
+    border-color: rgba(124,106,247,.4);
+    background: rgba(124,106,247,.05);
+  }
+  .week-row.past-week { opacity: .55; }
+  .week-row.future-week { opacity: .75; }
+
+  .week-row .wnum {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: -.01em;
+    padding-top: 1px;
+  }
+  .week-row.past-week .wnum { color: var(--muted); }
+
+  .week-row .wdates {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    padding-top: 3px;
+    letter-spacing: .01em;
+  }
+
+  .week-row .wtarget {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.45;
+    padding: 0 12px;
+  }
+  .week-row.current-week .wtarget { color: var(--text); font-weight: 500; }
+
+  .week-row .wnote-wrap { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; min-width: 120px; }
+
+  .week-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .week-badge.current { background: rgba(124,106,247,.15); color: var(--accent); border: 1px solid rgba(124,106,247,.25); }
+  .week-badge.past    { background: rgba(62,207,142,.1);  color: var(--success); border: 1px solid rgba(62,207,142,.2); }
+  .week-badge.future  { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+  .week-badge.disney  { background: rgba(245,166,35,.1); color: var(--warn); border: 1px solid rgba(245,166,35,.2); }
+
+  /* INLINE NOTE */
+  .week-note-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-align: right;
+    width: 120px;
+    caret-color: var(--accent);
+  }
+  .week-note-input::placeholder { color: var(--border2); }
+  .week-note-input:focus { color: var(--text); }
+
+  /* DAILY ACTIONS */
+  .daily-actions-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 32px;
+    margin-bottom: 28px;
+  }
+  .daily-actions-card .label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .daily-action-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .daily-action-row:last-child { border-bottom: none; }
+  .daily-action-row .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--success);
+    flex-shrink: 0;
+  }
+  .daily-action-row .link {
+    margin-left: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    text-decoration: none;
+    opacity: .7;
+    transition: opacity .2s;
+  }
+  .daily-action-row .link:hover { opacity: 1; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 13px;
+    color: var(--text);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all .3s;
+    z-index: 999;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.success { border-color: var(--success); color: var(--success); }
+  .toast.error   { border-color: var(--danger);  color: var(--danger); }
+
+  @media (max-width: 640px) {
+    .page { padding: 24px 16px 60px; }
+    nav { padding: 12px 16px; }
+    .twelve-metrics { grid-template-columns: 1fr 1fr; }
+    .week-row { grid-template-columns: 44px 90px 1fr; }
+    .week-row .wnote-wrap { display: none; }
+    .yearly-card::before { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<script>
+  const SUPABASE_URL     = 'https://YOUR_PROJECT.supabase.co';
+  const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
+
+  // 12-week block start date (Monday May 11, 2025)
+  const BLOCK_START = new Date('2025-05-11');
+
+  const WEEKS = [
+    { w: 1,  start: '2025-05-11', end: '2025-05-17', target: 'Systematize LinkedIn for growth/getting the right people at scale. Start instantly.' },
+    { w: 2,  start: '2025-05-18', end: '2025-05-24', target: 'Systematize inviting connections to Preempt Global LinkedIn.' },
+    { w: 3,  start: '2025-05-25', end: '2025-05-31', target: 'Have everything on mobile or pre-planned for Disney trip. Don\'t let it slip.' },
+    { w: 4,  start: '2025-06-01', end: '2025-06-07', target: 'Review best performing Instantly and LinkedIn & double down.' },
+    { w: 5,  start: '2025-06-08', end: '2025-06-14', target: 'Have at least 1 phone call with referral.' },
+    { w: 6,  start: '2025-06-15', end: '2025-06-21', target: 'Have at least 1 phone call with client.' },
+    { w: 7,  start: '2025-06-22', end: '2025-06-28', target: 'Personally message/email all LinkedIn convos and connections.' },
+    { w: 8,  start: '2025-06-29', end: '2025-07-05', target: 'More domains, more leads, more emails, more convos.' },
+    { w: 9,  start: '2025-07-06', end: '2025-07-12', target: 'Follow up with every interested past prospect.' },
+    { w: 10, start: '2025-07-13', end: '2025-07-19', target: 'How can this work without me and/or with more systems or SOPs.' },
+    { w: 11, start: '2025-07-20', end: '2025-07-26', target: 'Personal LinkedIn activate.' },
+    { w: 12, start: '2025-07-27', end: '2025-08-02', target: 'Work current clients a rev up for next 12 week year.' },
+  ];
+
+  const DAILY_ACTIONS = [
+    'Send 180 emails per day (via Instantly)',
+    'Connect with 5 people per day on LinkedIn',
+    'Comment on 8 LinkedIn posts per day',
+    'Invite connections to follow Preempt Global page',
+    'Check Form responses',
+  ];
+
+  const YEARLY_GOALS = [
+    '$250k revenue',
+    '3 clients per month',
+    'Rev up for $1M/year team',
+    'Quit job',
+    'Work remote',
+  ];
+</script>
+
+<!-- NAV -->
+<nav>
+  <span class="logo">// workspace</span>
+  <a href="/">morning</a>
+  <a href="/tasks">tasks</a>
+  <a href="/goals" class="active">goals</a>
+  <a href="/notes">notes</a>
+  <a href="/calendar">calendar</a>
+  <a href="/capture">capture</a>
+  <span class="spacer"></span>
+  <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">
+    <span class="status-dot" id="statusDot"></span>
+    <span id="statusText">connecting…</span>
+  </span>
+</nav>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="eyebrow">Brian Moran · 12 Week Year</div>
+    <h1>Preempt Global</h1>
+    <div class="sub" id="blockStatus">Loading block status…</div>
+  </div>
+
+  <!-- YEARLY GOAL -->
+  <div class="yearly-card">
+    <div class="label">Yearly vision — 2025</div>
+    <div class="yearly-goals" id="yearlyGoals"></div>
+  </div>
+
+  <!-- 12-WEEK GOAL -->
+  <div class="twelve-card">
+    <div class="label">12-week goal — May 11 → Aug 2, 2025</div>
+    <div class="twelve-metrics">
+      <div class="metric-box">
+        <div class="val">10,000</div>
+        <div class="lbl">emails sent</div>
+      </div>
+      <div class="metric-box">
+        <div class="val">$15k</div>
+        <div class="lbl">revenue target</div>
+      </div>
+      <div class="metric-box">
+        <div class="val">2 + 1</div>
+        <div class="lbl">cold offer + full review</div>
+      </div>
+    </div>
+    <div class="twelve-tactics">
+      <div class="tact-label">Tactical commitments</div>
+      <div class="tactic-item">Send 180 emails per day via Instantly</div>
+      <div class="tactic-item">Connect with 5 people per day on LinkedIn</div>
+      <div class="tactic-item">Comment on 8 LinkedIn posts per day</div>
+      <div class="tactic-item">Invite connections to follow Preempt Global page</div>
+    </div>
+  </div>
+
+  <!-- WEEK PROGRESS BAR -->
+  <div class="week-progress-card">
+    <div class="label">Block progress</div>
+    <div class="week-bar-wrap">
+      <div class="week-bar-meta">
+        <span class="current" id="weekCurrent">Week — of 12</span>
+        <span class="remaining" id="weekRemaining">— weeks remaining</span>
+      </div>
+      <div class="week-bar">
+        <div class="week-bar-fill" id="weekBarFill" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="week-dots" id="weekDots"></div>
+  </div>
+
+  <!-- WEEKLY PLAN -->
+  <div class="weekly-section">
+    <div class="section-label">Weekly targets</div>
+    <div class="week-grid" id="weekGrid"></div>
+  </div>
+
+  <!-- DAILY ACTIONS -->
+  <div class="daily-actions-card">
+    <div class="label">Daily actions → feeds /tasks</div>
+    <div id="dailyActionsList"></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!--
+  SUPABASE SQL — run in SQL editor:
+
+  CREATE TABLE week_notes (
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    week_num integer NOT NULL UNIQUE,
+    note text DEFAULT '',
+    updated_at timestamptz DEFAULT now()
+  );
+
+  ALTER TABLE week_notes ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "allow all" ON week_notes FOR ALL USING (true);
+-->
+
+<script>
+// ── Supabase client
+const supa = (() => {
+  const headers = {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+    'Content-Type': 'application/json',
+    'Prefer': 'return=representation'
+  };
+  const base = `${SUPABASE_URL}/rest/v1`;
+
+  async function query(table, params = {}) {
+    const url = new URL(`${base}/${table}`);
+    Object.entries(params).forEach(([k,v]) => url.searchParams.set(k,v));
+    const r = await fetch(url, { headers });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  }
+
+  async function upsert(table, data) {
+    const r = await fetch(`${base}/${table}`, {
+      method: 'POST',
+      headers: { ...headers, 'Prefer': 'resolution=merge-duplicates,return=representation' },
+      body: JSON.stringify(data)
+    });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  }
+
+  return { query, upsert };
+})();
+
+// ── Helpers
+function toast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `toast show ${type}`;
+  setTimeout(() => el.className = 'toast', 2400);
+}
+
+function getCurrentWeek() {
+  const now = new Date();
+  const diff = Math.floor((now - BLOCK_START) / (7 * 24 * 60 * 60 * 1000));
+  return Math.min(Math.max(diff + 1, 1), 12);
+}
+
+function formatDate(str) {
+  const d = new Date(str + 'T12:00:00');
+  return `${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]} ${d.getDate()}`;
+}
+
+function getWeekStatus(week, currentWeek) {
+  if (week.w < currentWeek) return 'past';
+  if (week.w === currentWeek) return 'current';
+  return 'future';
+}
+
+// ── Notes state
+let noteTimers = {};
+let notes = {};
+
+// ── Init
+async function init() {
+  // Connection check
+  try {
+    await supa.query('week_notes', { limit: '1' });
+    document.getElementById('statusDot').className = 'status-dot connected';
+    document.getElementById('statusText').textContent = 'connected';
+  } catch(e) {
+    document.getElementById('statusText').textContent = 'offline';
+  }
+
+  // Load notes
+  try {
+    const rows = await supa.query('week_notes', { select: 'week_num,note' });
+    rows.forEach(r => { notes[r.week_num] = r.note; });
+  } catch(e) { console.warn('Could not load notes', e); }
+
+  const currentWeek = getCurrentWeek();
+  const weeksRemaining = 12 - currentWeek;
+  const pct = Math.round((currentWeek / 12) * 100);
+
+  // Block status
+  document.getElementById('blockStatus').textContent =
+    `Week ${currentWeek} of 12 · ${weeksRemaining} weeks remaining · Block ends Aug 2, 2025`;
+
+  // Week progress
+  document.getElementById('weekCurrent').textContent   = `Week ${currentWeek} of 12`;
+  document.getElementById('weekRemaining').textContent = `${weeksRemaining} week${weeksRemaining !== 1 ? 's' : ''} remaining`;
+  document.getElementById('weekBarFill').style.width   = `${pct}%`;
+
+  // Week dots
+  const dotsEl = document.getElementById('weekDots');
+  for (let i = 1; i <= 12; i++) {
+    const dot = document.createElement('div');
+    dot.className = `week-dot${i < currentWeek ? ' past' : i === currentWeek ? ' current' : ''}`;
+    dot.title = `Week ${i}`;
+    dotsEl.appendChild(dot);
+  }
+
+  // Yearly goals
+  const yearlyEl = document.getElementById('yearlyGoals');
+  YEARLY_GOALS.forEach(g => {
+    const div = document.createElement('div');
+    div.className = 'yearly-goal-item';
+    div.innerHTML = `<div class="bullet"></div><span>${g}</span>`;
+    yearlyEl.appendChild(div);
+  });
+
+  // Weekly grid
+  const gridEl = document.getElementById('weekGrid');
+  WEEKS.forEach(week => {
+    const status = getWeekStatus(week, currentWeek);
+    const isDisney = week.w === 3;
+    const note = notes[week.w] || '';
+
+    const row = document.createElement('div');
+    row.className = `week-row ${status}-week`;
+
+    let badge = '';
+    if (status === 'current') badge = '<span class="week-badge current">current</span>';
+    else if (status === 'past') badge = '<span class="week-badge past">complete</span>';
+    else if (isDisney) badge = '<span class="week-badge disney">🏰 disney</span>';
+    else badge = '<span class="week-badge future">upcoming</span>';
+
+    row.innerHTML = `
+      <div class="wnum">W${week.w}</div>
+      <div class="wdates">${formatDate(week.start)} – ${formatDate(week.end)}</div>
+      <div class="wtarget">${week.target}</div>
+      <div class="wnote-wrap">
+        ${badge}
+        <input
+          class="week-note-input"
+          type="text"
+          placeholder="add note…"
+          value="${(note).replace(/"/g, '&quot;')}"
+          data-week="${week.w}"
+        >
+      </div>
+    `;
+
+    const input = row.querySelector('.week-note-input');
+    input.addEventListener('input', () => scheduleNoteSave(week.w, input.value));
+
+    gridEl.appendChild(row);
+  });
+
+  // Daily actions
+  const actionsEl = document.getElementById('dailyActionsList');
+  DAILY_ACTIONS.forEach(action => {
+    const div = document.createElement('div');
+    div.className = 'daily-action-row';
+    div.innerHTML = `
+      <div class="dot"></div>
+      <span>${action}</span>
+      <a class="link" href="/tasks">→ tasks</a>
+    `;
+    actionsEl.appendChild(div);
+  });
+}
+
+function scheduleNoteSave(weekNum, text) {
+  clearTimeout(noteTimers[weekNum]);
+  noteTimers[weekNum] = setTimeout(async () => {
+    notes[weekNum] = text;
+    try {
+      await supa.upsert('week_notes', [{ week_num: weekNum, note: text }]);
+    } catch(e) {
+      toast('Note save failed', 'error');
+    }
+  }, 800);
+}
+
+init().catch(console.error);
+</script>
+</body>
+</html>
