@@ -91,7 +91,7 @@ function renderHeader(activePage, options = {}) {
         display: inline-block;
         width: 6px; height: 6px;
         border-radius: 50%;
-        background: var(--muted);
+        background: var(--danger);
         margin-right: 6px;
         vertical-align: middle;
         transition: background .3s;
