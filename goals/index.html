@@ -31,50 +31,6 @@
     min-height: 100vh;
   }
 
-  /* NAV */
-  nav {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 14px 32px;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  nav a {
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    color: var(--muted);
-    text-decoration: none;
-    padding: 5px 12px;
-    border-radius: 6px;
-    transition: all .2s;
-    letter-spacing: .03em;
-  }
-  nav a:hover { color: var(--text); background: var(--surface2); }
-  nav a.active { color: var(--accent); background: rgba(124,106,247,.12); }
-  nav .logo {
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text);
-    margin-right: 12px;
-    letter-spacing: -.02em;
-  }
-  nav .spacer { flex: 1; }
-  .status-dot {
-    display: inline-block;
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--muted);
-    margin-right: 6px;
-    vertical-align: middle;
-    transition: background .3s;
-  }
-  .status-dot.connected { background: var(--success); }
-
   /* LAYOUT */
   .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
 
@@ -116,7 +72,7 @@
     overflow: hidden;
   }
   .yearly-card::before {
-    content: '2026';
+    content: '2025';
     position: absolute;
     right: 24px;
     top: 50%;
@@ -431,7 +387,6 @@
 
   @media (max-width: 640px) {
     .page { padding: 24px 16px 60px; }
-    nav { padding: 12px 16px; }
     .twelve-metrics { grid-template-columns: 1fr 1fr; }
     .week-row { grid-template-columns: 44px 90px 1fr; }
     .week-row .wnote-wrap { display: none; }
@@ -442,25 +397,25 @@
 <body>
 
 <script>
-  const SUPABASE_URL     = 'https://YOUR_PROJECT.supabase.co';
-  const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
+  const SUPABASE_URL     = 'https://lxarvlyxpegwpfxnzacj.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx4YXJ2bHl4cGVnd3BmeG56YWNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyNTA1NzgsImV4cCI6MjA5MzgyNjU3OH0.A4LjF_1LV7d522jhigD4izyjY6S0fgETgebeDKGUsQU';
 
-  // 12-week block start date (Monday May 11, 2026)
-  const BLOCK_START = new Date('2026-05-11');
+  // 12-week block start date (Monday May 11, 2025)
+  const BLOCK_START = new Date('2025-05-11');
 
   const WEEKS = [
-    { w: 1,  start: '2026-05-11', end: '2026-05-17', target: 'Systematize LinkedIn for growth/getting the right people at scale. Start instantly.' },
-    { w: 2,  start: '2026-05-18', end: '2026-05-24', target: 'Systematize inviting connections to Preempt Global LinkedIn.' },
-    { w: 3,  start: '2026-05-25', end: '2026-05-31', target: 'Have everything on mobile or pre-planned for Disney trip. Don\'t let it slip.' },
-    { w: 4,  start: '2026-06-01', end: '2026-06-07', target: 'Review best performing Instantly and LinkedIn & double down.' },
-    { w: 5,  start: '2026-06-08', end: '2026-06-14', target: 'Have at least 1 phone call with referral.' },
-    { w: 6,  start: '2026-06-15', end: '2026-06-21', target: 'Have at least 1 phone call with client.' },
-    { w: 7,  start: '2026-06-22', end: '2026-06-28', target: 'Personally message/email all LinkedIn convos and connections.' },
-    { w: 8,  start: '2026-06-29', end: '2026-07-05', target: 'More domains, more leads, more emails, more convos.' },
-    { w: 9,  start: '2026-07-06', end: '2026-07-12', target: 'Follow up with every interested past prospect.' },
-    { w: 10, start: '2026-07-13', end: '2026-07-19', target: 'How can this work without me and/or with more systems or SOPs.' },
-    { w: 11, start: '2026-07-20', end: '2026-07-26', target: 'Personal LinkedIn activate.' },
-    { w: 12, start: '2026-07-27', end: '2026-08-02', target: 'Work current clients a rev up for next 12 week year.' },
+    { w: 1,  start: '2025-05-11', end: '2025-05-17', target: 'Systematize LinkedIn for growth/getting the right people at scale. Start instantly.' },
+    { w: 2,  start: '2025-05-18', end: '2025-05-24', target: 'Systematize inviting connections to Preempt Global LinkedIn.' },
+    { w: 3,  start: '2025-05-25', end: '2025-05-31', target: 'Have everything on mobile or pre-planned for Disney trip. Don\'t let it slip.' },
+    { w: 4,  start: '2025-06-01', end: '2025-06-07', target: 'Review best performing Instantly and LinkedIn & double down.' },
+    { w: 5,  start: '2025-06-08', end: '2025-06-14', target: 'Have at least 1 phone call with referral.' },
+    { w: 6,  start: '2025-06-15', end: '2025-06-21', target: 'Have at least 1 phone call with client.' },
+    { w: 7,  start: '2025-06-22', end: '2025-06-28', target: 'Personally message/email all LinkedIn convos and connections.' },
+    { w: 8,  start: '2025-06-29', end: '2025-07-05', target: 'More domains, more leads, more emails, more convos.' },
+    { w: 9,  start: '2025-07-06', end: '2025-07-12', target: 'Follow up with every interested past prospect.' },
+    { w: 10, start: '2025-07-13', end: '2025-07-19', target: 'How can this work without me and/or with more systems or SOPs.' },
+    { w: 11, start: '2025-07-20', end: '2025-07-26', target: 'Personal LinkedIn activate.' },
+    { w: 12, start: '2025-07-27', end: '2025-08-02', target: 'Work current clients a rev up for next 12 week year.' },
   ];
 
   const DAILY_ACTIONS = [
@@ -480,21 +435,11 @@
   ];
 </script>
 
-<!-- NAV -->
-<nav>
-  <span class="logo">// workspace</span>
-  <a href="/">morning</a>
-  <a href="/tasks">tasks</a>
-  <a href="/goals" class="active">goals</a>
-  <a href="/notes">notes</a>
-  <a href="/calendar">calendar</a>
-  <a href="/capture">capture</a>
-  <span class="spacer"></span>
-  <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">
-    <span class="status-dot" id="statusDot"></span>
-    <span id="statusText">connecting…</span>
-  </span>
-</nav>
+<script src="/header.js"></script>
+
+<!-- HEADER -->
+<div id="site-header"></div>
+<script>renderHeader('goals', { showStatus: true });</script>
 
 <div class="page">
 
@@ -507,13 +452,13 @@
 
   <!-- YEARLY GOAL -->
   <div class="yearly-card">
-    <div class="label">Yearly vision — 2026</div>
+    <div class="label">Yearly vision — 2025</div>
     <div class="yearly-goals" id="yearlyGoals"></div>
   </div>
 
   <!-- 12-WEEK GOAL -->
   <div class="twelve-card">
-    <div class="label">12-week goal — May 11 → Aug 2, 2026</div>
+    <div class="label">12-week goal — May 11 → Aug 2, 2025</div>
     <div class="twelve-metrics">
       <div class="metric-box">
         <div class="val">10,000</div>
@@ -666,7 +611,7 @@ async function init() {
 
   // Block status
   document.getElementById('blockStatus').textContent =
-    `Week ${currentWeek} of 12 · ${weeksRemaining} weeks remaining · Block ends Aug 2, 2026`;
+    `Week ${currentWeek} of 12 · ${weeksRemaining} weeks remaining · Block ends Aug 2, 2025`;
 
   // Week progress
   document.getElementById('weekCurrent').textContent   = `Week ${currentWeek} of 12`;
