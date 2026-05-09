@@ -206,11 +206,28 @@ function renderHeader(activePage, options = {}) {
         }
         #site-header .h-logo {
           display: block;
-          margin-right: 10px;
+          margin-right: 0;
           font-size: 12px;
+          flex: 1;
         }
         #site-header .h-mobile-nav {
           display: flex;
+          flex: 0;
+        }
+        #site-header .h-mobile-select-wrap {
+          flex: unset;
+        }
+        #site-header .h-mobile-trigger {
+          width: auto;
+          min-width: 110px;
+        }
+        #site-header .h-mobile-dropdown {
+          left: auto;
+          right: 0;
+          min-width: 160px;
+        }
+        #site-header .h-spacer {
+          display: none;
         }
       }
     `;
