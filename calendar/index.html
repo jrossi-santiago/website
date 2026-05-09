@@ -36,50 +36,6 @@
     min-height: 100vh;
   }
 
-  /* NAV */
-  nav {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 14px 32px;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  nav a {
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    color: var(--muted);
-    text-decoration: none;
-    padding: 5px 12px;
-    border-radius: 6px;
-    transition: all .2s;
-    letter-spacing: .03em;
-  }
-  nav a:hover { color: var(--text); background: var(--surface2); }
-  nav a.active { color: var(--accent); background: rgba(124,106,247,.12); }
-  nav .logo {
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text);
-    margin-right: 12px;
-    letter-spacing: -.02em;
-  }
-  nav .spacer { flex: 1; }
-  .status-dot {
-    display: inline-block;
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--muted);
-    margin-right: 6px;
-    vertical-align: middle;
-    transition: background .3s;
-  }
-  .status-dot.connected { background: var(--success); }
-
   /* PAGE */
   .page { max-width: 1000px; margin: 0 auto; padding: 40px 24px 80px; }
 
@@ -523,9 +479,6 @@
 
   @media (max-width: 700px) {
     .page { padding: 20px 12px 60px; }
-    nav { padding: 12px 16px; }
-    nav a { display: none; }
-    nav a.active { display: block; }
     .page-header { flex-direction: column; align-items: flex-start; gap: 12px; }
     .cal-cell { min-height: 60px; padding: 4px 6px; }
     .cal-event { display: none; }
@@ -538,8 +491,8 @@
 <body>
 
 <script>
-  const SUPABASE_URL      = 'https://lxarvlyxpegwpfxnzacj.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx4YXJ2bHl4cGVnd3BmeG56YWNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyNTA1NzgsImV4cCI6MjA5MzgyNjU3OH0.A4LjF_1LV7d522jhigD4izyjY6S0fgETgebeDKGUsQU';
+  const SUPABASE_URL      = 'https://YOUR_PROJECT.supabase.co';
+  const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
 
   // 12 Week Year block
   const BLOCK_START = new Date('2025-05-11');
@@ -559,21 +512,11 @@
   ];
 </script>
 
-<!-- NAV -->
-<nav>
-  <span class="logo">// workspace</span>
-  <a href="/">morning</a>
-  <a href="/tasks">tasks</a>
-  <a href="/goals">goals</a>
-  <a href="/notes">notes</a>
-  <a href="/calendar" class="active">calendar</a>
-  <a href="/capture">capture</a>
-  <span class="spacer"></span>
-  <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">
-    <span class="status-dot" id="statusDot"></span>
-    <span id="statusText">connecting…</span>
-  </span>
-</nav>
+<script src="/header.js"></script>
+
+<!-- HEADER -->
+<div id="site-header"></div>
+<script>renderHeader('calendar', { showStatus: true });</script>
 
 <div class="page">
 
