@@ -38,40 +38,6 @@
     padding: 0;
   }
 
-  /* NAV */
-  nav {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 14px 32px;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  nav a {
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    color: var(--muted);
-    text-decoration: none;
-    padding: 5px 12px;
-    border-radius: 6px;
-    transition: all .2s;
-    letter-spacing: .03em;
-  }
-  nav a:hover { color: var(--text); background: var(--surface2); }
-  nav a.active { color: var(--accent); background: rgba(124,106,247,.12); }
-  nav .logo {
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text);
-    margin-right: 12px;
-    letter-spacing: -.02em;
-  }
-  nav .spacer { flex: 1; }
-
   /* LAYOUT */
   .page { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
 
@@ -625,7 +591,6 @@
 
   @media (max-width: 600px) {
     .page { padding: 24px 16px 60px; }
-    nav { padding: 12px 16px; }
     .contrib-grid { grid-template-columns: repeat(26, 1fr); }
     .page-header { flex-direction: column; align-items: flex-start; gap: 12px; }
     .date-nav { width: 100%; }
@@ -639,8 +604,8 @@
      CONFIGURATION — replace with your values
      ═══════════════════════════════════════════════ -->
 <script>
-  const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
-  const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
+  const SUPABASE_URL = 'https://lxarvlyxpegwpfxnzacj.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx4YXJ2bHl4cGVnd3BmeG56YWNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyNTA1NzgsImV4cCI6MjA5MzgyNjU3OH0.A4LjF_1LV7d522jhigD4izyjY6S0fgETgebeDKGUsQU';
 
   // ── Repeatable tasks per day (0=Sun,1=Mon,...,6=Sat)
   const DAILY_TASKS = {
@@ -656,21 +621,11 @@
   const CUSTOM_SLOTS = 5;
 </script>
 
-<!-- NAV -->
-<nav>
-  <span class="logo">// workspace</span>
-  <a href="/">morning</a>
-  <a href="/tasks" class="active">tasks</a>
-  <a href="/goals">goals</a>
-  <a href="/notes">notes</a>
-  <a href="/calendar">calendar</a>
-  <a href="/capture">capture</a>
-  <span class="spacer"></span>
-  <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">
-    <span class="status-dot" id="statusDot"></span>
-    <span id="statusText">connecting…</span>
-  </span>
-</nav>
+<script src="/header.js"></script>
+
+<!-- HEADER -->
+<div id="site-header"></div>
+<script>renderHeader('tasks', { showStatus: true });</script>
 
 <div class="page">
 
