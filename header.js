@@ -18,8 +18,6 @@ const HEADER_PAGES = [
 ];
 
 function renderHeader(activePage, options = {}) {
-  const { showStatus = false } = options;
-
   const container = document.getElementById('site-header');
   if (!container) {
     console.warn('header.js: no element with id="site-header" found.');
@@ -78,6 +76,8 @@ function renderHeader(activePage, options = {}) {
         background: rgba(124,106,247,.12);
       }
       #site-header .h-spacer { flex: 1; }
+
+      /* ── STATUS — always visible */
       #site-header .h-status {
         font-family: 'DM Mono', monospace;
         font-size: 11px;
@@ -85,6 +85,7 @@ function renderHeader(activePage, options = {}) {
         display: flex;
         align-items: center;
         gap: 0;
+        flex-shrink: 0;
       }
       #site-header .status-dot {
         display: inline-block;
@@ -102,18 +103,17 @@ function renderHeader(activePage, options = {}) {
       #site-header .h-mobile-nav {
         display: none;
         align-items: center;
-        gap: 10px;
-        flex: 1;
+        gap: 8px;
       }
       #site-header .h-mobile-select-wrap {
         position: relative;
-        flex: 1;
       }
       #site-header .h-mobile-trigger {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        width: 100%;
+        width: auto;
+        min-width: 110px;
         background: var(--surface2);
         border: 1px solid var(--border);
         border-radius: 8px;
@@ -148,8 +148,9 @@ function renderHeader(activePage, options = {}) {
       #site-header .h-mobile-dropdown {
         position: absolute;
         top: calc(100% + 6px);
-        left: 0;
         right: 0;
+        left: auto;
+        min-width: 160px;
         background: var(--surface);
         border: 1px solid var(--border2);
         border-radius: 10px;
@@ -212,21 +213,12 @@ function renderHeader(activePage, options = {}) {
         }
         #site-header .h-mobile-nav {
           display: flex;
-          flex: 0;
-        }
-        #site-header .h-mobile-select-wrap {
-          flex: unset;
-        }
-        #site-header .h-mobile-trigger {
-          width: auto;
-          min-width: 110px;
-        }
-        #site-header .h-mobile-dropdown {
-          left: auto;
-          right: 0;
-          min-width: 160px;
         }
         #site-header .h-spacer {
+          display: none;
+        }
+        /* status text hidden on mobile, just show the dot */
+        #site-header #statusText {
           display: none;
         }
       }
@@ -243,13 +235,6 @@ function renderHeader(activePage, options = {}) {
     `<a href="${p.href}"${p.key === activePage ? ' class="active"' : ''}>${p.label}</a>`
   ).join('');
 
-  const statusHTML = showStatus ? `
-    <div class="h-status">
-      <span class="status-dot" id="statusDot"></span>
-      <span id="statusText">connecting…</span>
-    </div>
-  ` : '';
-
   container.innerHTML = `
     <nav>
       <span class="h-logo">// workspace</span>
@@ -259,7 +244,15 @@ function renderHeader(activePage, options = {}) {
         ${desktopLinks}
       </div>
 
-      <!-- Mobile dropdown -->
+      <span class="h-spacer"></span>
+
+      <!-- Status dot — always visible on all pages -->
+      <div class="h-status">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">connecting…</span>
+      </div>
+
+      <!-- Mobile: status dot + page dropdown (right side) -->
       <div class="h-mobile-nav">
         <div class="h-mobile-select-wrap">
           <div class="h-mobile-trigger" id="hMobileTrigger" onclick="toggleHeaderDropdown()">
@@ -272,8 +265,6 @@ function renderHeader(activePage, options = {}) {
         </div>
       </div>
 
-      <span class="h-spacer"></span>
-      ${statusHTML}
     </nav>
   `;
 
