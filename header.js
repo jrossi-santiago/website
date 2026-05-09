@@ -205,7 +205,9 @@ function renderHeader(activePage, options = {}) {
           display: none;
         }
         #site-header .h-logo {
-          display: none;
+          display: block;
+          margin-right: 10px;
+          font-size: 12px;
         }
         #site-header .h-mobile-nav {
           display: flex;
