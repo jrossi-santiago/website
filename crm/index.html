@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deal Pipeline</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg:        #0d0d0f;
+    --surface:   #16161a;
+    --surface2:  #1e1e24;
+    --border:    #2a2a35;
+    --border2:   #3a3a48;
+    --text:      #e8e8f0;
+    --muted:     #6b6b80;
+    --accent:    #7c6af7;
+    --accent2:   #5b4fd4;
+    --success:   #3ecf8e;
+    --warn:      #f5a623;
+    --danger:    #f04747;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* LAYOUT */
+  .page { max-width: 1400px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* HEADER */
+  .page-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 36px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-header h1 {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -.03em;
+    line-height: 1;
+  }
+  .page-header h1 span {
+    display: block;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 6px;
+    letter-spacing: .04em;
+  }
+
+  .header-stats {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+  }
+  .stat {
+    text-align: right;
+  }
+  .stat-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: -.02em;
+  }
+  .stat-lbl {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  /* KANBAN BOARD */
+  .kanban {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    min-height: 600px;
+  }
+
+  .column {
+    display: flex;
+    flex-direction: column;
+    background: transparent;
+  }
+
+  .column-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .column-title {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .column-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    background: rgba(124,106,247,.15);
+    color: var(--accent);
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(124,106,247,.25);
+  }
+
+  .column-color-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .column.replied .column-color-indicator { background: var(--accent); }
+  .column.meeting .column-color-indicator { background: var(--warn); }
+  .column.closed .column-color-indicator { background: var(--success); }
+  .column.lost .column-color-indicator { background: var(--danger); }
+
+  .cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+    min-height: 400px;
+    background: rgba(22, 22, 26, .4);
+    border: 1px dashed var(--border2);
+    border-radius: 12px;
+    padding: 12px;
+    transition: all .2s;
+  }
+
+  .cards-container.drag-over {
+    background: rgba(124, 106, 247, .08);
+    border-color: var(--accent);
+  }
+
+  /* DEAL CARD */
+  .deal-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    cursor: grab;
+    transition: all .2s;
+    user-select: none;
+  }
+
+  .deal-card:active { cursor: grabbing; }
+  .deal-card:hover {
+    border-color: var(--border2);
+    box-shadow: 0 4px 12px rgba(0,0,0,.3);
+  }
+
+  .deal-card.dragging {
+    opacity: .5;
+  }
+
+  .deal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    gap: 8px;
+  }
+
+  .deal-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    flex: 1;
+    word-break: break-word;
+  }
+
+  .deal-actions {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .deal-action-btn {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all .15s;
+    font-size: 12px;
+  }
+
+  .deal-action-btn:hover {
+    color: var(--text);
+    background: var(--surface2);
+  }
+
+  .deal-company {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+  }
+
+  .deal-email {
+    font-size: 11px;
+    color: var(--muted);
+    word-break: break-all;
+    margin-bottom: 8px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .deal-notes {
+    font-size: 12px;
+    color: var(--text);
+    background: rgba(22,22,26,.8);
+    border-left: 2px solid var(--accent);
+    padding: 8px 10px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    max-height: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .deal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: .02em;
+  }
+
+  .deal-time {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  /* MODALS */
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,.7);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal.open {
+    display: flex;
+  }
+
+  .modal-content {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 14px;
+    padding: 28px;
+    width: 90%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 16px 40px rgba(0,0,0,.5);
+  }
+
+  .modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    letter-spacing: -.02em;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .form-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: .02em;
+    text-transform: uppercase;
+  }
+
+  .form-input {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    transition: all .15s;
+  }
+
+  .form-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(124,106,247,.1);
+  }
+
+  .form-input::placeholder {
+    color: var(--muted);
+  }
+
+  textarea.form-input {
+    resize: vertical;
+    min-height: 80px;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .form-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .btn {
+    flex: 1;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .btn-primary:hover {
+    background: var(--accent2);
+  }
+
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover {
+    background: var(--border);
+  }
+
+  .btn-danger {
+    background: transparent;
+    color: var(--danger);
+    border: 1px solid var(--danger);
+  }
+
+  .btn-danger:hover {
+    background: rgba(240,71,71,.1);
+  }
+
+  .btn-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 18px;
+    transition: all .15s;
+  }
+
+  .btn-close:hover {
+    color: var(--text);
+  }
+
+  /* ADD DEAL BUTTON */
+  .add-deal-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(124,106,247,.08);
+    border: 1px dashed var(--accent);
+    border-radius: 8px;
+    color: var(--accent);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all .15s;
+    margin-top: 12px;
+  }
+
+  .add-deal-btn:hover {
+    background: rgba(124,106,247,.12);
+    border-color: var(--accent);
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 13px;
+    color: var(--text);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all .3s;
+    z-index: 999;
+    pointer-events: none;
+  }
+
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.success { border-color: var(--success); color: var(--success); }
+  .toast.error { border-color: var(--danger); color: var(--danger); }
+
+  /* RESPONSIVE */
+  @media (max-width: 1200px) {
+    .kanban { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  }
+
+  @media (max-width: 768px) {
+    .page { padding: 24px 16px 60px; }
+    .kanban { grid-template-columns: 1fr; gap: 12px; }
+    .cards-container { min-height: 300px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     CONFIGURATION
+     ═══════════════════════════════════════════════ -->
+<script>
+  const SUPABASE_URL = 'https://lxarvlyxpegwpfxnzacj.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx4YXJ2bHl4cGVnd3BmeG56YWNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyNTA1NzgsImV4cCI6MjA5MzgyNjU3OH0.A4LjF_1LV7d522jhigD4izyjY6S0fgETgebeDKGUsQU';
+
+  const STATUSES = ['replied', 'meeting', 'closed', 'lost'];
+  const STATUS_LABELS = {
+    replied: 'Replied',
+    meeting: 'Meeting',
+    closed: 'Closed',
+    lost: 'Lost'
+  };
+</script>
+
+<script src="/header.js"></script>
+
+<!-- HEADER -->
+<div id="site-header"></div>
+<script>renderHeader('crm', { showStatus: true });</script>
+
+<div class="page">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <h1>
+      <span>Pipeline</span>
+      Deal CRM
+    </h1>
+    <div class="header-stats">
+      <div class="stat">
+        <div class="stat-val" id="totalDeals">0</div>
+        <div class="stat-lbl">Total Deals</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val" id="closedCount">0</div>
+        <div class="stat-lbl">Closed</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KANBAN BOARD -->
+  <div class="kanban">
+    <div class="column replied">
+      <div class="column-header">
+        <span class="column-title">
+          <div class="column-color-indicator"></div>
+          Replied
+        </span>
+        <span class="column-count" id="count-replied">0</span>
+      </div>
+      <div class="cards-container" id="container-replied" data-status="replied"></div>
+      <button class="add-deal-btn" onclick="openNewDealModal('replied')">+ Add Deal</button>
+    </div>
+
+    <div class="column meeting">
+      <div class="column-header">
+        <span class="column-title">
+          <div class="column-color-indicator"></div>
+          Meeting
+        </span>
+        <span class="column-count" id="count-meeting">0</span>
+      </div>
+      <div class="cards-container" id="container-meeting" data-status="meeting"></div>
+      <button class="add-deal-btn" onclick="openNewDealModal('meeting')">+ Add Deal</button>
+    </div>
+
+    <div class="column closed">
+      <div class="column-header">
+        <span class="column-title">
+          <div class="column-color-indicator"></div>
+          Closed
+        </span>
+        <span class="column-count" id="count-closed">0</span>
+      </div>
+      <div class="cards-container" id="container-closed" data-status="closed"></div>
+      <button class="add-deal-btn" onclick="openNewDealModal('closed')">+ Add Deal</button>
+    </div>
+
+    <div class="column lost">
+      <div class="column-header">
+        <span class="column-title">
+          <div class="column-color-indicator"></div>
+          Lost
+        </span>
+        <span class="column-count" id="count-lost">0</span>
+      </div>
+      <div class="cards-container" id="container-lost" data-status="lost"></div>
+      <button class="add-deal-btn" onclick="openNewDealModal('lost')">+ Add Deal</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- NEW/EDIT DEAL MODAL -->
+<div class="modal" id="dealModal">
+  <div class="modal-content">
+    <button class="btn-close" onclick="closeDealModal()">✕</button>
+    <h2 class="modal-title" id="modalTitle">New Deal</h2>
+    
+    <form onsubmit="saveDeal(event)">
+      <div class="form-group">
+        <label class="form-label">Contact Name *</label>
+        <input type="text" class="form-input" id="dealName" placeholder="John Smith" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Email *</label>
+        <input type="email" class="form-input" id="dealEmail" placeholder="john@company.com" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Company *</label>
+        <input type="text" class="form-input" id="dealCompany" placeholder="Acme Corp" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <textarea class="form-input" id="dealNotes" placeholder="First contact 5 days ago, warm response..."></textarea>
+      </div>
+
+      <div class="form-buttons">
+        <button type="button" class="btn btn-secondary" onclick="closeDealModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Deal</button>
+        <button type="button" class="btn btn-danger" id="deleteBtnContainer" style="display:none;" onclick="deleteDeal()">Delete</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ═══════════════════════════════════════════════
+     SUPABASE CLIENT
+     ═══════════════════════════════════════════════ -->
+<script>
+const supa = (() => {
+  const headers = {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+    'Content-Type': 'application/json'
+  };
+  const base = `${SUPABASE_URL}/rest/v1`;
+
+  async function query(table, params = {}) {
+    const url = new URL(`${base}/${table}`);
+    Object.entries(params).forEach(([k,v]) => url.searchParams.set(k, v));
+    const r = await fetch(url, { headers });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  }
+
+  async function upsert(table, data) {
+    const r = await fetch(`${base}/${table}`, {
+      method: 'POST',
+      headers: {
+        ...headers,
+        'Prefer': 'resolution=merge-duplicates,return=representation'
+      },
+      body: JSON.stringify(data)
+    });
+    
+    if (r.status === 409) {
+      console.log('Got 409 conflict, using PATCH to update existing records');
+      const results = [];
+      
+      for (const record of data) {
+        const url = new URL(`${base}/${table}`);
+        url.searchParams.set('id', `eq.${record.id}`);
+        
+        const patchR = await fetch(url, {
+          method: 'PATCH',
+          headers,
+          body: JSON.stringify(record)
+        });
+        
+        if (patchR.ok) results.push(record);
+      }
+      
+      return results;
+    }
+    
+    if (!r.ok) {
+      const err = await r.text();
+      console.error('Supabase upsert error:', err);
+      return [];
+    }
+    
+    const responseText = await r.text();
+    if (!responseText) return [];
+    try {
+      return JSON.parse(responseText);
+    } catch (e) {
+      console.error('JSON parse error:', e);
+      return [];
+    }
+  }
+
+  async function delete_(table, id) {
+    const url = new URL(`${base}/${table}`);
+    url.searchParams.set('id', `eq.${id}`);
+    const r = await fetch(url, { method: 'DELETE', headers });
+    if (!r.ok) throw new Error(await r.text());
+    return true;
+  }
+
+  return { query, upsert, delete_ };
+})();
+
+// ── State
+let deals = [];
+let editingDealId = null;
+
+// ── Helpers
+function toast(msg, type='') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `toast show ${type}`;
+  setTimeout(() => el.className = 'toast', 2400);
+}
+
+function formatTimeAgo(timestamp) {
+  if (!timestamp) return '—';
+  const now = new Date();
+  const date = new Date(timestamp);
+  const diff = now - date;
+  const days = Math.floor(diff / (1000*60*60*24));
+  const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+  
+  if (days > 0) return `${days}d ago`;
+  if (hours > 0) return `${hours}h ago`;
+  return 'just now';
+}
+
+function getDealStatus(deal) {
+  if (!deal.created_at) return { label: 'Created: —', activity: 'Activity: —' };
+  const created = formatTimeAgo(deal.created_at);
+  const updated = deal.updated_at ? formatTimeAgo(deal.updated_at) : 'never';
+  return { label: `Created: ${created}`, activity: `Activity: ${updated}` };
+}
+
+// ── Modal
+function openNewDealModal(status = 'replied') {
+  editingDealId = null;
+  document.getElementById('modalTitle').textContent = 'New Deal';
+  document.getElementById('dealName').value = '';
+  document.getElementById('dealEmail').value = '';
+  document.getElementById('dealCompany').value = '';
+  document.getElementById('dealNotes').value = '';
+  document.getElementById('deleteBtnContainer').style.display = 'none';
+  document.getElementById('dealModal').classList.add('open');
+  document.getElementById('dealName').focus();
+}
+
+function openEditDealModal(dealId) {
+  const deal = deals.find(d => d.id === dealId);
+  if (!deal) return;
+  
+  editingDealId = dealId;
+  document.getElementById('modalTitle').textContent = `Edit: ${deal.contact_name}`;
+  document.getElementById('dealName').value = deal.contact_name;
+  document.getElementById('dealEmail').value = deal.email;
+  document.getElementById('dealCompany').value = deal.company;
+  document.getElementById('dealNotes').value = deal.notes || '';
+  document.getElementById('deleteBtnContainer').style.display = 'block';
+  document.getElementById('dealModal').classList.add('open');
+}
+
+function closeDealModal() {
+  document.getElementById('dealModal').classList.remove('open');
+  editingDealId = null;
+}
+
+// Close modal on outside click
+document.getElementById('dealModal').addEventListener('click', e => {
+  if (e.target.id === 'dealModal') closeDealModal();
+});
+
+// ── Save Deal
+async function saveDeal(e) {
+  e.preventDefault();
+  
+  const name = document.getElementById('dealName').value.trim();
+  const email = document.getElementById('dealEmail').value.trim();
+  const company = document.getElementById('dealCompany').value.trim();
+  const notes = document.getElementById('dealNotes').value.trim();
+
+  if (!name || !email || !company) {
+    toast('Name, email, and company are required', 'error');
+    return;
+  }
+
+  try {
+    let dealData;
+    if (editingDealId) {
+      // Update existing
+      dealData = {
+        id: editingDealId,
+        contact_name: name,
+        email,
+        company,
+        notes,
+        updated_at: new Date().toISOString()
+      };
+    } else {
+      // Create new
+      dealData = {
+        contact_name: name,
+        email,
+        company,
+        notes,
+        status: 'replied',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+    }
+
+    await supa.upsert('deals', [dealData]);
+    toast(editingDealId ? 'Deal updated' : 'Deal created', 'success');
+    closeDealModal();
+    await loadDeals();
+  } catch(e) {
+    console.error('Save error:', e);
+    toast('Save failed', 'error');
+  }
+}
+
+// ── Delete Deal
+async function deleteDeal() {
+  if (!editingDealId) return;
+  if (!confirm('Delete this deal?')) return;
+
+  try {
+    await supa.delete_('deals', editingDealId);
+    toast('Deal deleted', 'success');
+    closeDealModal();
+    await loadDeals();
+  } catch(e) {
+    console.error('Delete error:', e);
+    toast('Delete failed', 'error');
+  }
+}
+
+// ── Load & Render
+async function loadDeals() {
+  try {
+    deals = await supa.query('deals', { order: 'created_at.desc' });
+  } catch(e) {
+    console.warn('Could not load deals', e);
+    deals = [];
+    toast('Failed to load deals', 'error');
+  }
+
+  renderDeals();
+  updateStats();
+}
+
+function renderDeals() {
+  STATUSES.forEach(status => {
+    const container = document.getElementById(`container-${status}`);
+    const statusDeals = deals.filter(d => d.status === status);
+    
+    container.innerHTML = '';
+    statusDeals.forEach(deal => {
+      const card = createDealCard(deal);
+      container.appendChild(card);
+    });
+
+    document.getElementById(`count-${status}`).textContent = statusDeals.length;
+  });
+}
+
+function createDealCard(deal) {
+  const card = document.createElement('div');
+  card.className = 'deal-card';
+  card.draggable = true;
+  card.dataset.dealId = deal.id;
+
+  const timings = getDealStatus(deal);
+
+  card.innerHTML = `
+    <div class="deal-header">
+      <div class="deal-name">${deal.contact_name}</div>
+      <div class="deal-actions">
+        <button class="deal-action-btn" onclick="openEditDealModal('${deal.id}')" title="Edit">✎</button>
+      </div>
+    </div>
+    <div class="deal-company">${deal.company}</div>
+    <div class="deal-email">${deal.email}</div>
+    ${deal.notes ? `<div class="deal-notes">${deal.notes}</div>` : ''}
+    <div class="deal-footer">
+      <div class="deal-time">
+        <span>${timings.label}</span>
+        <span>${timings.activity}</span>
+      </div>
+    </div>
+  `;
+
+  // Drag events
+  card.addEventListener('dragstart', () => {
+    card.classList.add('dragging');
+    card.style.opacity = '0.5';
+  });
+
+  card.addEventListener('dragend', () => {
+    card.classList.remove('dragging');
+    card.style.opacity = '1';
+    document.querySelectorAll('.cards-container').forEach(c => c.classList.remove('drag-over'));
+  });
+
+  return card;
+}
+
+function updateStats() {
+  const total = deals.length;
+  const closed = deals.filter(d => d.status === 'closed').length;
+  
+  document.getElementById('totalDeals').textContent = total;
+  document.getElementById('closedCount').textContent = closed;
+}
+
+// ── Drag & Drop
+document.addEventListener('dragover', e => {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  
+  const container = e.target.closest('.cards-container');
+  if (container) {
+    container.classList.add('drag-over');
+  }
+});
+
+document.addEventListener('dragleave', e => {
+  const container = e.target.closest('.cards-container');
+  if (container && !container.contains(e.relatedTarget)) {
+    container.classList.remove('drag-over');
+  }
+});
+
+document.addEventListener('drop', async e => {
+  e.preventDefault();
+  
+  const container = e.target.closest('.cards-container');
+  if (!container) return;
+  
+  container.classList.remove('drag-over');
+  
+  const card = document.querySelector('.deal-card.dragging');
+  if (!card) return;
+  
+  const dealId = card.dataset.dealId;
+  const newStatus = container.dataset.status;
+  
+  const deal = deals.find(d => d.id === dealId);
+  if (!deal || deal.status === newStatus) return;
+  
+  try {
+    deal.status = newStatus;
+    deal.updated_at = new Date().toISOString();
+    
+    await supa.upsert('deals', [deal]);
+    toast(`Moved to ${STATUS_LABELS[newStatus]}`, 'success');
+    await loadDeals();
+  } catch(e) {
+    console.error('Move error:', e);
+    toast('Move failed', 'error');
+    await loadDeals();
+  }
+});
+
+// ── Init
+async function init() {
+  try {
+    await supa.query('deals', { limit: 1 });
+    const statusEl = document.getElementById('statusDot');
+    if (statusEl) statusEl.className = 'status-dot connected';
+  } catch(e) {
+    const statusTx = document.getElementById('statusText');
+    if (statusTx) statusTx.textContent = 'offline';
+    toast('Supabase connection failed', 'error');
+  }
+
+  await loadDeals();
+}
+
+init().catch(console.error);
+</script>
+
+</body>
+</html>
