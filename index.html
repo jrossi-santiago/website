@@ -167,6 +167,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
+    align-items: start;
   }
   .image-card {
     background: var(--surface);
@@ -174,6 +175,8 @@
     border-radius: 12px;
     overflow: hidden;
     position: relative;
+    width: fit-content;
+    max-width: 100%;
   }
   .image-card-label {
     display: none;
