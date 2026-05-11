@@ -29,7 +29,6 @@
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
     font-family: 'DM Sans', sans-serif;
     background: var(--bg);
@@ -38,10 +37,8 @@
     padding: 0;
   }
 
-  /* LAYOUT */
   .page { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
 
-  /* HEADER */
   .page-header {
     display: flex;
     align-items: flex-end;
@@ -77,10 +74,7 @@
     text-transform: uppercase;
   }
 
-  /* PROGRESS BAR */
-  .progress-wrap {
-    margin-bottom: 32px;
-  }
+  .progress-wrap { margin-bottom: 32px; }
   .progress-meta {
     display: flex;
     justify-content: space-between;
@@ -110,7 +104,6 @@
     transition: width .5s cubic-bezier(.4,0,.2,1);
   }
 
-  /* SECTIONS */
   .section { margin-bottom: 32px; }
   .section-label {
     font-family: 'DM Mono', monospace;
@@ -122,9 +115,7 @@
     padding-left: 2px;
   }
 
-  /* TASK CARDS */
   .task-list { display: flex; flex-direction: column; gap: 6px; }
-
   .task-item {
     display: flex;
     align-items: center;
@@ -179,9 +170,7 @@
     color: var(--muted);
     letter-spacing: .04em;
   }
-  .task-item.rollover .task-type { color: var(--warn); }
 
-  /* CUSTOM INPUTS */
   .custom-slot {
     display: flex;
     align-items: center;
@@ -247,7 +236,6 @@
   }
   .custom-save-dot.saving { opacity: 1; }
 
-  /* CONTRIBUTION GRID */
   .grid-wrap {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -336,7 +324,6 @@
     color: var(--muted);
   }
 
-  /* TOAST */
   .toast {
     position: fixed;
     bottom: 28px;
@@ -357,7 +344,6 @@
   .toast.success { border-color: var(--success); color: var(--success); }
   .toast.error { border-color: var(--danger); color: var(--danger); }
 
-  /* STATUS DOT */
   .status-dot {
     display: inline-block;
     width: 6px; height: 6px;
@@ -368,7 +354,6 @@
   }
   .status-dot.connected { background: var(--success); }
 
-  /* LOADING */
   .skeleton {
     background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%);
     background-size: 200% 100%;
@@ -379,7 +364,6 @@
   }
   @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
-  /* TOOLTIP */
   .grid-cell[title]:hover::after {
     content: attr(title);
     position: absolute;
@@ -398,7 +382,6 @@
     z-index: 100;
   }
 
-  /* DATE NAVIGATOR */
   .date-nav {
     display: flex;
     align-items: center;
@@ -464,7 +447,6 @@
   .date-nav-today:hover { background: rgba(124,106,247,.2); }
   .date-nav-today.hidden { display: none; }
 
-  /* CALENDAR PICKER POPUP */
   .cal-popup {
     position: fixed;
     z-index: 500;
@@ -558,7 +540,6 @@
   }
   .cal-popup-day { position: relative; }
 
-  /* VIEW MODE BANNER */
   .view-mode-banner {
     display: none;
     align-items: center;
@@ -582,7 +563,6 @@
   }
   .view-mode-banner span { flex: 1; font-size: 12px; }
 
-  /* READ ONLY OVERLAY on custom inputs */
   .custom-slot.readonly {
     opacity: .7;
     pointer-events: none;
@@ -600,22 +580,18 @@
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════
-     CONFIGURATION — replace with your values
-     ═══════════════════════════════════════════════ -->
 <script>
   const SUPABASE_URL = 'https://lxarvlyxpegwpfxnzacj.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx4YXJ2bHl4cGVnd3BmeG56YWNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyNTA1NzgsImV4cCI6MjA5MzgyNjU3OH0.A4LjF_1LV7d522jhigD4izyjY6S0fgETgebeDKGUsQU';
 
-  // ── Repeatable tasks per day (0=Sun,1=Mon,...,6=Sat)
   const DAILY_TASKS = {
-    0: [], // Sunday — no repeatable tasks
+    0: [],
     1: ['Check Instantly','Check Form','Check LinkedIn','Comment on 8 LinkedIn posts','Send 5 connections'],
     2: ['Check Instantly','Check Form','Check LinkedIn','Comment on 8 LinkedIn posts','Send 5 connections'],
     3: ['Check Instantly','Check Form','Check LinkedIn','Comment on 8 LinkedIn posts','Send 5 connections','Write SEO Article'],
     4: ['Check Instantly','Check Form','Check LinkedIn','Comment on 8 LinkedIn posts','Send 5 connections','Invite connections to follow business page'],
     5: ['Check Instantly','Check Form','Check LinkedIn','Comment on 8 LinkedIn posts','Send 5 connections'],
-    6: [], // Saturday — no repeatable tasks
+    6: [],
   };
 
   const CUSTOM_SLOTS = 5;
@@ -623,13 +599,10 @@
 
 <script src="/header.js"></script>
 
-<!-- HEADER -->
 <div id="site-header"></div>
 <script>renderHeader('tasks', { showStatus: true });</script>
 
 <div class="page">
-
-  <!-- HEADER -->
   <div class="page-header">
     <h1>
       <span id="todayDate">—</span>
@@ -638,7 +611,6 @@
     <span class="day-badge" id="dayBadge">—</span>
   </div>
 
-  <!-- DATE NAVIGATOR -->
   <div class="date-nav" id="dateNav">
     <button class="date-nav-btn" id="datePrev" onclick="stepDay(-1)" title="Previous day">‹</button>
     <div class="date-nav-center">
@@ -648,7 +620,6 @@
     <button class="date-nav-btn" id="dateNext" onclick="stepDay(1)" title="Next day">›</button>
   </div>
 
-  <!-- CALENDAR PICKER POPUP -->
   <div class="cal-popup" id="calPopup">
     <div class="cal-popup-header">
       <button class="cal-popup-nav" onclick="pickerChangeMonth(-1)">‹</button>
@@ -662,12 +633,10 @@
     <div class="cal-popup-days" id="pickerDays"></div>
   </div>
 
-  <!-- VIEW MODE BANNER -->
   <div class="view-mode-banner" id="viewModeBanner">
     <span id="viewModeText"></span>
   </div>
 
-  <!-- PROGRESS -->
   <div class="progress-wrap">
     <div class="progress-meta">
       <span id="progressLabel">0 of 0 complete</span>
@@ -678,7 +647,6 @@
     </div>
   </div>
 
-  <!-- REPEATABLE TASKS -->
   <div class="section" id="repeatableSection">
     <div class="section-label">Daily repeatables</div>
     <div class="task-list" id="repeatableList">
@@ -688,13 +656,11 @@
     </div>
   </div>
 
-  <!-- CUSTOM TASKS -->
   <div class="section">
     <div class="section-label">Custom tasks <span style="color:var(--muted);font-size:9px;margin-left:6px;">AUTO-SAVES · INCOMPLETE ROLLS OVER</span></div>
     <div id="customList"></div>
   </div>
 
-  <!-- CONTRIBUTION GRID -->
   <div class="section">
     <div class="section-label">Productivity history</div>
     <div class="grid-wrap">
@@ -734,136 +700,16 @@
       </div>
     </div>
   </div>
-
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<!-- ═══════════════════════════════════════════════
-     SUPABASE SETUP INSTRUCTIONS
-     ═══════════════════════════════════════════════
-     Run these SQL statements in your Supabase SQL editor:
-
-     -- 1. TASK STATE (repeatable checkboxes per day)
-     CREATE TABLE task_state (
-       id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-       date date NOT NULL,
-       task_name text NOT NULL,
-       task_type text NOT NULL DEFAULT 'repeatable', -- 'repeatable' | 'custom'
-       is_done boolean DEFAULT false,
-       created_at timestamptz DEFAULT now(),
-       UNIQUE(date, task_name, task_type)
-     );
-
-     -- 2. CUSTOM TASKS (the 5 input slots, with rollover)
-     CREATE TABLE custom_tasks (
-       id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-       date date NOT NULL,
-       slot integer NOT NULL CHECK (slot BETWEEN 1 AND 5),
-       text text DEFAULT '',
-       is_done boolean DEFAULT false,
-       rolled_over boolean DEFAULT false,
-       created_at timestamptz DEFAULT now(),
-       UNIQUE(date, slot)
-     );
-
-     -- 3. DAILY SCORE (contribution grid data)
-     CREATE TABLE daily_score (
-       id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-       date date NOT NULL UNIQUE,
-       total_tasks integer DEFAULT 0,
-       done_tasks integer DEFAULT 0,
-       pct integer DEFAULT 0,  -- 0-100
-       grade integer DEFAULT 0 -- 0-4 for grid color
-     );
-
-     -- 4. MIDNIGHT FUNCTION (schedule via pg_cron or Supabase cron)
-     -- This scores the day and rolls over incomplete custom tasks
-     CREATE OR REPLACE FUNCTION score_and_rollover()
-     RETURNS void AS $$
-     DECLARE
-       yesterday date := CURRENT_DATE - 1;
-       total_r integer;
-       done_r integer;
-       total_c integer;
-       done_c integer;
-       total_all integer;
-       done_all integer;
-       pct_val integer;
-       grade_val integer;
-       slot_offset integer := 0;
-     BEGIN
-       -- Count repeatables for yesterday
-       SELECT COUNT(*), COUNT(*) FILTER (WHERE is_done)
-       INTO total_r, done_r
-       FROM task_state WHERE date = yesterday AND task_type = 'repeatable';
-
-       -- Count custom tasks for yesterday
-       SELECT COUNT(*) FILTER (WHERE text != ''), COUNT(*) FILTER (WHERE is_done AND text != '')
-       INTO total_c, done_c
-       FROM custom_tasks WHERE date = yesterday;
-
-       total_all := total_r + total_c;
-       done_all  := done_r + done_c;
-
-       IF total_all > 0 THEN
-         pct_val := ROUND((done_all::numeric / total_all) * 100);
-       ELSE
-         pct_val := 0;
-       END IF;
-
-       grade_val := CASE
-         WHEN pct_val = 0   THEN 0
-         WHEN pct_val < 40  THEN 1
-         WHEN pct_val < 60  THEN 2
-         WHEN pct_val < 85  THEN 3
-         ELSE 4
-       END;
-
-       INSERT INTO daily_score (date, total_tasks, done_tasks, pct, grade)
-       VALUES (yesterday, total_all, done_all, pct_val, grade_val)
-       ON CONFLICT (date) DO UPDATE
-         SET total_tasks = EXCLUDED.total_tasks,
-             done_tasks = EXCLUDED.done_tasks,
-             pct = EXCLUDED.pct,
-             grade = EXCLUDED.grade;
-
-       -- Roll over incomplete custom tasks (non-empty, not done)
-       -- Fill into today's earliest open slots
-       FOR slot_rec IN
-         SELECT text FROM custom_tasks
-         WHERE date = yesterday AND is_done = false AND text != ''
-         ORDER BY slot
-       LOOP
-         slot_offset := slot_offset + 1;
-         INSERT INTO custom_tasks (date, slot, text, rolled_over)
-         VALUES (CURRENT_DATE, slot_offset, slot_rec.text, true)
-         ON CONFLICT (date, slot) DO NOTHING;
-       END LOOP;
-     END;
-     $$ LANGUAGE plpgsql;
-
-     -- Schedule it (requires pg_cron extension enabled in Supabase):
-     SELECT cron.schedule('midnight-score', '0 0 * * *', 'SELECT score_and_rollover()');
-
-     -- Enable Row Level Security (optional but recommended):
-     ALTER TABLE task_state ENABLE ROW LEVEL SECURITY;
-     ALTER TABLE custom_tasks ENABLE ROW LEVEL SECURITY;
-     ALTER TABLE daily_score ENABLE ROW LEVEL SECURITY;
-     CREATE POLICY "allow all" ON task_state FOR ALL USING (true);
-     CREATE POLICY "allow all" ON custom_tasks FOR ALL USING (true);
-     CREATE POLICY "allow all" ON daily_score FOR ALL USING (true);
-═══════════════════════════════════════════════ -->
-
 <script>
-// ── Supabase client
 const supa = (() => {
   const headers = {
     'apikey': SUPABASE_ANON_KEY,
     'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-    'Content-Type': 'application/json',
-    'Prefer': 'return=representation'
+    'Content-Type': 'application/json'
   };
   const base = `${SUPABASE_URL}/rest/v1`;
 
@@ -878,11 +724,22 @@ const supa = (() => {
   async function upsert(table, data) {
     const r = await fetch(`${base}/${table}`, {
       method: 'POST',
-      headers: { ...headers, 'Prefer': 'resolution=merge-duplicates,return=representation' },
+      headers: {
+        ...headers,
+        'Prefer': 'resolution=merge-duplicates,return=representation'
+      },
       body: JSON.stringify(data)
     });
-    if (!r.ok) throw new Error(await r.text());
-    return r.json();
+    
+    if (!r.ok) {
+      const err = await r.text();
+      console.error('Supabase error:', err);
+      throw new Error(err);
+    }
+    
+    const responseText = await r.text();
+    if (!responseText) return [];
+    return JSON.parse(responseText);
   }
 
   async function patch(table, filter, data) {
@@ -896,7 +753,6 @@ const supa = (() => {
   return { query, upsert, patch };
 })();
 
-// ── Date helpers
 function makeDateStr(d) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
@@ -928,19 +784,15 @@ function checkSVG() {
   return `<svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 }
 
-// ── State
 let viewDateStr      = TODAY_STR;
 let repeatableStates = {};
 let customTasks      = [];
 let saveTimers       = {};
 let datesWithData    = new Set();
-
-// picker state
 let pickerYear  = new Date().getFullYear();
 let pickerMonth = new Date().getMonth();
 let pickerOpen  = false;
 
-// ── Date Navigator
 function updateDateNav() {
   const isToday  = viewDateStr === TODAY_STR;
   const viewDate = parseDateStr(viewDateStr);
@@ -954,7 +806,6 @@ function updateDateNav() {
   const todayBtn = document.getElementById('dateNavToday');
   todayBtn.classList.toggle('hidden', isToday);
 
-  // View mode banner
   const banner   = document.getElementById('viewModeBanner');
   const bannerTx = document.getElementById('viewModeText');
   if (isToday) {
@@ -982,7 +833,6 @@ function goToday() {
   loadDay();
 }
 
-// ── Calendar Picker
 function toggleCalPicker() {
   pickerOpen = !pickerOpen;
   const popup = document.getElementById('calPopup');
@@ -1023,16 +873,13 @@ function renderPicker() {
   const lastDay  = new Date(pickerYear, pickerMonth + 1, 0);
   const startDow = firstDay.getDay();
 
-  // Leading blanks
   for (let i = 0; i < startDow; i++) {
     const prev = new Date(pickerYear, pickerMonth, 1 - (startDow - i));
     addPickerDay(daysEl, prev, true);
   }
-  // Current month
   for (let d = 1; d <= lastDay.getDate(); d++) {
     addPickerDay(daysEl, new Date(pickerYear, pickerMonth, d), false);
   }
-  // Trailing blanks
   const total = startDow + lastDay.getDate();
   const trailing = (7 - (total % 7)) % 7;
   for (let i = 1; i <= trailing; i++) {
@@ -1059,7 +906,6 @@ function addPickerDay(container, date, otherMonth) {
   container.appendChild(btn);
 }
 
-// close picker on outside click
 document.addEventListener('click', e => {
   if (pickerOpen &&
       !document.getElementById('calPopup').contains(e.target) &&
@@ -1068,7 +914,6 @@ document.addEventListener('click', e => {
   }
 });
 
-// ── Load a day (repeatables + custom tasks)
 async function loadDay() {
   updateDateNav();
   const isToday  = viewDateStr === TODAY_STR;
@@ -1086,7 +931,6 @@ async function loadDay() {
   ]);
 }
 
-// ── Repeatables
 async function loadRepeatables(dow, isToday, isPast, isFuture) {
   const tasks   = DAILY_TASKS[dow] || [];
   const listEl  = document.getElementById('repeatableList');
@@ -1099,7 +943,6 @@ async function loadRepeatables(dow, isToday, isPast, isFuture) {
   }
   sectionEl.style.display = '';
 
-  // Show skeletons while loading
   listEl.innerHTML = '<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>';
 
   try {
@@ -1111,14 +954,13 @@ async function loadRepeatables(dow, isToday, isPast, isFuture) {
     rows.forEach(r => { repeatableStates[r.task_name] = r.is_done; });
   } catch(e) { console.warn('Could not load repeatable state', e); }
 
-  // Only seed today's rows — never write to past/future
   if (isToday) {
     const upsertData = tasks.map(name => ({
       date: viewDateStr, task_name: name,
       task_type: 'repeatable',
       is_done: repeatableStates[name] ?? false
     }));
-    try { await supa.upsert('task_state', upsertData); } catch(e) {}
+    try { await supa.upsert('task_state', upsertData); } catch(e) { console.error('Seed error:', e); }
   }
 
   listEl.innerHTML = '';
@@ -1132,7 +974,6 @@ async function loadRepeatables(dow, isToday, isPast, isFuture) {
       <span class="task-name">${name}</span>
       <span class="task-type">daily</span>
     `;
-    // Only allow toggling on today
     if (isToday) {
       el.addEventListener('click', () => toggleRepeatable(name, el, dow));
     } else {
@@ -1157,6 +998,7 @@ async function toggleRepeatable(name, el, dow) {
       task_type: 'repeatable', is_done: newDone
     }]);
   } catch(e) {
+    console.error('Save error:', e);
     toast('Save failed', 'error');
     el.classList.toggle('done', !newDone);
     repeatableStates[name] = !newDone;
@@ -1164,7 +1006,6 @@ async function toggleRepeatable(name, el, dow) {
   }
 }
 
-// ── Custom Tasks
 async function loadCustomTasks(isToday, isPast, isFuture) {
   const listEl = document.getElementById('customList');
   listEl.innerHTML = '<div class="skeleton" style="height:48px;margin-bottom:6px"></div>';
@@ -1181,12 +1022,12 @@ async function loadCustomTasks(isToday, isPast, isFuture) {
       return existing || { id: null, slot: i+1, text: '', is_done: false, rolled_over: false };
     });
   } catch(e) {
+    console.warn('Could not load custom tasks', e);
     customTasks = Array.from({length: CUSTOM_SLOTS}, (_, i) =>
       ({ id: null, slot: i+1, text: '', is_done: false, rolled_over: false })
     );
   }
 
-  // Only seed on today
   if (isToday) {
     const toSeed = customTasks.filter(t => !t.id).map(t => ({
       date: viewDateStr, slot: t.slot, text: t.text,
@@ -1199,7 +1040,7 @@ async function loadCustomTasks(isToday, isPast, isFuture) {
           const t = customTasks.find(c => c.slot === s.slot);
           if (t) t.id = s.id;
         });
-      } catch(e) {}
+      } catch(e) { console.error('Custom task seed error:', e); }
     }
   }
 
@@ -1211,7 +1052,6 @@ function renderCustomTasks(isToday = true) {
   const listEl = document.getElementById('customList');
   listEl.innerHTML = '';
 
-  // On past/future: only show slots that have text, or show all 5 on today
   const slotsToShow = isToday
     ? customTasks
     : customTasks.filter(t => t.text.trim().length > 0);
@@ -1287,6 +1127,7 @@ function scheduleSave(slot, text) {
       }]);
       if (dot) dot.classList.remove('saving');
     } catch(e) {
+      console.error('Auto-save error:', e);
       toast('Auto-save failed', 'error');
       if (dot) dot.classList.remove('saving');
     }
@@ -1310,6 +1151,7 @@ async function toggleCustom(slot, wrap, input, checkEl) {
       is_done: newDone, rolled_over: task.rolled_over
     }]);
   } catch(e) {
+    console.error('Toggle error:', e);
     toast('Save failed', 'error');
     task.is_done = !newDone;
     wrap.classList.toggle('done', !newDone);
@@ -1318,7 +1160,6 @@ async function toggleCustom(slot, wrap, input, checkEl) {
   }
 }
 
-// ── Progress
 function updateProgress(dow) {
   const tasks  = DAILY_TASKS[dow] || [];
   const rTotal = tasks.length;
@@ -1337,7 +1178,6 @@ function updateProgress(dow) {
   document.getElementById('progressFill').style.width  = `${pct}%`;
 }
 
-// ── Contribution Grid
 async function loadGrid() {
   const gridEl  = document.getElementById('contribGrid');
   const monthEl = document.getElementById('gridMonths');
@@ -1364,7 +1204,6 @@ async function loadGrid() {
     });
   } catch(e) { console.warn('Could not load scores', e); }
 
-  // Month labels
   const months = [];
   let lastMonth = -1;
   cells.forEach((date, i) => {
@@ -1396,7 +1235,6 @@ async function loadGrid() {
     cell.title = score
       ? `${ds}: ${score.done_tasks}/${score.total_tasks} (${score.pct}%)`
       : `${ds}: no data`;
-    // Click a grid cell to jump to that day
     cell.style.cursor = 'pointer';
     cell.addEventListener('click', () => {
       viewDateStr = ds;
@@ -1406,7 +1244,6 @@ async function loadGrid() {
     gridEl.appendChild(cell);
   });
 
-  // Stats
   const allScores   = Object.values(scores).filter(s => s.pct > 0);
   const totalActive = allScores.length;
   const avgPct      = totalActive > 0
@@ -1433,7 +1270,6 @@ async function loadGrid() {
   document.getElementById('statAvg').textContent    = avgPct + '%';
 }
 
-// ── Boot
 async function init() {
   document.getElementById('todayDate').textContent =
     `${MONTH_NAMES[new Date().getMonth()]} ${new Date().getDate()}, ${new Date().getFullYear()} — `;
@@ -1442,10 +1278,13 @@ async function init() {
 
   try {
     await supa.query('daily_score', { limit: 1 });
-    document.getElementById('statusDot').className = 'status-dot connected';
-    document.getElementById('statusText').textContent = 'connected';
+    const statusEl = document.getElementById('statusDot');
+    if (statusEl) statusEl.className = 'status-dot connected';
+    const statusTx = document.getElementById('statusText');
+    if (statusTx) statusTx.textContent = 'connected';
   } catch(e) {
-    document.getElementById('statusText').textContent = 'offline';
+    const statusTx = document.getElementById('statusText');
+    if (statusTx) statusTx.textContent = 'offline';
     toast('Supabase connection failed — check your config', 'error');
   }
 
@@ -1454,6 +1293,6 @@ async function init() {
 
 init().catch(console.error);
 </script>
--e 
+
 </body>
 </html>
