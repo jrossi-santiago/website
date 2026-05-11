@@ -176,18 +176,7 @@
     position: relative;
   }
   .image-card-label {
-    position: absolute;
-    top: 10px; left: 10px;
-    font-family: 'DM Mono', monospace;
-    font-size: 8px;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    background: rgba(13,13,15,.75);
-    color: var(--muted);
-    padding: 3px 8px;
-    border-radius: 4px;
-    backdrop-filter: blur(4px);
-    z-index: 2;
+    display: none;
   }
   .image-card img {
     width: 100%;
@@ -195,7 +184,7 @@
     display: block;
     transition: transform .4s ease;
   }
-  .image-card:hover img { transform: scale(1.03); }
+  .image-card:hover img { transform: scale(1.02); }
   .image-placeholder {
     width: 100%;
     height: 200px;
