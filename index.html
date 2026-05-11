@@ -587,15 +587,16 @@ async function loadImage(bucket, cacheField, cardId) {
   const today = getTodayStr();
   const card  = document.getElementById(cardId);
   const label = card.querySelector('.image-card-label').outerHTML;
-  try {
-    const cached = await supa.query('daily_media_cache', { date: `eq.${today}`, select: cacheField });
-    if (cached?.[0]?.[cacheField]) {
-      card.innerHTML = label + `<img src="${cached[0][cacheField]}" alt="${cacheField}" loading="lazy" class="fade-in">`;
-      return;
-    }
-  } catch(e) {
-    console.warn(`Cache lookup failed for ${bucket}:`, e);
+  
+  // Check localStorage for today's cached image
+  const localStorageKey = `${cacheField}_${today}`;
+  const cachedUrl = localStorage.getItem(localStorageKey);
+  if (cachedUrl) {
+    console.log(`Using cached ${bucket} image from localStorage:`, cachedUrl);
+    card.innerHTML = label + `<img src="${cachedUrl}" alt="${cacheField}" loading="lazy" class="fade-in">`;
+    return;
   }
+
   try {
     const files  = await supa.listBucket(bucket);
     console.log(`Files in ${bucket}:`, files);
@@ -608,10 +609,15 @@ async function loadImage(bucket, cacheField, cardId) {
     const url  = supa.publicUrl(bucket, pick.name);
     console.log(`Loading image from ${bucket}:`, url);
     card.innerHTML = label + `<img src="${url}" alt="${cacheField}" loading="lazy" class="fade-in">`;
+    
+    // Cache in localStorage for today
+    localStorage.setItem(localStorageKey, url);
+    
+    // Also cache in Supabase for redundancy
     try {
       await supa.upsert('daily_media_cache', [{ date: today, [cacheField]: url }]);
     } catch(cacheErr) {
-      console.warn(`Could not cache image URL:`, cacheErr);
+      console.warn(`Could not cache image URL in Supabase:`, cacheErr);
     }
   } catch(e) {
     card.innerHTML = label + `<div class="image-placeholder">Could not load from ${bucket}</div>`;
