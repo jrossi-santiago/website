@@ -15,6 +15,7 @@ const HEADER_PAGES = [
   { key: 'notes',    label: 'notes',    href: '/notes'     },
   { key: 'calendar', label: 'calendar', href: '/calendar'  },
   { key: 'capture',  label: 'capture',  href: '/capture'   },
+  { key: 'crm',      label: 'crm',      href: '/crm'       },
 ];
 
 function renderHeader(activePage, options = {}) {
