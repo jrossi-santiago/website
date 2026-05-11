@@ -368,7 +368,7 @@
     'Trust in the Lord with all your heart',
     'You are called. You are equipped. Go.',
     'Consistency beats intensity every single time',
-    'Lets get drunk and be sombody.',
+    "Let's get drunk and be somebody.",
   ];
 </script>
 
@@ -492,7 +492,9 @@ const supa = (() => {
       body: JSON.stringify({ limit: 200, offset: 0, prefix: '' })
     });
     if (!r.ok) throw new Error(await r.text());
-    return r.json();
+    const data = await r.json();
+    // The API returns an array of objects with { name, id, updated_at, created_at, ... }
+    return Array.isArray(data) ? data : [];
   }
   function publicUrl(bucket, filename) {
     return `${store}/object/public/${bucket}/${filename}`;
@@ -600,18 +602,29 @@ async function loadImage(bucket, cacheField, cardId) {
       card.innerHTML = label + `<img src="${cached[0][cacheField]}" alt="${cacheField}" loading="lazy" class="fade-in">`;
       return;
     }
-  } catch(e) {}
+  } catch(e) {
+    console.warn(`Cache lookup failed for ${bucket}:`, e);
+  }
   try {
     const files  = await supa.listBucket(bucket);
+    console.log(`Files in ${bucket}:`, files);
     const images = files.filter(f => f.name && /\.(jpg|jpeg|png|gif|webp)$/i.test(f.name));
-    if (!images.length) { card.innerHTML = label + `<div class="image-placeholder">No images found</div>`; return; }
+    if (!images.length) { 
+      card.innerHTML = label + `<div class="image-placeholder">No images found in ${bucket}</div>`; 
+      return; 
+    }
     const pick = images[Math.floor(Math.random() * images.length)];
     const url  = supa.publicUrl(bucket, pick.name);
+    console.log(`Loading image from ${bucket}:`, url);
     card.innerHTML = label + `<img src="${url}" alt="${cacheField}" loading="lazy" class="fade-in">`;
-    await supa.upsert('daily_media_cache', [{ date: today, [cacheField]: url }]);
+    try {
+      await supa.upsert('daily_media_cache', [{ date: today, [cacheField]: url }]);
+    } catch(cacheErr) {
+      console.warn(`Could not cache image URL:`, cacheErr);
+    }
   } catch(e) {
-    card.innerHTML = label + `<div class="image-placeholder">Could not load image</div>`;
-    console.warn(`${bucket} error`, e);
+    card.innerHTML = label + `<div class="image-placeholder">Could not load from ${bucket}</div>`;
+    console.warn(`${bucket} error:`, e);
   }
 }
 
