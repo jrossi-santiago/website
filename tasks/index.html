@@ -29,6 +29,7 @@
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
   body {
     font-family: 'DM Sans', sans-serif;
     background: var(--bg);
@@ -37,8 +38,10 @@
     padding: 0;
   }
 
+  /* LAYOUT */
   .page { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
 
+  /* HEADER */
   .page-header {
     display: flex;
     align-items: flex-end;
@@ -74,7 +77,10 @@
     text-transform: uppercase;
   }
 
-  .progress-wrap { margin-bottom: 32px; }
+  /* PROGRESS BAR */
+  .progress-wrap {
+    margin-bottom: 32px;
+  }
   .progress-meta {
     display: flex;
     justify-content: space-between;
@@ -104,6 +110,7 @@
     transition: width .5s cubic-bezier(.4,0,.2,1);
   }
 
+  /* SECTIONS */
   .section { margin-bottom: 32px; }
   .section-label {
     font-family: 'DM Mono', monospace;
@@ -115,7 +122,9 @@
     padding-left: 2px;
   }
 
+  /* TASK CARDS */
   .task-list { display: flex; flex-direction: column; gap: 6px; }
+
   .task-item {
     display: flex;
     align-items: center;
@@ -170,7 +179,9 @@
     color: var(--muted);
     letter-spacing: .04em;
   }
+  .task-item.rollover .task-type { color: var(--warn); }
 
+  /* CUSTOM INPUTS */
   .custom-slot {
     display: flex;
     align-items: center;
@@ -236,6 +247,7 @@
   }
   .custom-save-dot.saving { opacity: 1; }
 
+  /* CONTRIBUTION GRID */
   .grid-wrap {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -324,6 +336,7 @@
     color: var(--muted);
   }
 
+  /* TOAST */
   .toast {
     position: fixed;
     bottom: 28px;
@@ -344,6 +357,7 @@
   .toast.success { border-color: var(--success); color: var(--success); }
   .toast.error { border-color: var(--danger); color: var(--danger); }
 
+  /* STATUS DOT */
   .status-dot {
     display: inline-block;
     width: 6px; height: 6px;
@@ -354,6 +368,7 @@
   }
   .status-dot.connected { background: var(--success); }
 
+  /* LOADING */
   .skeleton {
     background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%);
     background-size: 200% 100%;
@@ -364,6 +379,7 @@
   }
   @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
+  /* TOOLTIP */
   .grid-cell[title]:hover::after {
     content: attr(title);
     position: absolute;
@@ -382,6 +398,7 @@
     z-index: 100;
   }
 
+  /* DATE NAVIGATOR */
   .date-nav {
     display: flex;
     align-items: center;
@@ -447,6 +464,7 @@
   .date-nav-today:hover { background: rgba(124,106,247,.2); }
   .date-nav-today.hidden { display: none; }
 
+  /* CALENDAR PICKER POPUP */
   .cal-popup {
     position: fixed;
     z-index: 500;
@@ -540,6 +558,7 @@
   }
   .cal-popup-day { position: relative; }
 
+  /* VIEW MODE BANNER */
   .view-mode-banner {
     display: none;
     align-items: center;
@@ -563,6 +582,7 @@
   }
   .view-mode-banner span { flex: 1; font-size: 12px; }
 
+  /* READ ONLY OVERLAY on custom inputs */
   .custom-slot.readonly {
     opacity: .7;
     pointer-events: none;
@@ -580,18 +600,22 @@
 </head>
 <body>
 
+<!-- ═══════════════════════════════════════════════
+     CONFIGURATION — replace with your values
+     ═══════════════════════════════════════════════ -->
 <script>
   const SUPABASE_URL = 'https://lxarvlyxpegwpfxnzacj.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx4YXJ2bHl4cGVnd3BmeG56YWNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyNTA1NzgsImV4cCI6MjA5MzgyNjU3OH0.A4LjF_1LV7d522jhigD4izyjY6S0fgETgebeDKGUsQU';
 
+  // ── Repeatable tasks per day (0=Sun,1=Mon,...,6=Sat)
   const DAILY_TASKS = {
-    0: [],
+    0: [], // Sunday — no repeatable tasks
     1: ['Check Instantly','Check Form','Check LinkedIn','Comment on 8 LinkedIn posts','Send 5 connections'],
     2: ['Check Instantly','Check Form','Check LinkedIn','Comment on 8 LinkedIn posts','Send 5 connections'],
     3: ['Check Instantly','Check Form','Check LinkedIn','Comment on 8 LinkedIn posts','Send 5 connections','Write SEO Article'],
     4: ['Check Instantly','Check Form','Check LinkedIn','Comment on 8 LinkedIn posts','Send 5 connections','Invite connections to follow business page'],
     5: ['Check Instantly','Check Form','Check LinkedIn','Comment on 8 LinkedIn posts','Send 5 connections'],
-    6: [],
+    6: [], // Saturday — no repeatable tasks
   };
 
   const CUSTOM_SLOTS = 5;
@@ -599,10 +623,13 @@
 
 <script src="/header.js"></script>
 
+<!-- HEADER -->
 <div id="site-header"></div>
 <script>renderHeader('tasks', { showStatus: true });</script>
 
 <div class="page">
+
+  <!-- HEADER -->
   <div class="page-header">
     <h1>
       <span id="todayDate">—</span>
@@ -611,6 +638,7 @@
     <span class="day-badge" id="dayBadge">—</span>
   </div>
 
+  <!-- DATE NAVIGATOR -->
   <div class="date-nav" id="dateNav">
     <button class="date-nav-btn" id="datePrev" onclick="stepDay(-1)" title="Previous day">‹</button>
     <div class="date-nav-center">
@@ -620,6 +648,7 @@
     <button class="date-nav-btn" id="dateNext" onclick="stepDay(1)" title="Next day">›</button>
   </div>
 
+  <!-- CALENDAR PICKER POPUP -->
   <div class="cal-popup" id="calPopup">
     <div class="cal-popup-header">
       <button class="cal-popup-nav" onclick="pickerChangeMonth(-1)">‹</button>
@@ -633,10 +662,12 @@
     <div class="cal-popup-days" id="pickerDays"></div>
   </div>
 
+  <!-- VIEW MODE BANNER -->
   <div class="view-mode-banner" id="viewModeBanner">
     <span id="viewModeText"></span>
   </div>
 
+  <!-- PROGRESS -->
   <div class="progress-wrap">
     <div class="progress-meta">
       <span id="progressLabel">0 of 0 complete</span>
@@ -647,6 +678,7 @@
     </div>
   </div>
 
+  <!-- REPEATABLE TASKS -->
   <div class="section" id="repeatableSection">
     <div class="section-label">Daily repeatables</div>
     <div class="task-list" id="repeatableList">
@@ -656,11 +688,13 @@
     </div>
   </div>
 
+  <!-- CUSTOM TASKS -->
   <div class="section">
     <div class="section-label">Custom tasks <span style="color:var(--muted);font-size:9px;margin-left:6px;">AUTO-SAVES · INCOMPLETE ROLLS OVER</span></div>
     <div id="customList"></div>
   </div>
 
+  <!-- CONTRIBUTION GRID -->
   <div class="section">
     <div class="section-label">Productivity history</div>
     <div class="grid-wrap">
@@ -700,11 +734,17 @@
       </div>
     </div>
   </div>
+
 </div>
 
+<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
+<!-- ═══════════════════════════════════════════════
+     SUPABASE CLIENT (FIXED)
+     ═══════════════════════════════════════════════ -->
 <script>
+// ── Supabase client (FIXED VERSION)
 const supa = (() => {
   const headers = {
     'apikey': SUPABASE_ANON_KEY,
@@ -721,6 +761,7 @@ const supa = (() => {
     return r.json();
   }
 
+  // FIXED: Use upsert with PATCH fallback for conflicts
   async function upsert(table, data) {
     const r = await fetch(`${base}/${table}`, {
       method: 'POST',
@@ -731,15 +772,57 @@ const supa = (() => {
       body: JSON.stringify(data)
     });
     
+    // If we get 409 (conflict), fall back to PATCH updates
+    if (r.status === 409) {
+      console.log('Got 409 conflict, using PATCH to update existing records');
+      const results = [];
+      
+      for (const record of data) {
+        if (table === 'task_state') {
+          const url = new URL(`${base}/${table}`);
+          url.searchParams.set('date', `eq.${record.date}`);
+          url.searchParams.set('task_name', `eq.${record.task_name}`);
+          url.searchParams.set('task_type', `eq.${record.task_type}`);
+          
+          const patchR = await fetch(url, {
+            method: 'PATCH',
+            headers,
+            body: JSON.stringify({ is_done: record.is_done })
+          });
+          
+          if (patchR.ok) results.push(record);
+        } else if (table === 'custom_tasks') {
+          const url = new URL(`${base}/${table}`);
+          url.searchParams.set('date', `eq.${record.date}`);
+          url.searchParams.set('slot', `eq.${record.slot}`);
+          
+          const patchR = await fetch(url, {
+            method: 'PATCH',
+            headers,
+            body: JSON.stringify({ text: record.text, is_done: record.is_done, rolled_over: record.rolled_over })
+          });
+          
+          if (patchR.ok) results.push(record);
+        }
+      }
+      
+      return results;
+    }
+    
     if (!r.ok) {
       const err = await r.text();
-      console.error('Supabase error:', err);
-      throw new Error(err);
+      console.error('Supabase upsert error:', err);
+      return [];
     }
     
     const responseText = await r.text();
     if (!responseText) return [];
-    return JSON.parse(responseText);
+    try {
+      return JSON.parse(responseText);
+    } catch (e) {
+      console.error('JSON parse error:', e);
+      return [];
+    }
   }
 
   async function patch(table, filter, data) {
@@ -753,6 +836,7 @@ const supa = (() => {
   return { query, upsert, patch };
 })();
 
+// ── Date helpers
 function makeDateStr(d) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
@@ -784,15 +868,19 @@ function checkSVG() {
   return `<svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 }
 
+// ── State
 let viewDateStr      = TODAY_STR;
 let repeatableStates = {};
 let customTasks      = [];
 let saveTimers       = {};
 let datesWithData    = new Set();
+
+// picker state
 let pickerYear  = new Date().getFullYear();
 let pickerMonth = new Date().getMonth();
 let pickerOpen  = false;
 
+// ── Date Navigator
 function updateDateNav() {
   const isToday  = viewDateStr === TODAY_STR;
   const viewDate = parseDateStr(viewDateStr);
@@ -806,6 +894,7 @@ function updateDateNav() {
   const todayBtn = document.getElementById('dateNavToday');
   todayBtn.classList.toggle('hidden', isToday);
 
+  // View mode banner
   const banner   = document.getElementById('viewModeBanner');
   const bannerTx = document.getElementById('viewModeText');
   if (isToday) {
@@ -833,6 +922,7 @@ function goToday() {
   loadDay();
 }
 
+// ── Calendar Picker
 function toggleCalPicker() {
   pickerOpen = !pickerOpen;
   const popup = document.getElementById('calPopup');
@@ -873,13 +963,16 @@ function renderPicker() {
   const lastDay  = new Date(pickerYear, pickerMonth + 1, 0);
   const startDow = firstDay.getDay();
 
+  // Leading blanks
   for (let i = 0; i < startDow; i++) {
     const prev = new Date(pickerYear, pickerMonth, 1 - (startDow - i));
     addPickerDay(daysEl, prev, true);
   }
+  // Current month
   for (let d = 1; d <= lastDay.getDate(); d++) {
     addPickerDay(daysEl, new Date(pickerYear, pickerMonth, d), false);
   }
+  // Trailing blanks
   const total = startDow + lastDay.getDate();
   const trailing = (7 - (total % 7)) % 7;
   for (let i = 1; i <= trailing; i++) {
@@ -906,6 +999,7 @@ function addPickerDay(container, date, otherMonth) {
   container.appendChild(btn);
 }
 
+// close picker on outside click
 document.addEventListener('click', e => {
   if (pickerOpen &&
       !document.getElementById('calPopup').contains(e.target) &&
@@ -914,6 +1008,7 @@ document.addEventListener('click', e => {
   }
 });
 
+// ── Load a day (repeatables + custom tasks)
 async function loadDay() {
   updateDateNav();
   const isToday  = viewDateStr === TODAY_STR;
@@ -931,6 +1026,7 @@ async function loadDay() {
   ]);
 }
 
+// ── Repeatables
 async function loadRepeatables(dow, isToday, isPast, isFuture) {
   const tasks   = DAILY_TASKS[dow] || [];
   const listEl  = document.getElementById('repeatableList');
@@ -943,6 +1039,7 @@ async function loadRepeatables(dow, isToday, isPast, isFuture) {
   }
   sectionEl.style.display = '';
 
+  // Show skeletons while loading
   listEl.innerHTML = '<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>';
 
   try {
@@ -954,6 +1051,7 @@ async function loadRepeatables(dow, isToday, isPast, isFuture) {
     rows.forEach(r => { repeatableStates[r.task_name] = r.is_done; });
   } catch(e) { console.warn('Could not load repeatable state', e); }
 
+  // Only seed today's rows — never write to past/future
   if (isToday) {
     const upsertData = tasks.map(name => ({
       date: viewDateStr, task_name: name,
@@ -974,6 +1072,7 @@ async function loadRepeatables(dow, isToday, isPast, isFuture) {
       <span class="task-name">${name}</span>
       <span class="task-type">daily</span>
     `;
+    // Only allow toggling on today
     if (isToday) {
       el.addEventListener('click', () => toggleRepeatable(name, el, dow));
     } else {
@@ -1006,6 +1105,7 @@ async function toggleRepeatable(name, el, dow) {
   }
 }
 
+// ── Custom Tasks
 async function loadCustomTasks(isToday, isPast, isFuture) {
   const listEl = document.getElementById('customList');
   listEl.innerHTML = '<div class="skeleton" style="height:48px;margin-bottom:6px"></div>';
@@ -1028,6 +1128,7 @@ async function loadCustomTasks(isToday, isPast, isFuture) {
     );
   }
 
+  // Only seed on today
   if (isToday) {
     const toSeed = customTasks.filter(t => !t.id).map(t => ({
       date: viewDateStr, slot: t.slot, text: t.text,
@@ -1052,6 +1153,7 @@ function renderCustomTasks(isToday = true) {
   const listEl = document.getElementById('customList');
   listEl.innerHTML = '';
 
+  // On past/future: only show slots that have text, or show all 5 on today
   const slotsToShow = isToday
     ? customTasks
     : customTasks.filter(t => t.text.trim().length > 0);
@@ -1160,6 +1262,7 @@ async function toggleCustom(slot, wrap, input, checkEl) {
   }
 }
 
+// ── Progress
 function updateProgress(dow) {
   const tasks  = DAILY_TASKS[dow] || [];
   const rTotal = tasks.length;
@@ -1178,6 +1281,7 @@ function updateProgress(dow) {
   document.getElementById('progressFill').style.width  = `${pct}%`;
 }
 
+// ── Contribution Grid
 async function loadGrid() {
   const gridEl  = document.getElementById('contribGrid');
   const monthEl = document.getElementById('gridMonths');
@@ -1204,6 +1308,7 @@ async function loadGrid() {
     });
   } catch(e) { console.warn('Could not load scores', e); }
 
+  // Month labels
   const months = [];
   let lastMonth = -1;
   cells.forEach((date, i) => {
@@ -1235,6 +1340,7 @@ async function loadGrid() {
     cell.title = score
       ? `${ds}: ${score.done_tasks}/${score.total_tasks} (${score.pct}%)`
       : `${ds}: no data`;
+    // Click a grid cell to jump to that day
     cell.style.cursor = 'pointer';
     cell.addEventListener('click', () => {
       viewDateStr = ds;
@@ -1244,6 +1350,7 @@ async function loadGrid() {
     gridEl.appendChild(cell);
   });
 
+  // Stats
   const allScores   = Object.values(scores).filter(s => s.pct > 0);
   const totalActive = allScores.length;
   const avgPct      = totalActive > 0
@@ -1270,6 +1377,7 @@ async function loadGrid() {
   document.getElementById('statAvg').textContent    = avgPct + '%';
 }
 
+// ── Boot
 async function init() {
   document.getElementById('todayDate').textContent =
     `${MONTH_NAMES[new Date().getMonth()]} ${new Date().getDate()}, ${new Date().getFullYear()} — `;
