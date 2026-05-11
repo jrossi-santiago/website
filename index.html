@@ -95,8 +95,39 @@
     padding-left: 2px;
   }
 
-  /* QUOTE CARD */
-  .quote-card {
+  /* VALUES GRID */
+  .values-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 24px 32px;
+    margin-bottom: 40px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .value-item:nth-child(3) {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .value-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .value-number {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--text);
+    letter-spacing: -.01em;
+  }
+  .value-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--text);
+    letter-spacing: -.01em;
+  }
     background: linear-gradient(135deg, rgba(124,106,247,.07) 0%, rgba(62,207,142,.04) 100%);
     border: 1px solid rgba(124,106,247,.2);
     border-radius: 12px;
@@ -339,6 +370,8 @@
   @media (max-width: 600px) {
     .page { padding: 24px 16px 60px; }
     .hero-greeting { font-size: 28px; }
+    .values-grid { gap: 16px 20px; }
+    .value-number, .value-label { font-size: 18px; }
     .image-grid { grid-template-columns: 1fr; }
     .weather-stats { grid-template-columns: repeat(3,1fr); }
     .hourly-row { grid-template-columns: 56px 28px 1fr 48px; padding: 10px 14px; gap: 8px; }
@@ -375,6 +408,21 @@
     <div class="hero-date" id="heroDate">—</div>
     <div class="begin-wrap">
       <a class="begin-btn" href="/tasks">Begin my day →</a>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="values-grid">
+      <div class="value-item">
+        <div class="value-number">$15,000</div>
+        <div class="value-label">No Debt</div>
+        <div class="value-number">Trust God</div>
+      </div>
+      <div class="value-item">
+        <div class="value-number">3 Clients</div>
+        <div class="value-label">Real Business</div>
+        <div class="value-label">Always Pray</div>
+      </div>
     </div>
   </div>
 
