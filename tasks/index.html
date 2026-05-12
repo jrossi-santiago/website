@@ -184,6 +184,221 @@
   }
   .task-item.rollover .task-type { color: var(--warn); }
 
+  /* TASK ITEM WITH PROFILE LINK */
+  .task-item.has-profiles {
+    cursor: default;
+    position: relative;
+  }
+  .task-item.has-profiles .task-name {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .task-item.has-profiles .task-name::after {
+    content: '→';
+    font-size: 12px;
+    color: var(--accent);
+    opacity: 0;
+    transition: all .2s;
+  }
+  .task-item.has-profiles:hover .task-name::after {
+    opacity: 1;
+  }
+
+  /* PROFILE MODAL */
+  .profile-modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 998;
+  }
+  .profile-modal.open { display: flex; }
+
+  .profile-modal-panel {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 80px rgba(0,0,0,.9);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .profile-modal-header {
+    padding: 24px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .profile-modal-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .profile-day-indicator {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: rgba(124,106,247,.15);
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+  .profile-modal-header p {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-top: 8px;
+  }
+
+  .profile-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-size: 24px;
+    cursor: pointer;
+    transition: color .15s;
+  }
+  .profile-modal-close:hover { color: var(--text); }
+
+  .profile-modal-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+  }
+
+  .profile-tier-group {
+    border-bottom: 1px solid var(--border);
+  }
+  .profile-tier-group:last-child {
+    border-bottom: none;
+  }
+
+  .profile-tier-header {
+    padding: 16px 24px;
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .profile-tier-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 4px;
+  }
+  .profile-tier-badge.tier1 {
+    background: rgba(124,106,247,.25);
+    color: #7c6af7;
+  }
+  .profile-tier-badge.tier2 {
+    background: rgba(245,93,123,.15);
+    color: #f5a623;
+  }
+  .profile-tier-badge.tier3 {
+    background: rgba(62,207,142,.15);
+    color: #3ecf8e;
+  }
+  .profile-tier-label {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: .02em;
+  }
+
+  .profile-item-wrapper {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    transition: all .2s;
+  }
+  .profile-item-wrapper:hover {
+    background: rgba(124,106,247,.05);
+  }
+  .profile-item-wrapper:last-child {
+    border-bottom: none;
+  }
+
+  .profile-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .profile-info {
+    flex: 1;
+  }
+  .profile-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .profile-frequency {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: .02em;
+  }
+
+  .profile-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--accent);
+    border: none;
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all .2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .profile-link-btn:hover {
+    background: var(--accent2);
+    transform: translateX(2px);
+  }
+  .profile-link-btn::after {
+    content: '→';
+    font-size: 10px;
+  }
+
+  .profile-modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+    text-align: center;
+  }
+  .profile-modal-footer p {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+
   /* TASK CONFIG MODAL */
   .task-config-modal {
     position: fixed;
@@ -787,6 +1002,9 @@
     .date-nav { width: 100%; }
     .date-nav-center { flex: 1; justify-content: center; }
     .task-config-day-tabs { grid-template-columns: repeat(2, 1fr); }
+    .profile-modal-panel { max-height: 90vh; }
+    .profile-item { flex-direction: column; }
+    .profile-link-btn { width: 100%; justify-content: center; }
   }
 </style>
 </head>
@@ -802,15 +1020,97 @@
   // ── Repeatable tasks per day (0=Sun,1=Mon,...,6=Sat)
   let DAILY_TASKS = {
     0: [], // Sunday — no repeatable tasks
-    1: ['Check Instantly','Check Form','Check LinkedIn','Comment on 8 LinkedIn posts','Send 5 connections'],
-    2: ['Check Instantly','Check Form','Check LinkedIn','Comment on 8 LinkedIn posts','Send 5 connections'],
-    3: ['Check Instantly','Check Form','Check LinkedIn','Comment on 8 LinkedIn posts','Send 5 connections','Write SEO Article'],
-    4: ['Check Instantly','Check Form','Check LinkedIn','Comment on 8 LinkedIn posts','Send 5 connections','Invite connections to follow business page'],
-    5: ['Check Instantly','Check Form','Check LinkedIn','Comment on 8 LinkedIn posts','Send 5 connections'],
+    1: ['Check Instantly','Check Form','Check LinkedIn','Comment on 8 LinkedIn posts','Send 5 connections','Profile Comments'],
+    2: ['Check Instantly','Check Form','Check LinkedIn','Comment on 8 LinkedIn posts','Send 5 connections','Profile Comments'],
+    3: ['Check Instantly','Check Form','Check LinkedIn','Comment on 8 LinkedIn posts','Send 5 connections','Write SEO Article','Profile Comments'],
+    4: ['Check Instantly','Check Form','Check LinkedIn','Comment on 8 LinkedIn posts','Send 5 connections','Invite connections to follow business page','Profile Comments'],
+    5: ['Check Instantly','Check Form','Check LinkedIn','Comment on 8 LinkedIn posts','Send 5 connections','Profile Comments'],
     6: [], // Saturday — no repeatable tasks
   };
 
   const CUSTOM_SLOTS = 5;
+
+  // LinkedIn profiles by day and tier
+  const LINKEDIN_PROFILES = {
+    1: { // Monday
+      tier1: [
+        { name: 'Kyle Moore', freq: '1–2 posts/week', url: 'https://www.linkedin.com/in/kyle-moore/' },
+        { name: 'Jarrett Wentworth', freq: '2–3 posts/week', url: 'https://www.linkedin.com/in/jarrett-wentworth/' }
+      ],
+      tier2: [
+        { name: 'Mike Rinaldi', freq: '1–2 posts/week', url: 'https://www.linkedin.com/in/mikearinaldi/' },
+        { name: 'Data Center World / AFCOM', freq: '2–3 posts/week', url: 'https://www.linkedin.com/company/data-center-world-afcom/' }
+      ],
+      tier3: [
+        { name: '7x24 Exchange', freq: '2–3 posts/week', url: 'https://www.linkedin.com/company/7x24-exchange/' },
+        { name: 'Switch Data Centers', freq: '1–2 posts/week', url: 'https://www.linkedin.com/company/switch-data-centers/' }
+      ]
+    },
+    2: { // Tuesday
+      tier1: [
+        { name: 'Justin Basile', freq: '2–3 posts/week', url: 'https://www.linkedin.com/in/justin-basile/' },
+        { name: 'Chris Crosby', freq: '2–3 posts/week', url: 'https://www.linkedin.com/in/chriscrosby/' }
+      ],
+      tier2: [
+        { name: 'Daniel Stanton', freq: '2–3 posts/week', url: 'https://www.linkedin.com/in/danielstanton1/' },
+        { name: 'Bill Kleyman', freq: '1–2 posts/week', url: 'https://www.linkedin.com/in/billkleyman/' }
+      ],
+      tier3: [
+        { name: 'AFCOM', freq: '2–3 posts/week', url: 'https://www.linkedin.com/company/afcom/' },
+        { name: 'TechVision Group', freq: '1–2 posts/week', url: 'https://www.linkedin.com/company/techvision-group/' }
+      ]
+    },
+    3: { // Wednesday
+      tier1: [
+        { name: 'Kev Campbell', freq: '2–3 posts/week', url: 'https://www.linkedin.com/in/kev-campbell/' },
+        { name: 'Mike Rinaldi', freq: '1–2 posts/week', url: 'https://www.linkedin.com/in/mikearinaldi/' }
+      ],
+      tier2: [
+        { name: 'Data Center World / AFCOM', freq: '2–3 posts/week', url: 'https://www.linkedin.com/company/data-center-world-afcom/' },
+        { name: 'Daniel Stanton', freq: '2–3 posts/week', url: 'https://www.linkedin.com/in/danielstanton1/' }
+      ],
+      tier3: [
+        { name: '7x24 Exchange', freq: '2–3 posts/week', url: 'https://www.linkedin.com/company/7x24-exchange/' },
+        { name: 'Switch Data Centers', freq: '1–2 posts/week', url: 'https://www.linkedin.com/company/switch-data-centers/' }
+      ]
+    },
+    4: { // Thursday
+      tier1: [
+        { name: 'Kevin Timmons', freq: '1–2 posts/week', url: 'https://www.linkedin.com/in/kevintimmons/' },
+        { name: 'Nabeel Mahmood', freq: '2–3 posts/week', url: 'https://www.linkedin.com/in/nabeelmahmood/' }
+      ],
+      tier2: [
+        { name: 'Sheri Hinish', freq: '2–3 posts/week', url: 'https://www.linkedin.com/in/sherihinish/' },
+        { name: 'Martijn Lofvers', freq: '1–2 posts/week', url: 'https://www.linkedin.com/in/martijnlofvers/' }
+      ],
+      tier3: [
+        { name: 'Data Centre Magazine', freq: '3–4 posts/week', url: 'https://www.linkedin.com/company/data-centre-magazine/' },
+        { name: 'CyrusOne', freq: '1–2 posts/week', url: 'https://www.linkedin.com/company/cyrusone/' }
+      ]
+    },
+    5: { // Friday
+      tier1: [
+        { name: 'Phillip Koblence', freq: '1–2 posts/week', url: 'https://www.linkedin.com/in/phillip-koblence/' },
+        { name: 'Lauren Ryder', freq: '1–2 posts/week', url: 'https://www.linkedin.com/in/laurenryder/' }
+      ],
+      tier2: [
+        { name: 'Lora Cecere', freq: '1–2 posts/week', url: 'https://www.linkedin.com/in/loracecere/' },
+        { name: 'Construction Dive', freq: '4–5 posts/week', url: 'https://www.linkedin.com/company/construction-dive/' }
+      ],
+      tier3: [
+        { name: 'Infrastructure Masons (iMasons)', freq: '2–3 posts/week', url: 'https://www.linkedin.com/company/infrastructure-masons/' },
+        { name: 'Equinix', freq: '2–3 posts/week', url: 'https://www.linkedin.com/company/equinix/' }
+      ]
+    }
+  };
+
+  const DAY_COLORS = {
+    1: { name: 'Monday', emoji: '📍', hex: '#667eea' },
+    2: { name: 'Tuesday', emoji: '📍', hex: '#f5576c' },
+    3: { name: 'Wednesday', emoji: '📍', hex: '#4facfe' },
+    4: { name: 'Thursday', emoji: '📍', hex: '#43e97b' },
+    5: { name: 'Friday', emoji: '📍', hex: '#fa709a' }
+  };
 </script>
 
 <script src="/header.js"></script>
@@ -930,6 +1230,30 @@
     </div>
   </div>
 
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="profile-modal" id="profileModal">
+  <div class="profile-modal-panel">
+    <button class="profile-modal-close" onclick="closeProfileModal()">×</button>
+    <div class="profile-modal-header">
+      <div>
+        <h2>
+          <span class="profile-day-indicator" id="profileDayIndicator">Monday</span>
+          Profile Comments
+        </h2>
+        <p id="profileHeaderNote">Click any profile to visit their LinkedIn page</p>
+      </div>
+    </div>
+
+    <div class="profile-modal-content" id="profileModalContent">
+      <!-- Populated by JavaScript -->
+    </div>
+
+    <div class="profile-modal-footer">
+      <p>6 profiles × ~3 min each = 18 min + 2 min flex = 20 min</p>
+    </div>
+  </div>
 </div>
 
 <!-- TASK CONFIG MODAL -->
@@ -1103,6 +1427,88 @@ let pickerOpen  = false;
 let configMode = 'view';
 let editingDay = 1; // Monday
 let editingTasks = {};
+
+// ── Profile Modal
+function openProfileModal(taskName) {
+  if (taskName !== 'Profile Comments') return;
+  
+  const viewDate = parseDateStr(viewDateStr);
+  const dow = viewDate.getDay();
+  
+  // Only Mon-Fri have profiles
+  if (dow < 1 || dow > 5) {
+    toast('No profiles scheduled for this day', 'error');
+    return;
+  }
+
+  const dayInfo = DAY_COLORS[dow];
+  const profiles = LINKEDIN_PROFILES[dow];
+  
+  document.getElementById('profileDayIndicator').textContent = DAY_NAMES[dow];
+  
+  const contentEl = document.getElementById('profileModalContent');
+  contentEl.innerHTML = '';
+  
+  // Tier 1
+  const tier1Group = createProfileTierGroup('Tier 1', profiles.tier1, 'tier1');
+  contentEl.appendChild(tier1Group);
+  
+  // Tier 2
+  const tier2Group = createProfileTierGroup('Tier 2', profiles.tier2, 'tier2');
+  contentEl.appendChild(tier2Group);
+  
+  // Tier 3
+  const tier3Group = createProfileTierGroup('Tier 3', profiles.tier3, 'tier3');
+  contentEl.appendChild(tier3Group);
+  
+  document.getElementById('profileModal').classList.add('open');
+}
+
+function createProfileTierGroup(tierLabel, profiles, tierClass) {
+  const group = document.createElement('div');
+  group.className = 'profile-tier-group';
+  
+  const header = document.createElement('div');
+  header.className = 'profile-tier-header';
+  header.innerHTML = `
+    <span class="profile-tier-badge ${tierClass}">${tierLabel}</span>
+    <span class="profile-tier-label">${profiles.length} profiles</span>
+  `;
+  group.appendChild(header);
+  
+  profiles.forEach(profile => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'profile-item-wrapper';
+    
+    const item = document.createElement('div');
+    item.className = 'profile-item';
+    item.innerHTML = `
+      <div class="profile-info">
+        <div class="profile-name">${profile.name}</div>
+        <div class="profile-frequency">${profile.freq}</div>
+      </div>
+      <a href="${profile.url}" target="_blank" class="profile-link-btn">Visit</a>
+    `;
+    
+    wrapper.appendChild(item);
+    group.appendChild(wrapper);
+  });
+  
+  return group;
+}
+
+function closeProfileModal() {
+  document.getElementById('profileModal').classList.remove('open');
+}
+
+// Close modal on outside click
+document.addEventListener('click', e => {
+  const modal = document.getElementById('profileModal');
+  if (modal.classList.contains('open') &&
+      !modal.querySelector('.profile-modal-panel').contains(e.target)) {
+    closeProfileModal();
+  }
+});
 
 // ── Task Config Modal
 function openTaskConfig() {
@@ -1369,19 +1775,43 @@ async function loadRepeatables(dow, isToday, isPast, isFuture) {
   tasks.forEach(name => {
     const done = repeatableStates[name] ?? false;
     const el   = document.createElement('div');
-    el.className = `task-item${done ? ' done' : ''}`;
+    
+    const isProfileTask = name === 'Profile Comments';
+    el.className = `task-item${done ? ' done' : ''}${isProfileTask ? ' has-profiles' : ''}`;
     el.dataset.name = name;
+    
     el.innerHTML = `
       <div class="task-check">${checkSVG()}</div>
       <span class="task-name">${name}</span>
       <span class="task-type">daily</span>
     `;
-    // Only allow toggling on today
-    if (isToday) {
-      el.addEventListener('click', () => toggleRepeatable(name, el, dow));
+    
+    if (isProfileTask) {
+      // Profile Comments: click name to open modal
+      const nameEl = el.querySelector('.task-name');
+      nameEl.style.cursor = 'pointer';
+      nameEl.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openProfileModal(name);
+      });
+      // But still allow checkbox toggle if today
+      if (isToday) {
+        const checkEl = el.querySelector('.task-check');
+        checkEl.style.cursor = 'pointer';
+        checkEl.addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggleRepeatable(name, el, dow);
+        });
+      }
     } else {
-      el.style.cursor = 'default';
+      // Normal tasks: toggle on click
+      if (isToday) {
+        el.addEventListener('click', () => toggleRepeatable(name, el, dow));
+      } else {
+        el.style.cursor = 'default';
+      }
     }
+    
     listEl.appendChild(el);
     repeatableStates[name] = done;
   });
