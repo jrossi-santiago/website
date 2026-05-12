@@ -120,6 +120,9 @@
     color: var(--muted);
     margin-bottom: 12px;
     padding-left: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
   /* TASK CARDS */
@@ -180,6 +183,194 @@
     letter-spacing: .04em;
   }
   .task-item.rollover .task-type { color: var(--warn); }
+
+  /* TASK CONFIG MODAL */
+  .task-config-modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+  }
+  .task-config-modal.open { display: flex; }
+
+  .task-config-panel {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,.8);
+  }
+
+  .task-config-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .task-config-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -.02em;
+  }
+  .task-config-close {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px 8px;
+    transition: color .15s;
+  }
+  .task-config-close:hover { color: var(--text); }
+
+  .task-config-day-tabs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+  .task-config-day-tab {
+    padding: 10px 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    transition: all .15s;
+  }
+  .task-config-day-tab.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .task-config-day-tab:hover { border-color: var(--accent); color: var(--text); }
+
+  .task-config-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .task-config-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+  }
+  .task-config-item input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    caret-color: var(--accent);
+  }
+  .task-config-item input::placeholder { color: var(--muted); }
+  .task-config-item-remove {
+    background: transparent;
+    border: none;
+    color: var(--danger);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px;
+    transition: color .15s;
+    flex-shrink: 0;
+  }
+  .task-config-item-remove:hover { color: #ff6b6b; }
+
+  .task-config-add {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .task-config-add input {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    caret-color: var(--accent);
+  }
+  .task-config-add input::placeholder { color: var(--muted); }
+  .task-config-add input:focus {
+    border-color: var(--accent);
+    outline: none;
+  }
+  .task-config-add-btn {
+    background: var(--accent);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .task-config-add-btn:hover { background: var(--accent2); }
+
+  .task-config-footer {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .task-config-btn {
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .task-config-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .task-config-btn.save {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .task-config-btn.save:hover { background: var(--accent2); border-color: var(--accent2); }
+
+  .task-config-edit-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--accent);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 4px 8px;
+    cursor: pointer;
+    transition: all .15s;
+    margin-left: auto;
+  }
+  .task-config-edit-btn:hover { border-color: var(--accent); }
 
   /* CUSTOM INPUTS */
   .custom-slot {
@@ -595,6 +786,7 @@
     .page-header { flex-direction: column; align-items: flex-start; gap: 12px; }
     .date-nav { width: 100%; }
     .date-nav-center { flex: 1; justify-content: center; }
+    .task-config-day-tabs { grid-template-columns: repeat(2, 1fr); }
   }
 </style>
 </head>
@@ -608,7 +800,7 @@
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx4YXJ2bHl4cGVnd3BmeG56YWNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyNTA1NzgsImV4cCI6MjA5MzgyNjU3OH0.A4LjF_1LV7d522jhigD4izyjY6S0fgETgebeDKGUsQU';
 
   // ── Repeatable tasks per day (0=Sun,1=Mon,...,6=Sat)
-  const DAILY_TASKS = {
+  let DAILY_TASKS = {
     0: [], // Sunday — no repeatable tasks
     1: ['Check Instantly','Check Form','Check LinkedIn','Comment on 8 LinkedIn posts','Send 5 connections'],
     2: ['Check Instantly','Check Form','Check LinkedIn','Comment on 8 LinkedIn posts','Send 5 connections'],
@@ -680,7 +872,10 @@
 
   <!-- REPEATABLE TASKS -->
   <div class="section" id="repeatableSection">
-    <div class="section-label">Daily repeatables</div>
+    <div class="section-label">
+      <span>Daily repeatables</span>
+      <button class="task-config-edit-btn" onclick="openTaskConfig()">Edit</button>
+    </div>
     <div class="task-list" id="repeatableList">
       <div class="skeleton"></div>
       <div class="skeleton"></div>
@@ -735,6 +930,30 @@
     </div>
   </div>
 
+</div>
+
+<!-- TASK CONFIG MODAL -->
+<div class="task-config-modal" id="taskConfigModal">
+  <div class="task-config-panel">
+    <div class="task-config-header">
+      <h2>Edit Daily Tasks</h2>
+      <button class="task-config-close" onclick="closeTaskConfig()">×</button>
+    </div>
+
+    <div class="task-config-day-tabs" id="dayTabs"></div>
+
+    <div class="task-config-list" id="taskConfigList"></div>
+
+    <div class="task-config-add">
+      <input type="text" id="newTaskInput" placeholder="Add new task..." />
+      <button class="task-config-add-btn" onclick="addTaskToDay()">Add</button>
+    </div>
+
+    <div class="task-config-footer">
+      <button class="task-config-btn" onclick="closeTaskConfig()">Close</button>
+      <button class="task-config-btn save" onclick="saveTaskConfig()">Save Changes</button>
+    </div>
+  </div>
 </div>
 
 <!-- TOAST -->
@@ -879,6 +1098,91 @@ let datesWithData    = new Set();
 let pickerYear  = new Date().getFullYear();
 let pickerMonth = new Date().getMonth();
 let pickerOpen  = false;
+
+// Task config state
+let configMode = 'view';
+let editingDay = 1; // Monday
+let editingTasks = {};
+
+// ── Task Config Modal
+function openTaskConfig() {
+  configMode = 'view';
+  editingDay = 1;
+  editingTasks = JSON.parse(JSON.stringify(DAILY_TASKS));
+  renderTaskConfig();
+  document.getElementById('taskConfigModal').classList.add('open');
+}
+
+function closeTaskConfig() {
+  document.getElementById('taskConfigModal').classList.remove('open');
+  editingTasks = {};
+}
+
+function renderTaskConfig() {
+  const dayTabsEl = document.getElementById('dayTabs');
+  const listEl = document.getElementById('taskConfigList');
+
+  dayTabsEl.innerHTML = '';
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  dayNames.forEach((name, idx) => {
+    const btn = document.createElement('button');
+    btn.className = `task-config-day-tab${idx === editingDay ? ' active' : ''}`;
+    btn.textContent = name;
+    btn.onclick = () => { editingDay = idx; renderTaskConfig(); };
+    dayTabsEl.appendChild(btn);
+  });
+
+  listEl.innerHTML = '';
+  const tasks = editingTasks[editingDay] || [];
+  tasks.forEach((task, idx) => {
+    const item = document.createElement('div');
+    item.className = 'task-config-item';
+    item.innerHTML = `
+      <input type="text" value="${task.replace(/"/g, '&quot;')}" onchange="updateTaskInDay(${idx}, this.value)" />
+      <button class="task-config-item-remove" onclick="removeTaskFromDay(${idx})">×</button>
+    `;
+    listEl.appendChild(item);
+  });
+}
+
+function updateTaskInDay(idx, newValue) {
+  editingTasks[editingDay][idx] = newValue;
+}
+
+function removeTaskFromDay(idx) {
+  editingTasks[editingDay].splice(idx, 1);
+  renderTaskConfig();
+}
+
+function addTaskToDay() {
+  const input = document.getElementById('newTaskInput');
+  const value = input.value.trim();
+  if (!value) return;
+  if (!editingTasks[editingDay]) editingTasks[editingDay] = [];
+  editingTasks[editingDay].push(value);
+  input.value = '';
+  renderTaskConfig();
+}
+
+function saveTaskConfig() {
+  DAILY_TASKS = JSON.parse(JSON.stringify(editingTasks));
+  localStorage.setItem('DAILY_TASKS', JSON.stringify(DAILY_TASKS));
+  toast('Daily tasks saved', 'success');
+  closeTaskConfig();
+  loadDay();
+}
+
+// Load from localStorage on init
+function loadTaskConfig() {
+  const saved = localStorage.getItem('DAILY_TASKS');
+  if (saved) {
+    try {
+      DAILY_TASKS = JSON.parse(saved);
+    } catch(e) {
+      console.warn('Could not load saved tasks:', e);
+    }
+  }
+}
 
 // ── Date Navigator
 function updateDateNav() {
@@ -1379,6 +1683,8 @@ async function loadGrid() {
 
 // ── Boot
 async function init() {
+  loadTaskConfig(); // Load saved tasks from localStorage
+
   document.getElementById('todayDate').textContent =
     `${MONTH_NAMES[new Date().getMonth()]} ${new Date().getDate()}, ${new Date().getFullYear()} — `;
   document.getElementById('dayBadge').textContent = DAY_NAMES[new Date().getDay()];
